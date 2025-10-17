@@ -1,0 +1,7 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <FontFamily x:Key="fontBase">pack://application:,,,/Assets/fonts/#Montserrat</FontFamily>
+    <FontFamily x:Key="fontSen">pack://application:,,,/Assets/fonts/#Sen</FontFamily>
+
+</ResourceDictionary>

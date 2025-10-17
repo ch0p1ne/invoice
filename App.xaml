@@ -1,0 +1,18 @@
+﻿<Application x:Class="invoice.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:invoice" 
+             Startup="ApplicationStart">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Assets/styles/ButtonStyle.xaml"/>
+                <ResourceDictionary Source="/Assets/styles/MenuItem.xaml" />
+                <ResourceDictionary Source="template/DataTemplate.xaml"/>
+                <ResourceDictionary Source="Assets/styles/fontsFamily.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
