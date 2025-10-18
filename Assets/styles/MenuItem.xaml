@@ -5,7 +5,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource fontBase}" />
         <Setter Property="FontSize" Value="16" />
         <Setter Property="Background" Value="#F6F0FF" />
-        <Setter Property="Foreground" Value="#000000" />
+        <Setter Property="Foreground" Value="#202020" />
         <Setter Property="Width" Value="210" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
@@ -22,12 +22,12 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="border" Property="Background" Value="#80C2BC"/>
                             <Setter Property="FontWeight" Value="Normal" />
-                            <Setter Property="Foreground" Value="#000000"/>
+                            <Setter Property="Foreground" Value="#202020"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="border" Property="Background" Value="#CFEFE0"/>
                             <Setter Property="FontWeight" Value="Bold" />
-                            <Setter Property="Foreground" Value="#000000"/>
+                            <Setter Property="Foreground" Value="#202020"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

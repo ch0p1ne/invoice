@@ -31,7 +31,7 @@ namespace invoice.ViewModels
         {
             _navigationService = navigationService;
             _sessionService = sessionService;
-            CurrentViewModel = new HomeVM();
+            CurrentViewModel = new ExamenVM();
 
             MenuItems = new ObservableCollection<MenuItem>()
             {
@@ -41,7 +41,7 @@ namespace invoice.ViewModels
                    Childrens =
                    [
                        new MenuItem("Apercu", null, null, "/Assets/icons/house.png"),
-                       new MenuItem("Nouvelle Facture", null, null, "/Assets/icons/add.png"),
+                       new MenuItem("Nouvelle Facture", null, new CreateFactureVM(), "/Assets/icons/add.png"),
                        new MenuItem("Vue des Factures", null, null, "/Assets/icons/list.png"),
                    ],
                    ViewModel = new NewInvoiceVM(),

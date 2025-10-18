@@ -1,0 +1,38 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="buttonCrudStyle" TargetType="Button">
+        <!-- 1. Valeur par défaut du Background -->
+        <Setter Property="Background" Value="#CFEFE0"/>
+        <Setter Property="Foreground" Value="#202020"/>
+        <Setter Property="Margin" Value="0,0,100,0"/>
+        <Setter Property="FontFamily" Value="{DynamicResource fontBase}"/>
+        <Setter Property="FontWeight" Value="Light"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <!-- 2. Lier le Background du Border au Background du Button -->
+                    <Border CornerRadius="8" Background="{TemplateBinding Background}" Padding="22,10" Cursor="Hand">
+                        <Border.RenderTransform>
+                            <ScaleTransform x:Name="scale" ScaleX="1" ScaleY="1"/>
+                        </Border.RenderTransform>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <!-- 3. Survol : changer le Background en rouge -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#9ECCA9"/> 
+                <Setter Property="FontWeight" Value="Normal" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#008A38" />
+                <Setter Property="Foreground" Value="#ffffff" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>

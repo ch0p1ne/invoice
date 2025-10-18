@@ -11,5 +11,6 @@ namespace invoice.Services
     {
         void NavigateTo<TViewModel>() where TViewModel : VMBase;
         void CloseWindow<TViewModel>() where TViewModel : VMBase;
+
     }
 }

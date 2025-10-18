@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,17 +16,13 @@ using System.Windows.Shapes;
 namespace invoice.Views
 {
     /// <summary>
-    /// Logique d'interaction pour ExamenView.xaml
+    /// Logique d'interaction pour ListExamenView.xaml
     /// </summary>
-    public partial class ExamenView : UserControl
+    public partial class ListExamenView : UserControl
     {
-        public string SaveExamenName { get; set; } = string.Empty;
-        public int SaveReference {  get; set; } = 0;
-        public double SavePrice { get; set; } = double.NaN;
-        public ExamenView()
+        public ListExamenView()
         {
             InitializeComponent();
         }
-
     }
 }
