@@ -118,6 +118,7 @@ namespace invoice.ViewModels
             }
             else
             {
+                Examens.Add(Examen);
                 CurrentCrudOperation = "crudList";
             }
         }

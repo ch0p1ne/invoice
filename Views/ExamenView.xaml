@@ -12,7 +12,7 @@
              FontFamily="{StaticResource fontBase}"
              xmlns:behevior="http://schemas.microsoft.com/xaml/behaviors">
     <UserControl.Resources>
-        
+
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightBlue" />
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
     </UserControl.Resources>

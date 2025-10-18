@@ -21,9 +21,6 @@ namespace invoice.Views
     /// </summary>
     public partial class ExamenView : UserControl
     {
-        public string SaveExamenName { get; set; } = string.Empty;
-        public int SaveReference {  get; set; } = 0;
-        public double SavePrice { get; set; } = double.NaN;
         public ExamenView()
         {
             InitializeComponent();
