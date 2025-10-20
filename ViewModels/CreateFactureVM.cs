@@ -4,10 +4,15 @@ using invoice.Context;
 using invoice.Models;
 using invoice.Services;
 using invoice.Utilities;
+using invoice.Utilities.PdfGenerator;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Companion;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,6 +42,7 @@ namespace invoice.ViewModels
         private decimal _discountAmount = 0;
         private string _discountType = string.Empty;
         private string _paymentMethod = string.Empty;
+        private bool _generatePDFButtonIsEnable = false;
 
 
 
@@ -51,6 +57,12 @@ namespace invoice.ViewModels
 
         //Property
         public ISessionService SessionService { get; set; }
+        public Facture Facture { get; set; }
+        public bool GeneratePDFButtonIsEnable 
+        {
+            get => _generatePDFButtonIsEnable;
+            set =>SetProperty(ref _generatePDFButtonIsEnable, value);
+        }
         public decimal DiscountAmount
         {
             get => _discountAmount;
@@ -137,7 +149,6 @@ namespace invoice.ViewModels
                     // 💡 LOGIQUE D'ACTIVATION :
                     // La sélection du patient (value) est non-null si un élément a été choisi.
 
-                        PatientDefined = (value != null);
                     if (value != null)
                     {
                         PatientDefined = true;
@@ -233,6 +244,8 @@ namespace invoice.ViewModels
                 CalculAllIndexedPrice();
             }
         }
+        
+        
         //  H A R D - H A R D
         // Fonction à comprendre absolument
         [RelayCommand]
@@ -307,9 +320,15 @@ namespace invoice.ViewModels
 
             // Si toutes les opérations ont réussi, complétez la transaction
             scope.Complete();
-            InvoiceExams.Clear() ;
+            InvoiceExams.Clear();
+            Facture = nouvelleFacture;
+            GeneratePDFButtonIsEnable = true;
+            GenererFacturePdf();
             var Messagebox = new ModelOpenner($"Création de la facture {nouvelleFacture.Reference} terminé");
         }
+        
+        
+        
         [RelayCommand]
         public async Task CreatePatient()
         {
@@ -336,12 +355,18 @@ namespace invoice.ViewModels
                 throw new System.InvalidOperationException("Erreur lors de la création du patient", ex);
             }
         }
+        [RelayCommand]
+        public void GenerateInvoicePDF()
+        {
+            var document = new InvoiceGenerator(Facture);
+            document.ShowInCompanion(12500);
+        }
 
 
         // Method
         public async Task<string> GenerateReference()
         {
-            string reference = string.Empty;
+            string reference;
             int currentDay = DateTime.Now.Day;
             int currentMonth = DateTime.Now.Month;
             int currentYear = DateTime.Now.Year;
@@ -446,6 +471,29 @@ namespace invoice.ViewModels
         {
             // Le bouton est actif SEULEMENT si un examen est sélectionné dans le ComboBox
             return SelectedAvailableExam != null;
+        }
+        public void GenererFacturePdf()
+        {
+            var folderPath = "c:/clima-g/factures/";
+            var fileName = $"{Facture.Reference}_{Patient.FirstName}_{Patient.LastName}.pdf";
+
+            // 1. Définir le chemin complet du fichier
+            string filePath = Path.Combine(folderPath, fileName);
+            // Vérifie si le dossier n'existe PAS
+            if (!Directory.Exists(folderPath))
+            {
+                // Crée tous les répertoires et sous-répertoires dans le chemin spécifié.
+                // Cette méthode est sûre, même si le chemin contient plusieurs niveaux non existants.
+                Directory.CreateDirectory(folderPath); // ✨ Le dossier est créé ici
+
+                Console.WriteLine($"Dossier créé : {folderPath}");
+            }
+
+            // Crée le document
+            var document = new FactureDocument(Facture, Patient);
+
+            // Génère le PDF et l'ouvre
+            document.GeneratePdf(filePath);
         }
 
     }

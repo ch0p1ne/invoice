@@ -1,6 +1,7 @@
 ﻿using invoice.Services;
 using invoice.ViewModels;
 using invoice.Views;
+using QuestPDF.Infrastructure;
 using System.Configuration;
 using System.Data;
 using System.Globalization;
@@ -28,7 +29,7 @@ namespace invoice
         protected override void OnStartup(StartupEventArgs e)
         {
 
-
+            QuestPDF.Settings.License = LicenseType.Community;
             // Alternative plus récente :
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("fr-FR");
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("fr-FR");

@@ -337,6 +337,8 @@
                     Margin="0,0,100,0"
                     Height="42"
                     Width="200"
+                    IsEnabled="{Binding GeneratePDFButtonIsEnable}"
+                    Command="{Binding GenerateInvoicePDFCommand}"
                     FontWeight="Bold"
                     Content="Apercu Impression">
                 
