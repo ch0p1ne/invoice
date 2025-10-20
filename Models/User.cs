@@ -1,33 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace invoice.Models
 {
-    public class User
+    public class User : ObservableObject
     {
-        public int UserId { get; set; }
+        private int _userId;
+        private string _account_name = string.Empty;
+        private string _passwordHash = string.Empty;
+        private string? _email;
+        private string _phone_number_one = string.Empty;
+
+        public int UserId { get => _userId; set => SetProperty(ref _userId, value); }
         [Column(TypeName = "nvarchar(75)")]
-        public string Account_name { get; set; } = string.Empty;
+        public string Account_name { get => _account_name; set => SetProperty(ref _account_name, value); }
         [MaxLength(255)]
-        public string PasswordHash { get; set; } = string.Empty;
+        public string PasswordHash { get => _passwordHash; set => SetProperty(ref _passwordHash, value); }
         [MaxLength(255)]
         public string Salt { get; set; } = string.Empty;
         [Column(TypeName = "nvarchar(100)")]
-        public string? Email { get; set; }
+        public string? Email { get => _email; set => SetProperty(ref _email, value); }
         [Column(TypeName = "nvarchar(15)")]
-        public string Phone_number_one { get; set; } = string.Empty;
+        public string Phone_number_one { get => _phone_number_one; set => SetProperty(ref _phone_number_one, value); }
         public DateTime Created_at { get; set; } = DateTime.Now;
 
         public ICollection<Role> Roles { get; set; } = [];
         public ICollection<UserRole> UserRoles { get; set; } = [];
         public ICollection<Facture>? Factures { get; set; }
+
 
     }
 }

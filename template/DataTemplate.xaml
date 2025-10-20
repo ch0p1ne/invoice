@@ -28,4 +28,14 @@
     <custom:TemplateSelector x:Key="StringTemplateSelector"
                                        CrudListTemplate="{StaticResource CrudListTemplate}"
                                        CrudCreateTemplate="{StaticResource CrudCreateTemplate}" />
+
+    <DataTemplate x:Key="CrudOneTemplate">
+        <view:CreateFactureOne  DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=view:CreateFactureView}}"/>
+    </DataTemplate>
+    <DataTemplate x:Key="CrudTwoTemplate">
+        <view:CreateFactureTwo  DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=view:CreateFactureView}}"/>
+    </DataTemplate>
+    <custom:TemplateSelectorFacture x:Key="StringTemplateFactureSelector"
+                                   CrudOneTemplate="{StaticResource CrudOneTemplate}"
+                                   CrudTwoTemplate="{StaticResource CrudTwoTemplate}" />
 </ResourceDictionary>

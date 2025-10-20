@@ -1,0 +1,347 @@
+﻿<UserControl x:Class="invoice.Views.CreateFactureTwo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:converters="clr-namespace:invoice.Utilities.Converters"
+             xmlns:local="clr-namespace:invoice.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Language="fr-FR"
+             >
+    <UserControl.Resources>
+        <converters:DiscountFormatConverter x:Key="DiscountFormatConverter" />
+
+        <BooleanToVisibilityConverter  x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+
+        </Grid.RowDefinitions>
+        <Grid.Resources>
+            
+            <Style x:Key="txtLabeled" TargetType="TextBlock">
+                <Setter Property="FontWeight" Value="Light" />
+                <Setter Property="Foreground" Value="#1F1F1F" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,0,50,0" />
+                <Setter Property="FontSize" Value="14" />
+            </Style>
+
+            <Style x:Key="txtTotal" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="#000000" />
+                <Setter Property="Background" Value="#F7F7F7" />
+                <Setter Property="HorizontalAlignment" Value="Right" />
+                <Setter Property="FontSize" Value="15" />
+                <Setter Property="Padding" Value="30,5" />
+            </Style>
+            <Style x:Key="rdoRemise" TargetType="RadioButton">
+                <Setter Property="Height" Value="32" />
+                <Setter Property="Width" Value="32" />
+                <Setter Property="Template" >
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RadioButton">
+                            <Grid>
+
+                                <Ellipse Fill="{TemplateBinding Background}"
+                                 Name="RoundShape"
+                                 Cursor="Hand"
+                                 Stroke="{TemplateBinding BorderBrush}"
+                                 StrokeThickness="{TemplateBinding BorderThickness}">
+
+                                </Ellipse>
+
+                                <ContentPresenter   HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Content="{TemplateBinding Content}" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="RoundShape" Property="Fill" Value="#CFEFE0"/>
+                                </Trigger>
+
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="RoundShape" Property="Fill" Value="#2a9d8f"/>
+                                </Trigger>
+
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="RoundShape" Property="Fill" Value="LightGray"/>
+                                    <Setter Property="Foreground" Value="Gray"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+            </Style>
+            
+            <!--<DataTemplate DataType="ComboBox" x:Key="SelectedValueDisplayTemplate">
+                <TextBlock Text="{Binding ExamenName}" />
+            </DataTemplate>-->
+        </Grid.Resources>
+
+        <StackPanel Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <WrapPanel Margin="130,5,0,0">
+                <Button Margin="0,0,10,0" Style="{StaticResource buttonCircleStyle}"
+                        Command="{Binding ChangeCurrentViewCommand}"
+                        CommandParameter="crudCreateOne"
+                        Width="24"
+                        Height="24">
+                    <Image Source="/Assets/icons/arrow-left.png" Height="24"/>
+                </Button>
+                <Border Height="35"
+                    Width="5"
+                    Background="#404040">
+
+                </Border>
+                <TextBlock Text="Detail de la facture" VerticalAlignment="Center"
+                       FontSize="25"
+                       Margin="20,0,0,0"
+                       FontFamily="{StaticResource fontSen}"/>
+            </WrapPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="105" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal"                       
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Margin="130,10,0,0">
+                    <TextBlock Style="{StaticResource txtLabeled}" Text="Motif(s)" 
+                               FontWeight="Normal"
+                               Margin="0,0,15,0"/>
+                    <Button Style="{StaticResource buttonCircleStyle}"
+                            Height="32"
+                            Command="{Binding AddExamCommand}">
+                        <Image Source="/Assets/icons/add.png"  />
+                    </Button>
+                    <StackPanel Margin="10,0,0,0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <WrapPanel >
+                            <Image Source="/Assets/icons/exam_soft.png" Height="32" Margin="0,0,10,0" />
+                            <ComboBox MinWidth="170" 
+                                      Height="24"
+                                      ItemsSource="{Binding AvailableExamens}"
+                                      SelectedItem="{Binding SelectedAvailableExam, Mode=TwoWay}"
+                                      MaxDropDownHeight="155"
+                                      BorderThickness="0,0,0,1"
+                                      VerticalContentAlignment="Center"
+                                      
+                                      >
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                            <Rectangle Fill="#008A38" Width="4" Height="8" Margin="0,2,5,2" />
+                                            <ContentControl VerticalAlignment="Center"
+                                                            Content="{Binding ExamenName}"
+                                                            FontSize="14"/> 
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </WrapPanel>
+                        <ComboBox MinWidth="50" 
+                                  VerticalContentAlignment="Center"
+                                  Height="24"
+                                  ItemsSource="{Binding QtyAvailable}"
+                                  SelectedItem="{Binding SelectedQty, Mode=TwoWay}"
+                                  HorizontalAlignment="Right"
+                                  Width="15"
+                                  Margin="15,0,0,0">
+
+                        </ComboBox>
+                    </StackPanel>
+
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Margin="105,0,105,0">
+                    <ListView ItemsSource="{Binding InvoiceExams, Mode=TwoWay}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid >
+                                    <Grid.Style>
+                                        <Style TargetType="Grid">
+                                        </Style>
+                                    </Grid.Style>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="300" />
+                                        <ColumnDefinition Width="75" />
+                                        <ColumnDefinition Width="150" />
+                                        <ColumnDefinition Width="175" />
+                                        <ColumnDefinition Width="250" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" Background="LightYellow" FontSize="16" FontWeight="SemiBold" Padding="10,1" Text="{Binding Exam.ExamenName}" Grid.Column="0" Style="{StaticResource txtLabeled}" />
+                                    <TextBlock HorizontalAlignment="Right"  Text="{Binding Qty}" Grid.Column="1" Style="{StaticResource txtLabeled}" 
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock HorizontalAlignment="Right" FontWeight="Light" Text="Examen" Grid.Column="2" Style="{StaticResource txtLabeled}" />
+                                    <TextBlock Text="{Binding Exam.Price, StringFormat={}{0:N2} fcfa}"
+                                               Grid.Column="3"
+                                               FontSize="12"
+                                               FontWeight="Bold"
+                                               Style="{StaticResource txtTotal}" />
+
+                                    <Button  Style="{StaticResource buttonCircleStyle}"
+                                             Grid.Column="4"
+                                             HorizontalAlignment="Right"
+                                             Cursor="Hand"
+                                                 Command="{Binding DataContext.removeInvoiceExamCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, AncestorLevel=2 }}"
+                                                 CommandParameter="{Binding}"
+                                                    Height="24" 
+                                                    Width="24">
+                                        <Image Source="/Assets/icons/delete.png"/>
+                                    </Button>
+
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.Style>
+                            <Style TargetType="ListView">
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="MaxHeight" Value="250" />
+                                <Setter Property="Margin" Value="0,35,0,0" />
+                                <Setter Property="BorderThickness" Value="0" />
+                                <Setter Property="VerticalContentAlignment" Value="Center" />
+                            </Style>
+                        </ListView.Style>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Margin" Value="0,5,0,0"/>
+                                <Setter Property="MaxHeight" Value="35" />
+                                
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+
+        <Grid Grid.Row="2" Margin="75,0,50,25">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" HorizontalAlignment="Left">
+                <TextBlock Text="Remise" 
+                           FontSize="15"
+                           Margin="5,0,0,15"
+                           Foreground="#2a9d8f"
+                           FontWeight="SemiBold"/>
+                <WrapPanel>
+                    <TextBox VerticalContentAlignment="Center"
+                             Padding="15,10"
+                             Width="135"
+                             >
+                        <TextBox.Text>
+                            <MultiBinding Converter="{StaticResource DiscountFormatConverter}">
+                                <Binding Path="DiscountAmount" 
+                                         Mode="TwoWay"/>
+
+                                <Binding ElementName="rbPercent" Path="IsChecked" />
+                            </MultiBinding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <RadioButton Style="{StaticResource rdoRemise}" 
+                                 GroupName="remiseType" 
+                                 IsChecked="{Binding SelectedDiscountFlat, Mode=TwoWay}" 
+                                 Content="CFA" 
+                                 Margin="25,0,10,0"/>
+                    <RadioButton GroupName="remiseType"
+                                 Name="rbPercent"
+                                 IsChecked="{Binding SelectedDiscountPercent, Mode=TwoWay}"
+                                 Style="{StaticResource rdoRemise}"
+                                 Content="%" />
+                </WrapPanel>
+            </StackPanel>
+
+            <Grid Grid.Column="2" HorizontalAlignment="Right">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock  Grid.Column="0" Style="{StaticResource txtLabeled}" Text="Total HT" />
+                    <TextBlock  Grid.Column="0" Style="{StaticResource txtTotal}" 
+                                Text="{Binding TotalHTPrice,  
+                                                StringFormat={}{0:N2} FCFA}"
+                                />
+                </Grid>
+                <Grid Grid.Row="1" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock  Grid.Column="0" Style="{StaticResource txtLabeled}" Text="Taxe" />
+                    <TextBlock  Grid.Column="0" Style="{StaticResource txtTotal}" Text="{Binding Taxe,StringFormat={}{0:P2}}" />
+
+                </Grid>
+                <Grid Grid.Row="2" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock  Grid.Column="0" Style="{StaticResource txtLabeled}" 
+                                Text="Net à payer" 
+                                FontWeight="Bold"
+                                FontSize="18"/>
+                    <TextBlock  Grid.Column="0" Style="{StaticResource txtTotal}" 
+                                Text="{Binding TotalTTCPrice, StringFormat={}{0:N2} FCFA}" 
+                                FontWeight="Bold"
+                                FontSize="18"/>
+                </Grid>
+            </Grid>
+        </Grid>
+
+
+        <Grid Grid.Row="3" 
+                    VerticalAlignment="Top" Margin="105,0,0,0"
+              HorizontalAlignment="Center"
+                    MinHeight="50">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="2" Style="{StaticResource buttonCrudStyle}"
+                    Height="42"
+                    FontWeight="Bold"
+                    Command="{Binding CreateInvoiceCommand}"
+                    Content="Enregistrer">
+                
+            </Button>
+            <Button Grid.Column="1"  
+                    Style="{StaticResource buttonCrudStyle}"
+                    Height="42"                  
+                    FontWeight="Bold"   
+                    Margin="0,0,50,0"
+                    Content="Enregistrer ET Imprimer">
+                
+            </Button>
+            <Button Grid.Column="0"
+                    Margin="0,0,100,0"
+                    Height="42"
+                    Width="200"
+                    FontWeight="Bold"
+                    Content="Apercu Impression">
+                
+            </Button>
+        </Grid>
+
+    </Grid>
+</UserControl>

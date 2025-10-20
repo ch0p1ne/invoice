@@ -35,7 +35,7 @@
                     </WrapPanel>
                     <WrapPanel Orientation="Vertical">
                         <Label >Prix à l'unité</Label>
-                        <TextBox x:Name="txtPrice"  MinWidth="100" MaxWidth="150" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="10,5" IsReadOnly="{Binding DataContext.IsEditable,
+                        <TextBox x:Name="txtPrice"  MinWidth="100" MaxWidth="150" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:C}}" Padding="10,5" IsReadOnly="{Binding DataContext.IsEditable,
                       ElementName=ExamenControl}"/>
                     </WrapPanel>
                     <StackPanel.Resources>
@@ -147,7 +147,7 @@
 
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
-                            <Setter Property="MinHeight" Value="35 "/>
+                            <Setter Property="MinHeight" Value="40 "/>
                             <Setter Property="Padding" Value="4,2"/>
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
@@ -161,15 +161,20 @@
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
-                            <Setter Property="Padding" Value="4,2"/>
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="FontSize" Value="12"/>
+                            <Setter Property="FontWeight" Value="Normal"/>
                         </Style>
                     </DataGrid.CellStyle>
 
                     <DataGrid.Columns>
 
-                        <DataGridTextColumn Width="3*" Header="Acte d'examen" Binding="{Binding ExamenName}" ElementStyle="{StaticResource CenteredTextBlock}" />
+                        <DataGridTextColumn Width="4*" Header="Acte d'examen" Binding="{Binding ExamenName}" ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="Bold" />
                         <DataGridTextColumn Width="1*" Header="Reference" Binding="{Binding Reference}" ElementStyle="{StaticResource CenteredTextBlock}" />
-                        <DataGridTextColumn Width="1*" Header="Prix" Binding="{Binding Price}" ElementStyle="{StaticResource CenteredTextBlock}" />
+                        <DataGridTextColumn Width="2*" 
+                                            Header="Prix" 
+                                            Binding="{Binding Price, StringFormat={}{0:C}}"
+                                            ElementStyle="{StaticResource CenteredTextBlock}" />
 
                     </DataGrid.Columns>
 

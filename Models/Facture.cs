@@ -13,41 +13,40 @@ namespace invoice.Models
     public class Facture
     {
         public int FactureId { get; set; }
-        [Column(TypeName = "nvarchar(8)")]
-        public int Reference { get; set; }
+        [Column(TypeName = "nvarchar(15)")]
+        public string Reference { get; set; } = string.Empty;
         public InvoiceType Type { get; set; } = InvoiceType.Autre; // Consultation, Examen, Autre
         [Column(TypeName = "decimal(10,2)")]
-        public decimal? Total_amount { get; set; }
+        public decimal? TotalAmountHT { get; set; }
         [Column(TypeName = "decimal(3,2)")]
         public decimal Tva { get; set; }
         public decimal Css { get; set; }
         [Column(TypeName = "decimal(3,2)")]
-        public decimal Assurance_coverage_percent { get; set; } // prise en charge
+        public decimal? InsuranceCoveragePercent { get; set; } // prise en charge
         [Column(TypeName = "decimal(3,2)")]
-        public decimal Patient_responsibility { get; set; } // part patient
+        public decimal PatientPercent { get; set; } // part patient
         [Column(TypeName = "decimal(10,2)")]
-        public decimal Amount_paid { get; set; } //  accompte
+        public decimal? AmountPaid { get; set; } //  accompte
         [Column(TypeName = "decimal(3,2)")]
-        public decimal Discount_percent { get; set; } = 0;
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal Discount_flat { get; set; } = 0;
+        public decimal? DiscountPercent { get; set; } = 0;
         public StatusType? Status { get; set; } = StatusType.Non_payer; // En attente, Payée, Annulée
-        public string? Payment_method { get; set; }
+        public string? PaymentMethod { get; set; }
         public DateTime Created_at { get; set; } = DateTime.Now;
         public DateTime Updated_at { get; set; } = DateTime.Now;
 
-        public int UserId { get; set; }
-        public required User User { get; set; }
+        public required int UserId { get; set; }
+        public User? User { get; set; }
 
-        public int PatientId { get; set; }
-        public required Patient Patient { get; set; }
+        public required int PatientId { get; set; }
+        public Patient? Patient { get; set; }
 
         public ICollection<Examen> Examens { get; set; } = [];
-        public ICollection<FactureExamen> FacturseExamens { get; set; } = [];
+        public ICollection<FactureExamen> FacturesExamens { get; set; } = [];
 
         public ICollection<Consultation> Consultations { get; set; } = [];
         public ICollection<FactureConsultation> FacturesConsultations { get; set; } = [];
 
         public FactureAvoir? FactureAvoir { get; set; }
+
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using invoice.Context;
 
@@ -11,9 +12,11 @@ using invoice.Context;
 namespace invoice.Migrations
 {
     [DbContext(typeof(ClimaDbContext))]
-    partial class ClimaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251019192556_AlterReferenceColumnTypeOfInvoiceTable")]
+    partial class AlterReferenceColumnTypeOfInvoiceTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,8 +109,11 @@ namespace invoice.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FactureId"));
 
-                    b.Property<decimal?>("AmountPaid")
+                    b.Property<decimal>("Amount_paid")
                         .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("Assurance_coverage_percent")
+                        .HasColumnType("decimal(3,2)");
 
                     b.Property<DateTime>("Created_at")
                         .HasColumnType("datetime2");
@@ -115,29 +121,29 @@ namespace invoice.Migrations
                     b.Property<decimal>("Css")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("DiscountPercent")
-                        .HasColumnType("decimal(3,2)");
+                    b.Property<decimal>("Discount_flat")
+                        .HasColumnType("decimal(10,2)");
 
-                    b.Property<decimal?>("InsuranceCoveragePercent")
+                    b.Property<decimal>("Discount_percent")
                         .HasColumnType("decimal(3,2)");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("PatientPercent")
+                    b.Property<decimal>("Patient_responsibility")
                         .HasColumnType("decimal(3,2)");
 
-                    b.Property<string>("PaymentMethod")
+                    b.Property<string>("Payment_method")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Reference")
                         .IsRequired()
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(8)");
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("TotalAmountHT")
+                    b.Property<decimal?>("Total_amount")
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<decimal>("Tva")
@@ -256,18 +262,18 @@ namespace invoice.Migrations
 
             modelBuilder.Entity("invoice.Models.FactureExamen", b =>
                 {
-                    b.Property<int>("ExamenId")
+                    b.Property<int>("ExamensExamenId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FactureId")
+                    b.Property<int>("FacturesFactureId")
                         .HasColumnType("int");
 
                     b.Property<int>("Qte")
                         .HasColumnType("int");
 
-                    b.HasKey("ExamenId", "FactureId");
+                    b.HasKey("ExamensExamenId", "FacturesFactureId");
 
-                    b.HasIndex("FactureId");
+                    b.HasIndex("FacturesFactureId");
 
                     b.ToTable("FacturesExamens");
                 });
@@ -537,21 +543,17 @@ namespace invoice.Migrations
 
             modelBuilder.Entity("invoice.Models.FactureExamen", b =>
                 {
-                    b.HasOne("invoice.Models.Examen", "Examen2")
+                    b.HasOne("invoice.Models.Examen", null)
                         .WithMany("FacturesExamens")
-                        .HasForeignKey("ExamenId")
+                        .HasForeignKey("ExamensExamenId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("invoice.Models.Facture", "Facture1")
-                        .WithMany("FacturesExamens")
-                        .HasForeignKey("FactureId")
+                    b.HasOne("invoice.Models.Facture", null)
+                        .WithMany("FacturseExamens")
+                        .HasForeignKey("FacturesFactureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Examen2");
-
-                    b.Navigation("Facture1");
                 });
 
             modelBuilder.Entity("invoice.Models.Patient", b =>
@@ -599,7 +601,7 @@ namespace invoice.Migrations
 
                     b.Navigation("FacturesConsultations");
 
-                    b.Navigation("FacturesExamens");
+                    b.Navigation("FacturseExamens");
                 });
 
             modelBuilder.Entity("invoice.Models.Medecin", b =>

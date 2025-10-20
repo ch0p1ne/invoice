@@ -11,6 +11,9 @@
                 <ResourceDictionary Source="/Assets/styles/MenuItem.xaml" />
                 <ResourceDictionary Source="template/DataTemplate.xaml"/>
                 <ResourceDictionary Source="Assets/styles/fontsFamily.xaml"/>
+                <ResourceDictionary Source="/Assets/styles/LabelAndTexBoxStyle.xaml"/>
+                <ResourceDictionary Source="/Assets/styles/ButtonNextViewFacStyle.xaml" />
+                <ResourceDictionary Source="/Assets/styles/ButtonCircleStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             

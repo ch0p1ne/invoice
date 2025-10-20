@@ -6,6 +6,7 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize"
         Background="#F6FFFF"
+        x:Name="Mainwindow"
         WindowStyle="None">
 
     <Window.Resources>
@@ -85,7 +86,7 @@
                  </WrapPanel>
                 
                  <WrapPanel HorizontalAlignment="Right" Margin="0,20,0,0" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding DateOnly}" FontFamily="{StaticResource fontBase}" FontSize="14" FontWeight="Light" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding DateOnly, ConverterCulture='fr-FR', StringFormat={}{0:dd MMMM yyyy} }" FontFamily="{StaticResource fontBase}" FontSize="14" FontWeight="Light" VerticalAlignment="Center" />
                     <Image Source="/Assets/icons/calendar.png" Height="24" Margin="20,0,0,0" />
                 </WrapPanel>
                 

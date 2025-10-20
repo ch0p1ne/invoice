@@ -29,21 +29,6 @@
                 <Label HorizontalAlignment="Center">Prix à l'unité</Label>
                 <TextBox x:Name="txtPrice"  Text="{Binding Examen.Price}"  MinWidth="100" MaxWidth="150" Padding="10,5" />
             </WrapPanel>
-            <StackPanel.Resources>
-                <Style TargetType="Label">
-                    <Setter Property="Foreground" Value="#202020" />
-                    <Setter Property="FontWeight" Value="SemiBold" />
-                    <Setter Property="FontSize" Value="16" />
-                    <Setter Property="Margin" Value="0,0,0,5" />
-                </Style>
-                <Style TargetType="TextBox">
-                    <Setter Property="Background" Value="#fdfffc" />
-                    <Setter Property="BorderThickness" Value="0,0,0,2" />
-                    <Setter Property="BorderBrush" Value="#2ec4b6" />
-                    <Setter Property="FontWeight" Value="Bold" />
-                    <Setter Property="FontSize" Value="15" />
-                </Style>
-            </StackPanel.Resources>
 
         </StackPanel>
         <WrapPanel Grid.Row="1" VerticalAlignment="Bottom" 

@@ -48,5 +48,7 @@ namespace invoice.Models
 
         public ICollection<Facture> Factures { get; set; } = new List<Facture>();
         public ICollection<FactureExamen> FacturesExamens { get; set; } = new List<FactureExamen>();
+
+        public override string ToString() => ExamenName;
     }
 }

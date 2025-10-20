@@ -3,7 +3,9 @@ using invoice.ViewModels;
 using invoice.Views;
 using System.Configuration;
 using System.Data;
+using System.Globalization;
 using System.Windows;
+using System.Windows.Markup;
 
 namespace invoice
 {
@@ -20,10 +22,21 @@ namespace invoice
             var sessionService = new SessionService();
 
             var navigationService = new NavigationService(sessionService);
-            navigationService.NavigateTo<MainVM>();
-
+            navigationService.NavigateTo<LoginVM>();
 
         }
+        protected override void OnStartup(StartupEventArgs e)
+        {
+
+
+            // Alternative plus récente :
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("fr-FR");
+            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("fr-FR");
+
+            base.OnStartup(e);
+        }
+
+
     }
 
 }
