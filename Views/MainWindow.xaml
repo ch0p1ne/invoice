@@ -44,7 +44,7 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" VerticalAlignment="Top">
-                <Image Source="/Assets/img/clima-g-logo.png" Stretch="None" Height="142"/>
+                <Image Source="/Assets/img/logo.png" Stretch="Fill" Height="142"/>
             </StackPanel>
 
             <StackPanel Grid.Row="1" Margin="5,15  ,0,0" Height="500" VerticalAlignment="Top">
@@ -58,7 +58,8 @@
             </StackPanel>
 
             <StackPanel Margin="0,10,0,0" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Center">
-                <Button Style="{StaticResource buttonCustomStyle}">
+                <Button Style="{StaticResource buttonCustomStyle}"
+                        Command="{Binding LogoutCommand}">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <Image Source="/Assets/icons/logout.png" Height="30" Width="30"/>

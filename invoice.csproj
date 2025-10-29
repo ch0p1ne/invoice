@@ -29,8 +29,15 @@
     <None Remove="Assets\icons\online-appointment.png" />
     <None Remove="Assets\img\clima-g-logo.png" />
     <None Remove="Assets\img\img1.jpg" />
+    <None Remove="Assets\img\logopdf.png" />
     <None Remove="Assets\img\user-icon01.png" />
     <None Remove="Assets\img\user-password01.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\img\logopdf.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -65,6 +72,7 @@
     <Resource Include="Assets\icons\online-appointment.png" />
     <Resource Include="Assets\img\clima-g-logo.png" />
     <Resource Include="Assets\img\img1.jpg" />
+    <Resource Include="Assets\img\logo.png" />
     <Resource Include="Assets\img\user-icon01.png" />
     <Resource Include="Assets\img\user-password01.png" />
   </ItemGroup>

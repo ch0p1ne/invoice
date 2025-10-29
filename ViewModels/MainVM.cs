@@ -13,7 +13,7 @@ namespace invoice.ViewModels
 {
     public partial class MainVM : VMBase
     {
-        private readonly ISessionService _sessionService;
+        private ISessionService _sessionService;
         private readonly INavigationService _navigationService;
         public ObservableCollection<MenuItem> MenuItems { get; }
 
@@ -67,6 +67,7 @@ namespace invoice.ViewModels
         public void Logout()
         {
             _navigationService.NavigateTo<LoginVM>();
+            _navigationService.CloseWindow<MainVM>();
         }
 
         [RelayCommand]

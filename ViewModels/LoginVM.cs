@@ -19,7 +19,7 @@ namespace invoice.ViewModels
     public partial class LoginVM : VMBase
     {
 
-        public readonly ISessionService _sessionService;
+        public  ISessionService _sessionService;
         public readonly INavigationService _navigationService;
         private string? _userName;
         private SecureString? _password;

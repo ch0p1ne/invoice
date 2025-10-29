@@ -38,7 +38,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Right" Height="370" Width="350" Margin="0,15,0,0">
-                <Image Source="/Assets/img/clima-g-logo.png"  Height="125"/>
+                <Image Source="/Assets/img/logo.png"  Height="125"/>
 
                 <WrapPanel Margin="5,35,0,0" HorizontalAlignment="center" Orientation="Vertical">
                     <Label FontFamily="{StaticResource fontBase}"  FontWeight="Normal" FontSize="11">Identifiant</Label>

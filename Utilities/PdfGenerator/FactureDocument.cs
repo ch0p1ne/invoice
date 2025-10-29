@@ -5,9 +5,11 @@ using invoice.Models; // Assurez-vous d'avoir ce using pour accéder à Facture,
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 public class FactureDocument : IDocument
 {
+    private string imagePath = Path.Combine(AppContext.BaseDirectory, "Assets", "img",  "logopdf.png");
     private readonly Facture _facture;
     private readonly Patient _patient;
 
@@ -15,6 +17,7 @@ public class FactureDocument : IDocument
 
     public FactureDocument(Facture facture, Patient patient)
     {
+        
         _facture = facture ?? throw new ArgumentNullException(nameof(facture));
 
         _patient = patient ?? throw new ArgumentNullException(nameof(patient));
@@ -33,7 +36,7 @@ public class FactureDocument : IDocument
         container.Page(page =>
         {
             page.Size(PageSizes.A4);
-            page.Margin(40);
+            page.Margin(30);
 
             page.Header().Element(ComposeHeader);
             page.Content().Element(ComposeContent);
@@ -48,18 +51,19 @@ public class FactureDocument : IDocument
     public void ComposeHeader(IContainer container)
     {
         container
-            .Height(60)
-            .Background(Colors.Grey.Lighten3) // Gris clair
+            .Height(110)
             .PaddingVertical(10)
             .Row(row =>
             {
-                row.RelativeItem(3).Column(column =>
+                row.ConstantItem(150).AlignLeft().AlignTop().Height(75).Image(imagePath).FitArea();
+
+                row.RelativeItem(3).AlignCenter().AlignBottom().Column(column =>
                 {
                     column.Item().Text("Facture").FontSize(20).SemiBold();
                     column.Item().Text($"Réf. : {_facture.Reference}").FontSize(11);
                 });
 
-                row.RelativeItem(2).AlignRight().Column(column =>
+                row.RelativeItem(2).AlignBottom().AlignRight().Column(column =>
                 {
                     column.Item().Text("Clinique CLIMA-G").SemiBold();
                     column.Item().Text("Adresse : Aéorodrome").FontSize(9);
@@ -71,16 +75,37 @@ public class FactureDocument : IDocument
     public void ComposeFooter(IContainer container)
     {
         container
-            .Height(30)
-            .Background(Colors.Grey.Lighten3) // Gris clair
-            .AlignMiddle()
-            .Text(x =>
+            .Height(70)
+            .AlignBottom()
+            .Row(row =>
             {
-                x.AlignRight();
-                x.Span("Page ").FontSize(9);
-                x.CurrentPageNumber().FontSize(9);
-                x.Span(" / ").FontSize(9);
-                x.TotalPages().FontSize(9);
+                row.RelativeItem().Column(column =>
+                {
+                    column.Spacing(10);
+                    column.Item()
+                    .Container()
+                        .Height(4)
+                        .Width(470)
+                        .Background(Colors.Green.Lighten3)
+                        .AlignCenter();
+
+                    column.Item()
+                    .Text(x =>
+                    {
+                        x.AlignCenter();
+                        x.Span("S.A.R.L au capital de 2 000 000 de FCFA siège social à owendo, Akournam II non loin du carrefour. NIF: 2024 0102 1465; w: ;RCCM: GA-LBV-01-2024-B12-01194. BP: 7441").FontSize(12).FontColor(Colors.Blue.Lighten3);
+                    });
+
+                    column.Item()
+                    .Text(x =>
+                    {
+                        x.AlignRight();
+                        x.Span("Page ").FontSize(9);
+                        x.CurrentPageNumber().FontSize(9);
+                        x.Span(" / ").FontSize(9);
+                        x.TotalPages().FontSize(9);
+                    });
+                });
             });
     }
 
@@ -88,14 +113,14 @@ public class FactureDocument : IDocument
     {
         container.Column(column =>
         {
-            column.Spacing(25);
+            column.Spacing(100);
 
             // 1. Informations du Patient
             column.Item().Element(ComposePatientInfo);
-
             // 2. Tableau Central des Examens
             column.Item().Element(ComposeInvoiceTable);
 
+            column.Spacing(50);
             // 3. Totaux et Résumé Financier
             column.Item().Element(ComposeTotals);
         });
@@ -118,35 +143,35 @@ public class FactureDocument : IDocument
         {
             table.ColumnsDefinition(column =>
             {
-                column.ConstantColumn(70);  // Réf Examen
+                column.ConstantColumn(50);  // Réf Examen
                 column.RelativeColumn(3);   // Description
                 column.ConstantColumn(50);  // Qté
-                column.ConstantColumn(70);  // Prix Unitaire
-                column.ConstantColumn(70);  // Total HT
+                column.ConstantColumn(100);  // Prix Unitaire
+                column.ConstantColumn(100);  // Montant HT
             });
             // Définition des colonnes
 
             // En-têtes du tableau
             table.Header(header =>
             {
-                header.Cell().PaddingVertical(5).Text("Réf").Bold();
-                header.Cell().PaddingVertical(5).Text("Désignation").Bold();
-                header.Cell().Text("Qté").Bold();
-                header.Cell().AlignRight().Text("P.U. HT").Bold();
-                header.Cell().AlignRight().Text("Total HT").Bold();
+                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(7).Text("Référence").Bold();
+                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignLeft().Padding(7).Text("Désignation").Bold();
+                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(7).Text("Qté").Bold();
+                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(7).Text("Px Unitaire").Bold();
+                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(7).Text("Montant HT").Bold();
             });
 
             // Corps du tableau (Lignes d'examens)
             foreach (var line in lines)
             {
                 var examen = line.Examen;
-                decimal totalHtLigne = examen.Price * line.Qte;
+                decimal totalHtLigne = examen!.Price * line.Qte;
 
-                table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Text(examen.Reference.ToString());
-                table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Text(examen.ExamenName);
-                table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Text(line.Qte.ToString());
-                table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).AlignRight().Text($"{examen.Price:N2}");
-                table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).AlignRight().Text($"{totalHtLigne:N2}");
+                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(4).Text(examen.Reference.ToString());
+                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(4).Text(examen.ExamenName);
+                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(4).Text(line.Qte.ToString());
+                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(4).AlignRight().Text($"{examen.Price:N2}");
+                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(4).AlignRight().Text($"{totalHtLigne:N2}");
             }
         });
     }
