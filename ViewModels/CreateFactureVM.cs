@@ -221,7 +221,7 @@ namespace invoice.ViewModels
         public void ChangeCurrentView(string viewName)
         {
             CurrentPartOfNewFacture = viewName;
-            GetExamenList();
+            GetExamenList().ConfigureAwait(false);
         }
         [RelayCommand(CanExecute = nameof(CanExecuteAddExam))]
         public void AddExam()

@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <StartupObject>invoice.App</StartupObject>
+    <ApplicationIcon>logo-png.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,6 +40,7 @@
     <Content Include="Assets\img\logopdf.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="logo-png.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -75,6 +78,10 @@
     <Resource Include="Assets\img\logo.png" />
     <Resource Include="Assets\img\user-icon01.png" />
     <Resource Include="Assets\img\user-password01.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>
