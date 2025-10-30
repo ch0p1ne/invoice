@@ -9,7 +9,7 @@ using System.IO;
 
 public class FactureDocument : IDocument
 {
-    private string imagePath = Path.Combine(AppContext.BaseDirectory, "Assets", "img",  "logopdf.png");
+    private string imagePath = Path.Combine(AppContext.BaseDirectory, "Assets", "img", "headerPDF.png");
     private readonly Facture _facture;
     private readonly Patient _patient;
 
@@ -38,9 +38,9 @@ public class FactureDocument : IDocument
             page.Size(PageSizes.A4);
             page.Margin(30);
 
-            page.Header().Element(ComposeHeader);
+            page.Header().AlignLeft().Element(ComposeHeader);
             page.Content().Element(ComposeContent);
-            page.Footer().Element(ComposeFooter);
+            page.Footer().AlignCenter().Element(ComposeFooter);
         });
     }
 
@@ -51,24 +51,27 @@ public class FactureDocument : IDocument
     public void ComposeHeader(IContainer container)
     {
         container
-            .Height(110)
+            .Height(180)
             .PaddingVertical(10)
-            .Row(row =>
+            .Column(column =>
             {
-                row.ConstantItem(150).AlignLeft().AlignTop().Height(75).Image(imagePath).FitArea();
+                column.Spacing(10);
+                column.Item().Image(imagePath).FitWidth();
 
-                row.RelativeItem(3).AlignCenter().AlignBottom().Column(column =>
+                column.Item().PaddingVertical(10).Row(row =>
                 {
-                    column.Item().Text("Facture").FontSize(20).SemiBold();
-                    column.Item().Text($"Réf. : {_facture.Reference}").FontSize(11);
+                    row.RelativeItem(3).AlignLeft().AlignBottom().Column(column =>
+                    {
+                        column.Item().Text("Facture").FontSize(20).SemiBold();
+                        column.Item().Text($"Réf.  : {_facture.Reference}").FontSize(11);
+                    });
+
+                    row.RelativeItem(2).AlignMiddle().AlignRight().Column(column =>
+                    {
+                        column.Item().Text($"Date : {_facture.Created_at:dd/MM/yyyy}").FontSize(11).SemiBold();
+                    });
                 });
 
-                row.RelativeItem(2).AlignBottom().AlignRight().Column(column =>
-                {
-                    column.Item().Text("Clinique CLIMA-G").SemiBold();
-                    column.Item().Text("Adresse : Aéorodrome").FontSize(9);
-                    column.Item().Text($"Date : {_facture.Created_at:dd/MM/yyyy}").FontSize(9);
-                });
             });
     }
 
@@ -86,14 +89,14 @@ public class FactureDocument : IDocument
                     .Container()
                         .Height(4)
                         .Width(470)
-                        .Background(Colors.Green.Lighten3)
+                        .Background(Colors.Green.Lighten2)
                         .AlignCenter();
 
                     column.Item()
                     .Text(x =>
                     {
                         x.AlignCenter();
-                        x.Span("S.A.R.L au capital de 2 000 000 de FCFA siège social à owendo, Akournam II non loin du carrefour. NIF: 2024 0102 1465; w: ;RCCM: GA-LBV-01-2024-B12-01194. BP: 7441").FontSize(12).FontColor(Colors.Blue.Lighten3);
+                        x.Span("S.A.R.L au capital de 2 000 000 de FCFA siège social à owendo, Akournam II non loin du carrefour. NIF: 2024 0102 1465; w: ;RCCM: GA-LBV-01-2024-B12-01194. BP: 7441").FontSize(12).FontColor(Colors.Blue.Lighten2).SemiBold();
                     });
 
                     column.Item()
@@ -128,10 +131,29 @@ public class FactureDocument : IDocument
 
     public void ComposePatientInfo(IContainer container)
     {
+        DateTime dateNaissance = (DateTime)_patient?.DateOfBirth!;
+        int age = CalculerAge(dateNaissance);
         container.Background(Colors.Grey.Lighten4).Padding(10).Column(column =>
         {
-            column.Item().Text("Patient :").SemiBold().FontSize(12);
-            column.Item().Text($"{_patient.FirstName ?? "N/A"} {_patient.LastName ?? "N/A"}").FontSize(10);
+            column.Item().Row(row =>
+            { 
+                row.ConstantItem(180).Text("Patient :").SemiBold().FontSize(9);
+                row.Spacing(15);
+                row.ConstantItem(150).Text("Date de naissance :").SemiBold().FontSize(9);
+            });
+            column.Spacing(3);
+            column.Item().Row(row =>
+            {
+                row.ConstantItem(180).Text($"{_patient.FirstName ?? "N/A"} {_patient.LastName ?? "N/A"}").FontSize(12);
+                row.Spacing(15);
+                row.ConstantItem(100).Text($"{_patient.DateOfBirth:dd/MM/yyyy}").FontSize(12);
+            });
+
+            column.Item().PaddingTop(5).Row(row =>
+            {
+                row.ConstantItem(30).Text("Age :").SemiBold().FontSize(9);
+                row.ConstantItem(20).PaddingLeft(5).Text($"{age}").SemiBold().FontSize(10);
+            });
         });
     }
 
@@ -143,10 +165,10 @@ public class FactureDocument : IDocument
         {
             table.ColumnsDefinition(column =>
             {
-                column.ConstantColumn(50);  // Réf Examen
+                column.ConstantColumn(70);  // Réf Examen
                 column.RelativeColumn(3);   // Description
-                column.ConstantColumn(50);  // Qté
-                column.ConstantColumn(100);  // Prix Unitaire
+                column.ConstantColumn(40);  // Qté
+                column.ConstantColumn(80);  // Prix Unitaire
                 column.ConstantColumn(100);  // Montant HT
             });
             // Définition des colonnes
@@ -154,11 +176,11 @@ public class FactureDocument : IDocument
             // En-têtes du tableau
             table.Header(header =>
             {
-                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(7).Text("Référence").Bold();
-                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignLeft().Padding(7).Text("Désignation").Bold();
-                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(7).Text("Qté").Bold();
-                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(7).Text("Px Unitaire").Bold();
-                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(7).Text("Montant HT").Bold();
+                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(8).Text("Référence").Bold();
+                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignLeft().Padding(8).Text("Désignation").Bold();
+                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(8).Text("Qté").Bold();
+                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(8).Text("Px Unitaire").Bold();
+                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(8).Text("Montant HT").Bold();
             });
 
             // Corps du tableau (Lignes d'examens)
@@ -167,11 +189,11 @@ public class FactureDocument : IDocument
                 var examen = line.Examen;
                 decimal totalHtLigne = examen!.Price * line.Qte;
 
-                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(4).Text(examen.Reference.ToString());
-                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(4).Text(examen.ExamenName);
-                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(4).Text(line.Qte.ToString());
-                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(4).AlignRight().Text($"{examen.Price:N2}");
-                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(4).AlignRight().Text($"{totalHtLigne:N2}");
+                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(6).Text(examen.Reference.ToString());
+                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(6).Text(examen.ExamenName);
+                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(6).Text(line.Qte.ToString());
+                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(6).AlignRight().Text($"{examen.Price:N2}");
+                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(6).AlignRight().Text($"{totalHtLigne:N2}");
             }
         });
     }
@@ -215,7 +237,7 @@ public class FactureDocument : IDocument
             column.Item().Row(row =>
             {
                 row.RelativeItem().AlignRight().Text($"Part Patient ({_facture.PatientPercent * 100:N0}%) :").SemiBold().FontSize(11).FontColor(Colors.Blue.Darken2);
-                row.ConstantItem(80).AlignRight().Text($"{patientShare:C}").SemiBold().FontSize(11).FontColor(Colors.Blue.Darken2);
+                row.ConstantItem(80).AlignRight().Text($"{patientShare:C}").SemiBold().FontSize(9).FontColor(Colors.Blue.Darken2);
             });
 
             // Montant Payé
@@ -229,8 +251,17 @@ public class FactureDocument : IDocument
             column.Item().Row(row =>
             {
                 row.RelativeItem().AlignRight().Text("Reste à Payer :").ExtraBold().FontSize(14);
-                row.ConstantItem(80).AlignRight().Text($"{amountDue:C}").ExtraBold().FontSize(14).FontColor(Colors.Red.Darken2);
+                row.ConstantItem(90).AlignRight().Text($"{amountDue:C}").ExtraBold().FontSize(11).FontColor(Colors.Red.Darken2);
             });
         });
+    }
+    public static int CalculerAge(DateTime dateDeNaissance)
+    {
+        int age = DateTime.Today.Year - dateDeNaissance.Year;
+        if (DateTime.Today.Month < dateDeNaissance.Month || (DateTime.Today.Month == dateDeNaissance.Month && DateTime.Today.Day < dateDeNaissance.Day))
+        {
+            age--;
+        }
+        return age;
     }
 }
