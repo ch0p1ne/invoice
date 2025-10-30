@@ -28,7 +28,7 @@ namespace invoice.Context
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
-                .UseSqlServer("Data Source=pc-thomas\\sqlexpress;database=CLIMAG;Trusted_Connection=True;TrustServerCertificate=True");
+                .UseSqlServer("Data Source=DESKTOP-RVJHVJS\\SQLEXPRESS;database=CLIMAG;Trusted_Connection=True;TrustServerCertificate=True");
         }
 
 
