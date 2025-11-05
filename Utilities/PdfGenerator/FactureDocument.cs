@@ -131,7 +131,7 @@ public class FactureDocument : IDocument
 
     public void ComposePatientInfo(IContainer container)
     {
-        DateTime dateNaissance = (DateTime)_patient?.DateOfBirth!;
+        DateTime dateNaissance = (DateTime)_patient?.DateOfBirth;
         int age = CalculerAge(dateNaissance);
         container.Background(Colors.Grey.Lighten4).Padding(10).Column(column =>
         {
@@ -203,10 +203,14 @@ public class FactureDocument : IDocument
         // Calcul des totaux basiques (assurez-vous que TotalAmountHT est peuplé dans l'entité)
         decimal totalHT = _facture.TotalAmountHT ?? 0m;
         decimal totalTVA = totalHT * (_facture.Tva);
-        decimal totalTTC = totalHT + totalTVA;
-        decimal patientShare = totalTTC * _facture.PatientPercent;
+        double remise = (double)(_facture.DiscountPercent ?? 0);
+        double totalTTC = (double)totalHT + (double)totalTVA;
+        double totalWithRemise = (double)totalHT * remise;
+        double netAPayer = totalTTC - totalWithRemise;
+        double patientShare = netAPayer * (double)_facture.PatientPercent;
         decimal amountPaid = _facture.AmountPaid ?? 0m;
-        decimal amountDue = totalTTC - amountPaid;
+        double amountDue = netAPayer - (double)amountPaid;
+
 
         container.AlignRight().PaddingRight(5).Column(column =>
         {
@@ -215,43 +219,35 @@ public class FactureDocument : IDocument
             // Total HT
             column.Item().Row(row =>
             {
-                row.RelativeItem().AlignRight().Text("TOTAL HT :").SemiBold();
+                row.RelativeItem().AlignRight().PaddingRight(10).Text("TOTAL HT :").SemiBold().FontSize(11);
                 row.ConstantItem(80).AlignRight().Text($"{totalHT:C}").SemiBold();
             });
 
-            // TVA
+            // Remise
             column.Item().Row(row =>
             {
-                row.RelativeItem().AlignRight().Text($"TVA ({_facture.Tva * 100:N0}%) :").SemiBold();
-                row.ConstantItem(80).AlignRight().Text($"{totalTVA:C}");
+                row.RelativeItem().AlignRight().PaddingRight(10).Text($"Remise ({remise:P0}) :").SemiBold().FontSize(11).FontColor(Colors.Blue.Darken2);
+                row.ConstantItem(80).AlignRight().Text($"{totalWithRemise:C}").SemiBold().FontSize(10).FontColor(Colors.Blue.Darken2);
             });
-
-            // TOTAL TTC
+            // Net à payer
             column.Item().Row(row =>
             {
-                row.RelativeItem().AlignRight().Text("TOTAL TTC :").ExtraBold();
-                row.ConstantItem(80).AlignRight().Text($"{totalTTC:C}").ExtraBold();
+                row.RelativeItem().AlignRight().PaddingRight(10).Text($"Net à payer :").SemiBold().FontSize(11).FontColor(Colors.Green.Darken2);
+                row.ConstantItem(80).AlignRight().Text($"{netAPayer:C}").SemiBold().FontSize(10).FontColor(Colors.Green.Darken2);
             });
-
-            // Part Patient
-            column.Item().Row(row =>
-            {
-                row.RelativeItem().AlignRight().Text($"Part Patient ({_facture.PatientPercent * 100:N0}%) :").SemiBold().FontSize(11).FontColor(Colors.Blue.Darken2);
-                row.ConstantItem(80).AlignRight().Text($"{patientShare:C}").SemiBold().FontSize(9).FontColor(Colors.Blue.Darken2);
-            });
-
+            
             // Montant Payé
             column.Item().Row(row =>
             {
-                row.RelativeItem().AlignRight().Text("Acompte/Payé :").SemiBold();
-                row.ConstantItem(80).AlignRight().Text($"{amountPaid:C}").SemiBold().FontColor(Colors.Green.Darken2);
+                row.RelativeItem().AlignRight().PaddingRight(10).Text("Avance :").SemiBold();
+                row.ConstantItem(80).AlignRight().Text($"{amountPaid:C}").SemiBold();
             });
 
             // Reste à Payer
             column.Item().Row(row =>
             {
-                row.RelativeItem().AlignRight().Text("Reste à Payer :").ExtraBold().FontSize(14);
-                row.ConstantItem(90).AlignRight().Text($"{amountDue:C}").ExtraBold().FontSize(11).FontColor(Colors.Red.Darken2);
+                row.RelativeItem().AlignRight().PaddingRight(10).Text("Reste à Payer :").ExtraBold().FontSize(14);
+                row.ConstantItem(90).AlignRight().Text($"{amountDue:C}").ExtraBold().FontSize(12).FontColor(Colors.Red.Darken2);
             });
         });
     }

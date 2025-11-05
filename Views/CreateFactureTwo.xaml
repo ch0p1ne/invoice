@@ -108,7 +108,7 @@
         <StackPanel Grid.Row="1">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="105" />
+                    <RowDefinition Height="80" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
@@ -227,42 +227,72 @@
 
         <Grid Grid.Row="2" Margin="75,0,50,25">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" HorizontalAlignment="Left">
-                <TextBlock Text="Remise" 
-                           FontSize="15"
-                           Margin="5,0,0,15"
-                           Foreground="#2a9d8f"
-                           FontWeight="SemiBold"/>
-                <WrapPanel>
-                    <TextBox VerticalContentAlignment="Center"
-                             Padding="15,10"
-                             Width="135"
-                             >
-                        <TextBox.Text>
-                            <MultiBinding Converter="{StaticResource DiscountFormatConverter}">
-                                <Binding Path="DiscountAmount" 
-                                         Mode="TwoWay"/>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" HorizontalAlignment="Left">
+                    <TextBlock Text="Remise" 
+                               FontSize="12"
+                               Margin="5,0,0,5"
+                               Foreground="#2a9d8f"
+                               FontWeight="SemiBold"/>
+                                    <WrapPanel>
+                                    <TextBox VerticalContentAlignment="Center"
+                                 Padding="5,0"
+                                 Height="25"
+                                 Width="100"
+                                 Tag=" 0 %"
+                                 >  
+                            <TextBox.Text>
+                                <Binding Path="DiscountPercent" Mode="TwoWay" UpdateSourceTrigger="LostFocus" />
+                                <!--<MultiBinding Converter="{StaticResource DiscountFormatConverter}">
+                    <Binding Path="DiscountAmount" 
+                             Mode="TwoWay"/>
 
-                                <Binding ElementName="rbPercent" Path="IsChecked" />
-                            </MultiBinding>
+                    <Binding ElementName="rbPercent" Path="IsChecked" />
+                </MultiBinding>-->
+                            </TextBox.Text>
+                        </TextBox>
+                        <RadioButton Style="{StaticResource rdoRemise}" 
+                     GroupName="remiseType" 
+                     IsEnabled="False"
+                     IsChecked="{Binding SelectedDiscountFlat, Mode=TwoWay}" 
+                     Content="CFA" 
+                     Margin="25,0,10,0"/>
+                        <RadioButton GroupName="remiseType"
+                     Name="rbPercent"
+                     IsChecked="{Binding SelectedDiscountPercent, Mode=TwoWay}"
+                     Style="{StaticResource rdoRemise}"
+                     Content="%" />
+                    </WrapPanel>
+                </StackPanel>
+                
+                <StackPanel Grid.Row="1" HorizontalAlignment="Left" Margin="0,5,0,0">
+                    <TextBlock Text="Avance" 
+               FontSize="12"
+               Margin="5,0,0,5"
+               Foreground="#5083ba"
+               FontWeight="SemiBold"/>
+                    <TextBox VerticalContentAlignment="Center"
+                 Padding="5,0"
+                 Height="25"
+                 Width="100"
+                 Tag=" 0 %"
+                 >
+                        <TextBox.Text>
+                            <Binding Path="AmountPaid" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" />
                         </TextBox.Text>
                     </TextBox>
-                    <RadioButton Style="{StaticResource rdoRemise}" 
-                                 GroupName="remiseType" 
-                                 IsChecked="{Binding SelectedDiscountFlat, Mode=TwoWay}" 
-                                 Content="CFA" 
-                                 Margin="25,0,10,0"/>
-                    <RadioButton GroupName="remiseType"
-                                 Name="rbPercent"
-                                 IsChecked="{Binding SelectedDiscountPercent, Mode=TwoWay}"
-                                 Style="{StaticResource rdoRemise}"
-                                 Content="%" />
-                </WrapPanel>
-            </StackPanel>
+                </StackPanel>
+
+            </Grid>
+            
 
             <Grid Grid.Column="2" HorizontalAlignment="Right">
                 <Grid.RowDefinitions>

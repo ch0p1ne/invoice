@@ -192,9 +192,11 @@
                VerticalAlignment="Center" />
                     <DatePicker DisplayDateStart="2020-01-01" 
                                 DisplayDateEnd="2030-12-31"
+                                IsTodayHighlighted="True"
                                 Margin="15,0,0,0"
                                 Style="{StaticResource datePickerIsBinder}"
                                 SelectedDate="{Binding Patient.DateOfBirth, Mode=TwoWay}"
+                                DisplayDate="2020-01-01"
                                 FontWeight="Normal"/>
                 </WrapPanel>
             </StackPanel>

@@ -29,20 +29,21 @@ namespace invoice.ViewModels
         private Patient? _selectedPatient;
         public Assurance? _selectedAssurance;
         private bool _selectedDiscountPercent = true;
-        private bool _selectedDiscountFlat = true;
+        private bool _selectedDiscountFlat = false;
         private int _selectedQty = 1;
         private double _totalHTPrice = 0;
         private double _totalTTCPrice = 0;
-        private double _taxe = 0.20; // TVA 20%
+        private double _taxe = 0; // TVA 20%
         private decimal _css = 0.10m; // TVA 20%
         private bool _patientDefined = false;
         private Patient? _patient = new Patient();
         private FactureExamen? _factureExamen;
         private bool _isInsurance = false;
-        private decimal _discountAmount = 0;
-        private string _discountType = string.Empty;
-        private string _paymentMethod = string.Empty;
+        private double _discountPercent;
+        private string _discountType = "Percent";
+        private string _paymentMethod = "Espèces";
         private bool _generatePDFButtonIsEnable = false;
+        private double _amountPaid = 0;
 
 
 
@@ -53,6 +54,7 @@ namespace invoice.ViewModels
             SessionService = sessionService;
             LoadPatientsList().ConfigureAwait(false);
             LoadAssuranceList().ConfigureAwait(false);
+            _patient.DateOfBirth = DateTime.Now;
         }
 
         //Property
@@ -63,10 +65,19 @@ namespace invoice.ViewModels
             get => _generatePDFButtonIsEnable;
             set =>SetProperty(ref _generatePDFButtonIsEnable, value);
         }
-        public decimal DiscountAmount
+        public double AmountPaid
         {
-            get => _discountAmount;
-            set => SetProperty(ref _discountAmount, value);
+            get => _amountPaid;
+            set => SetProperty(ref _amountPaid, value);
+        }
+        public double DiscountPercent
+        {
+            get => _discountPercent;
+            set
+            {
+                value = value / 100;
+                SetProperty(ref _discountPercent, value);
+            }
         }
         public string PaymentMethod
         {
@@ -271,8 +282,8 @@ namespace invoice.ViewModels
                 Css = Css,
                 InsuranceCoveragePercent = SelectedAssurance?.CoveragePercent,
                 PatientPercent = SelectedAssurance != null ? (1m - SelectedAssurance.CoveragePercent) : 1m,
-                AmountPaid = 0,
-                DiscountPercent = DiscountAmount,
+                AmountPaid = (decimal)AmountPaid,
+                DiscountPercent = (decimal)DiscountPercent,
                 Status = StatusType.Non_payer,
                 PaymentMethod = PaymentMethod,
 
@@ -358,8 +369,7 @@ namespace invoice.ViewModels
         [RelayCommand]
         public void GenerateInvoicePDF()
         {
-            var document = new InvoiceGenerator(Facture);
-            document.ShowInCompanion(12500);
+            
         }
 
 
@@ -399,7 +409,7 @@ namespace invoice.ViewModels
 
             TotalHTPrice = total;
 
-            TotalTTCPrice = TotalHTPrice + (TotalHTPrice * Taxe); // TVA 20%
+            TotalTTCPrice = TotalHTPrice + (TotalHTPrice * Taxe); // TVA 20% ?
         }
         public async Task GetExamenList()
         {
