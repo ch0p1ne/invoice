@@ -20,22 +20,23 @@
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0" Visibility="{Binding IsVisible, Converter={StaticResource TrueOrFalseToVisibility}}">
-                <StackPanel VerticalAlignment="Center" 
-                            HorizontalAlignment="Center"
+                <StackPanel VerticalAlignment="Bottom" 
+                            HorizontalAlignment="Left"
+                            Margin="35,0,0,75"
                             DataContext="{Binding SelectedItem, ElementName=listDataGrid}">
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,30">
+                    <WrapPanel Orientation="Vertical" Margin="0,0,0,10">
                         <Label >Nom De l'acte</Label>
-                        <TextBox x:Name="txtExamenName"  Width="270" Text="{Binding ExamenName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="10,5" IsReadOnly="{Binding DataContext.IsEditable,
+                        <TextBox x:Name="txtExamenName"  Width="250" Text="{Binding ExamenName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,3" IsReadOnly="{Binding DataContext.IsEditable,
                       ElementName=ExamenControl}" />
                     </WrapPanel>
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,30">
+                    <WrapPanel Orientation="Vertical" Margin="0,0,0,10">
                         <Label >Reférence</Label>
-                        <TextBox x:Name="txtReference" Width="130" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="10,5" IsReadOnly="{Binding DataContext.IsEditable,
+                        <TextBox x:Name="txtReference" Width="130" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,3" IsReadOnly="{Binding DataContext.IsEditable,
                       ElementName=ExamenControl}"/>
                     </WrapPanel>
                     <WrapPanel Orientation="Vertical">
                         <Label >Prix à l'unité</Label>
-                        <TextBox x:Name="txtPrice"  MinWidth="100" MaxWidth="150" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:C}}" Padding="10,5" IsReadOnly="{Binding DataContext.IsEditable,
+                        <TextBox x:Name="txtPrice"  MinWidth="100" MaxWidth="150" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:C}}" Padding="7,3" IsReadOnly="{Binding DataContext.IsEditable,
                       ElementName=ExamenControl}"/>
                     </WrapPanel>
                     <StackPanel.Resources>

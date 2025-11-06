@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace invoice.Models
     public class Examen : ObservableObject
     {
         private int _examenId;
-        private int _reference;
+        private string _reference = string.Empty;
         private string? _examenName;
         private decimal _price;
         private DateTime _createdAt = DateTime.Now;
@@ -21,8 +22,8 @@ namespace invoice.Models
             get => _examenId;
             set => SetProperty(ref _examenId, value);
         }
-
-        public int Reference
+        [Column(TypeName = "nvarchar(8)")]
+        public string Reference
         {
             get => _reference;
             set => SetProperty(ref _reference, value);

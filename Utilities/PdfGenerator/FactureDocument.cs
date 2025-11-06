@@ -176,11 +176,11 @@ public class FactureDocument : IDocument
             // En-têtes du tableau
             table.Header(header =>
             {
-                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(8).Text("Référence").Bold();
-                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignLeft().Padding(8).Text("Désignation").Bold();
-                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(8).Text("Qté").Bold();
-                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(8).Text("Px Unitaire").Bold();
-                header.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(8).Text("Montant HT").Bold();
+                header.Cell().BorderHorizontal(1).Background(Colors.Grey.Lighten3).BorderColor(Colors.Grey.Lighten3).BorderVertical(1).BorderColor(Colors.Black).Padding(8).Text("Référence").Bold();
+                header.Cell().BorderHorizontal(1).Background(Colors.Grey.Lighten3).BorderColor(Colors.Grey.Lighten3).BorderVertical(1).BorderColor(Colors.Black).AlignLeft().Padding(8).Text("Désignation").Bold();
+                header.Cell().BorderHorizontal(1).Background(Colors.Grey.Lighten3).BorderColor(Colors.Grey.Lighten3).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(8).Text("Qté").Bold();
+                header.Cell().BorderHorizontal(1).Background(Colors.Grey.Lighten3).BorderColor(Colors.Grey.Lighten3).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(8).Text("Px Unitaire").Bold();
+                header.Cell().BorderHorizontal(1).Background(Colors.Grey.Lighten3).BorderColor(Colors.Grey.Lighten3).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(8).Text("Montant HT").Bold();
             });
 
             // Corps du tableau (Lignes d'examens)
@@ -189,11 +189,11 @@ public class FactureDocument : IDocument
                 var examen = line.Examen;
                 decimal totalHtLigne = examen!.Price * line.Qte;
 
-                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(6).Text(examen.Reference.ToString());
-                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(6).Text(examen.ExamenName);
-                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(6).Text(line.Qte.ToString());
-                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(6).AlignRight().Text($"{examen.Price:N2}");
-                table.Cell().BorderHorizontal(1).BorderColor(Colors.Black).BorderVertical(1).BorderColor(Colors.Black).Padding(6).AlignRight().Text($"{totalHtLigne:N2}");
+                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).Text(examen.Reference.ToString());
+                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).Text(examen.ExamenName);
+                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).AlignRight().Padding(6).Text(line.Qte.ToString());
+                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).AlignRight().Text($"{examen.Price:N2}");
+                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).AlignRight().Text($"{totalHtLigne:N2}");
             }
         });
     }

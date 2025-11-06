@@ -24,11 +24,13 @@ namespace invoice.Context
         // Junction tables for many-to-many relationship
         public DbSet<UserRole> UsersRoles { get; set; }
         public DbSet<FactureExamen> FacturesExamens { get; set; }
+        private string sourceNameLocal= "pc-thomas";
+        private string sourceNameProd= "DESKTOP-RVJHVJ";
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
-                .UseSqlServer("Data Source=DESKTOP-RVJHVJS\\SQLEXPRESS;database=CLIMAG;Trusted_Connection=True;TrustServerCertificate=True");
+                .UseSqlServer($"Data Source={sourceNameLocal}\\SQLEXPRESS;database=CLIMAG;Trusted_Connection=True;TrustServerCertificate=True");
         }
 
 
