@@ -85,11 +85,15 @@ namespace invoice.ViewModels
             IsVisible = true;
         }
         [RelayCommand]
-        public void Modifier()
+        public void EndModifie()
         {
-            IsEditable = false;
+            IsEditable = !IsEditable;
         }
-
+        [RelayCommand]
+        public void Editable()
+        { 
+            IsEditable = !IsEditable;
+        }
         [RelayCommand]
         public void AddExamenPage()
         {

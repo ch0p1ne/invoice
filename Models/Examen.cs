@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using invoice.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +14,7 @@ namespace invoice.Models
     {
         private int _examenId;
         private string _reference = string.Empty;
-        private string? _examenName;
+        private string _examenName = string.Empty;
         private decimal _price;
         private DateTime _createdAt = DateTime.Now;
 
@@ -26,13 +27,17 @@ namespace invoice.Models
         public string Reference
         {
             get => _reference;
-            set => SetProperty(ref _reference, value);
+            set
+            {
+                if (InputValidator.IsValidReferenceString(value))
+                    SetProperty(ref _reference, value);
+            }
         }
 
         public string? ExamenName
         {
-            get => _examenName;
-            set => SetProperty(ref _examenName, value);
+            get => _examenName; 
+            set => SetProperty(ref _examenName, InputValidator.ToLowerString(value) ?? string.Empty);
         }
 
         public decimal Price

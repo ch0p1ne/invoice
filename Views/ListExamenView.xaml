@@ -15,74 +15,119 @@
     <Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="4*" />
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0" Visibility="{Binding IsVisible, Converter={StaticResource TrueOrFalseToVisibility}}">
                 <StackPanel VerticalAlignment="Bottom" 
                             HorizontalAlignment="Left"
-                            Margin="35,0,0,75"
+                            Margin="35,0,0,125"
                             DataContext="{Binding SelectedItem, ElementName=listDataGrid}">
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,10">
+                    <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
                         <Label >Nom De l'acte</Label>
-                        <TextBox x:Name="txtExamenName"  Width="250" Text="{Binding ExamenName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,3" IsReadOnly="{Binding DataContext.IsEditable,
-                      ElementName=ExamenControl}" />
+                        <TextBox x:Name="txtExamenName" Width="250" Text="{Binding ExamenName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,5" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center" />
                     </WrapPanel>
-                    <WrapPanel Orientation="Vertical" Margin="0,0,0,10">
-                        <Label >Reférence</Label>
-                        <TextBox x:Name="txtReference" Width="130" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,3" IsReadOnly="{Binding DataContext.IsEditable,
-                      ElementName=ExamenControl}"/>
+                    <WrapPanel Margin="0,0,0,10">
+                        
+                        <WrapPanel Orientation="Vertical">
+                            <Label >Reférence</Label>
+                            <TextBox x:Name="txtReference" Width="70" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,5" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
+                        </WrapPanel>
+                        
+                        <WrapPanel Orientation="Vertical" Margin="45,0,0,0">
+                            <Label >Prix à l'unité</Label>
+                            <WrapPanel>
+                                <TextBox x:Name="txtPrice"  MinWidth="75" MaxWidth="100" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}}" Padding="7,5" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
+                                <TextBlock VerticalAlignment="Center"
+                                           Margin="5,0,0,0"> FCFA</TextBlock>
+                            </WrapPanel>
+                            
+                        </WrapPanel>
                     </WrapPanel>
-                    <WrapPanel Orientation="Vertical">
-                        <Label >Prix à l'unité</Label>
-                        <TextBox x:Name="txtPrice"  MinWidth="100" MaxWidth="150" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:C}}" Padding="7,3" IsReadOnly="{Binding DataContext.IsEditable,
-                      ElementName=ExamenControl}"/>
-                    </WrapPanel>
+                    
                     <StackPanel.Resources>
                         <Style TargetType="Label">
                             <Setter Property="Foreground" Value="#202020" />
                             <Setter Property="FontWeight" Value="SemiBold" />
-                            <Setter Property="FontSize" Value="16" />
-                            <Setter Property="Margin" Value="0,0,0,5" />
+                            <Setter Property="FontSize" Value="13" />
+                            <Setter Property="Margin" Value="0,0,0,4" />
+                            
                         </Style>
                         <Style TargetType="TextBox">
+                            <Setter Property="Foreground" Value="#202020" />
                             <Setter Property="Background" Value="#fdfffc" />
-                            <Setter Property="BorderThickness" Value="0,0,0,2" />
+                            <Setter Property="BorderThickness" Value="0,0,0,1" />
                             <Setter Property="BorderBrush" Value="#2ec4b6" />
-                            <Setter Property="FontWeight" Value="Bold" />
-                            <Setter Property="FontSize" Value="15" />
+                            <Setter Property="FontWeight" Value="Normal" />
+                            <Setter Property="FontSize" Value="13" />
+
+                            <Style.Triggers>
+                                <Trigger Property="IsReadOnly" Value="False">
+                                    <Setter Property="BorderBrush" Value="LightBlue" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                    <Setter Property="BorderThickness" Value="0,0,0,2" />
+                                    <Setter Property="Background" Value="#E7E7E7" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                    
+                                </Trigger>
+                                
+                            </Style.Triggers>
                         </Style>
                     </StackPanel.Resources>
 
                 </StackPanel>
                 <WrapPanel VerticalAlignment="Bottom" 
                             HorizontalAlignment="Right"
-                           Margin="0,0,0,50"
+                           Margin="0,0,0,45"
                             >
-                    <Button Style="{StaticResource buttonCrudStyle}" 
-                            Content="Annuler"
-                            Background="#D9D9D9"
-                            Foreground="White"
+                    <Button Content="Editer"
+                            Background="LightGreen"
+                            Foreground="Black"
+                            Padding="10"
                             >
 
-                        <!--<behevior:Interaction.Triggers>
+                        <behevior:Interaction.Triggers>
                             <behevior:EventTrigger EventName="Click">
-                                <behevior:InvokeCommandAction Command="{Binding ModifierCommand}" />
+                                <behevior:InvokeCommandAction Command="{Binding EditableCommand}" />
                             </behevior:EventTrigger>
-                        </behevior:Interaction.Triggers>-->
+                        </behevior:Interaction.Triggers>
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Margin" Value="0,0,30,0" />
+                                <Setter Property="Width" Value="70" />
+                                <Setter Property="Background" Value="#E7E7E7" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                     </Button>
-                    <Button Style="{StaticResource buttonCrudStyle}"
-                            Content="Modifier"
-                            Background="#008A38"
+                    <Button Content="Terminer"
+                            Background="IndianRed"
                             Foreground="White"
+                            Padding="10"
                             >
 
-                        <!--<behevior:Interaction.Triggers>
+                        <behevior:Interaction.Triggers>
                             <behevior:EventTrigger EventName="Click">
-                                <behevior:InvokeCommandAction Command="{Binding ModifierCommand}" />
+                                <behevior:InvokeCommandAction Command="{Binding EndModifieCommand}" />
                             </behevior:EventTrigger>
-                        </behevior:Interaction.Triggers>-->
+                        </behevior:Interaction.Triggers>
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Margin" Value="0,0,30,0" />
+                                <Setter Property="Width" Value="70" />
+                                <Setter Property="Background" Value="#E7E7E7" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Value="true">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                     </Button>
                 </WrapPanel>
             </Grid>
@@ -90,7 +135,7 @@
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="5*" />
+                    <RowDefinition Height="6*" />
                 </Grid.RowDefinitions>
 
 
@@ -107,7 +152,7 @@
                           AutoGenerateColumns="False"
                           ItemsSource="{Binding Examens}"
                           HorizontalAlignment="Stretch"
-                          MinRowHeight="30"
+                          MinRowHeight="25"
                           BorderThickness="0"
                           IsReadOnly="True"
                           CanUserAddRows="False"
@@ -136,8 +181,8 @@
                         <Style x:Key="CenteredTextBlock" TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center"/>
                             <Setter Property="FontWeight" Value="Normal"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
                             <Setter Property="Margin" Value="10,0,0,2" />
+                            <Setter Property="FontSize" Value="14" />
                         </Style>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -152,7 +197,7 @@
                             <Setter Property="Padding" Value="4,2"/>
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="#e5f65D" />
+                                    <Setter Property="Background" Value="#9ECCA9" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -162,20 +207,27 @@
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="FontSize" Value="12"/>
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="FontSize" Value="14"/>
                             <Setter Property="FontWeight" Value="Normal"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Margin" Value="0,0,10,0"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#9ECCA9" />
+                                </Trigger>
+                            </Style.Triggers>
                         </Style>
                     </DataGrid.CellStyle>
 
                     <DataGrid.Columns>
 
-                        <DataGridTextColumn Width="4*" Header="Acte d'examen" Binding="{Binding ExamenName}" ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="Bold" />
+                        <DataGridTextColumn Width="4*" Header="Acte d'examen" Binding="{Binding ExamenName}" ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="SemiBold" />
                         <DataGridTextColumn Width="1*" Header="Reference" Binding="{Binding Reference}" ElementStyle="{StaticResource CenteredTextBlock}" />
                         <DataGridTextColumn Width="2*" 
                                             Header="Prix" 
-                                            Binding="{Binding Price, StringFormat={}{0:C}}"
-                                            ElementStyle="{StaticResource CenteredTextBlock}" />
+                                            Binding="{Binding Price, ConverterCulture=fr-GA,StringFormat={}{0:C}}"
+                                            ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="SemiBold"  />
 
                     </DataGrid.Columns>
 
