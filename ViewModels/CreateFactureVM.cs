@@ -513,7 +513,7 @@ namespace invoice.ViewModels
             }
 
             // Crée le document
-            var document = new FactureDocument(Facture, Patient);
+            var document = new FactureDocument(Facture, Patient, SessionService.User!);
 
             // Génère le PDF et l'ouvre
             document.GeneratePdf(filePath);

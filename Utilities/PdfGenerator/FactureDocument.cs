@@ -10,17 +10,20 @@ public class FactureDocument : IDocument
     private string imagePath = Path.Combine(AppContext.BaseDirectory, "Assets", "img", "headerPDF.png");
     private readonly Facture _facture;
     private readonly Patient _patient;
+    private readonly User _user;
     private int netAPayer;
     
 
     // La propriété FacturesExamens de Facture sera utilisée pour les lignes
 
-    public FactureDocument(Facture facture, Patient patient)
+    public FactureDocument(Facture facture, Patient patient, User user)
     {
         
         _facture = facture ?? throw new ArgumentNullException(nameof(facture));
 
         _patient = patient ?? throw new ArgumentNullException(nameof(patient));
+
+        _user = user ?? throw new ArgumentNullException(nameof(user));
     }
 
     // ----------------------------------------------------
@@ -78,7 +81,7 @@ public class FactureDocument : IDocument
     public void ComposeFooter(IContainer container)
     {
         container
-            .Height(110)
+            .Height(130)
             .AlignBottom()
             .Row(row =>
             {
@@ -88,7 +91,12 @@ public class FactureDocument : IDocument
                     column.Item().Text(x =>
                     {
                         x.AlignCenter();
-                        x.Span($"Arrété la présente facture à la somme de {NumberToWordsExtension.ToWords(netAPayer)}").FontSize(11).Light();
+                        x.Span($"Arrété la présente facture à la somme de :\n{NumberToWordsExtension.ToWords(netAPayer)} FCFA").FontSize(11).Light();
+                    });
+                    column.Item().Text(x =>
+                    {
+                        x.AlignLeft();
+                        x.Span($"{_user.Account_name}").FontSize(7).Light();
                     });
                     column.Item()
                     .Container()
