@@ -137,24 +137,24 @@ public class FactureDocument : IDocument
         {
             column.Item().Row(row =>
             { 
-                row.ConstantItem(180).Text("Patient :").SemiBold().FontSize(9);
-                row.Spacing(10);
-                row.ConstantItem(150).Text("Date de naissance :").SemiBold().FontSize(9);
-                row.ConstantItem(150).Text("Mode de paiement :").SemiBold().FontSize(9);
+                row.ConstantItem(180).Text("Patient :").NormalWeight().FontSize(11);
+                row.Spacing(2);
+                row.ConstantItem(150).Text("Date de naissance :").NormalWeight().FontSize(11);
+                row.ConstantItem(150).Text("Mode de paiement :").NormalWeight().FontSize(11);
             });
             column.Spacing(3);
             column.Item().Row(row =>
             {
-                row.ConstantItem(180).Text($"{_patient.FirstName ?? "N/A"} {_patient.LastName ?? "N/A"}").FontSize(12).Bold();
-                row.Spacing(15);
-                row.ConstantItem(100).Text($"{_patient.DateOfBirth:dd/MM/yyyy}").FontSize(12).Bold();
-                row.ConstantItem(100).Text($"{_facture.PaymentMethod}").FontSize(12).Bold();
+                row.ConstantItem(180).Text($"{_patient.FirstName ?? "N/A"} {_patient.LastName ?? "N/A"}").FontSize(12).SemiBold();
+                row.Spacing(2);
+                row.ConstantItem(150).Text($"{_patient.DateOfBirth:dd/MM/yyyy}").FontSize(12).SemiBold();
+                row.ConstantItem(150).Text($"{_facture.PaymentMethod}").FontSize(12).SemiBold();
             });
 
             column.Item().PaddingTop(5).Row(row =>
             {
-                row.ConstantItem(35).Text("Age :").SemiBold().FontSize(9);
-                row.ConstantItem(30).PaddingLeft(5).Text($"{age}").Bold().FontSize(10);
+                row.ConstantItem(35).Text("Age :").NormalWeight().FontSize(11);
+                row.ConstantItem(35).PaddingLeft(5).Text($"{age}").SemiBold().FontSize(10);
             });
         });
     }
