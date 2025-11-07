@@ -30,19 +30,24 @@ namespace invoice.Utilities
             }
             return true;
         }
-        public static bool IsValidPriceString(string? input)
+        public static decimal ValidPriceString(decimal input)
         {
-            if (string.IsNullOrEmpty(input))
-                return true;
-            foreach (var c in input)
+            if (decimal.IsNegative(input))
+            {
+                input = ToAbsoluteValue(input);
+                return input;
+            }
+            
+            var inputStr = input.ToString();
+            foreach (var c in inputStr)
             {
                 if (!char.IsDigit(c) && c != ',')
                 {
-                    CancelRecentInputChar(input);
-                    return false;
+                    CancelRecentInputDecimal(input);
+                    return input;
                 }
             }
-            return true;
+            return input;
         }
 
 
@@ -53,9 +58,20 @@ namespace invoice.Utilities
                 return input;
             return input.Trim();
         }
+        public static decimal ToAbsoluteValue(decimal input)
+        {
+            input = decimal.Abs(input);
+            return input;
+        }
         public static string CancelRecentInputChar(string input)
         {
             input = input.Substring(0,input.Length - 1);
+            return input;
+        }
+        public static decimal CancelRecentInputDecimal(decimal input)
+        {
+            string strInput = input.ToString()[..^1];
+            input = decimal.Parse(strInput);
             return input;
         }
         public static string? ToUpperString(string? input)

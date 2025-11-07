@@ -15,6 +15,15 @@ namespace invoice.ViewModels
 {
     public partial class ExamenVM : VMBase
     {
+        private bool _isExpandableAddForm = false;
+        public bool IsExpandableAddForm
+        { 
+            get => _isExpandableAddForm;
+            set
+            {
+                SetProperty(ref _isExpandableAddForm, value);
+            }
+        }
         private readonly string _title = "Examen";
         public string Title
         {
@@ -85,8 +94,12 @@ namespace invoice.ViewModels
             IsVisible = true;
         }
         [RelayCommand]
-        public void EndModifie()
+        public async Task SubmitModifie()
         {
+            using var context = new ClimaDbContext();
+            context.Examens.Update(Examen);
+
+            await context.SaveChangesAsync();
             IsEditable = !IsEditable;
         }
         [RelayCommand]
@@ -116,12 +129,14 @@ namespace invoice.ViewModels
             {
                 dispatcher2.Invoke(() =>
                 {
+                    IsExpandableAddForm = false;
                     Examens.Add(Examen);
                     CurrentCrudOperation = "crudList";
                 });
             }
             else
             {
+                IsExpandableAddForm = false;
                 Examens.Add(Examen);
                 CurrentCrudOperation = "crudList";
             }
@@ -132,5 +147,15 @@ namespace invoice.ViewModels
         {
             CurrentCrudOperation = "crudList";
         }
+
+        [RelayCommand]
+        public void ClearExamen()
+        {
+            Examen.ExamenName = "";
+            Examen.Reference = "";
+            Examen.Price = 0;
+            IsExpandableAddForm = false;
+        }
+
     }
 }

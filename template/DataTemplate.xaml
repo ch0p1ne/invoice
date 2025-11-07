@@ -15,19 +15,10 @@
     <DataTemplate DataType="{x:Type viewmodels:ExamenVM}">
         <view:ExamenView/>
     </DataTemplate>
+    
     <DataTemplate DataType="{x:Type viewmodels:CreateFactureVM}">
         <view:CreateFactureView />
     </DataTemplate>
-
-    <DataTemplate x:Key="CrudListTemplate">
-        <view:ListExamenView  DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=view:ExamenView}}"/>
-    </DataTemplate>
-    <DataTemplate x:Key="CrudCreateTemplate">
-        <view:CreateExamenView  DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=view:ExamenView}}"/>
-    </DataTemplate>
-    <custom:TemplateSelector x:Key="StringTemplateSelector"
-                                       CrudListTemplate="{StaticResource CrudListTemplate}"
-                                       CrudCreateTemplate="{StaticResource CrudCreateTemplate}" />
 
     <DataTemplate x:Key="CrudOneTemplate">
         <view:CreateFactureOne  DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=view:CreateFactureView}}"/>

@@ -10,9 +10,10 @@
              xmlns:view="clr-namespace:invoice.Views"
              x:Name="ExamenControl"
              FontFamily="{StaticResource fontBase}"
-             xmlns:behevior="http://schemas.microsoft.com/xaml/behaviors">
+             xmlns:behevior="http://schemas.microsoft.com/xaml/behaviors" 
+             xmlns:local="clr-namespace:invoice.Utilities.Converters">
     <UserControl.Resources>
-
+        <local:TrueOrFalseToVisibility x:Key="TrueOrFalseToVisibility" />
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightBlue" />
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
     </UserControl.Resources>
@@ -21,7 +22,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="5*"/>
+            <RowDefinition Height="7*"/>
         </Grid.RowDefinitions>
 
         <StackPanel VerticalAlignment="Top" Grid.Row="0">
@@ -32,35 +33,346 @@
                        FontWeight="SemiBold"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <Button Style="{StaticResource buttonCrudStyle}">
-                <Button.Content>
-                    <WrapPanel VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               Cursor="Hand"
-                               IsHitTestVisible="False">
+        <Grid Grid.Row="2">
+            <Grid Grid.Row="2">
 
-                        <Image Source="/Assets/icons/add.png"
-                               Height="32"
-                               Margin="0,0,5,0"/>
-                        <TextBlock Text="Ajouter"
-                                FontSize="16"
-                                FontWeight="SemiBold"
-                                Foreground="DarkOliveGreen"
-                                VerticalAlignment="Center"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="4*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="5*" />
+                        <RowDefinition Height="4*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0"
+                  Margin="15,0,0,0">
+                        <Expander Header=" Ajouter"
+                          ExpandDirection="Down"
+                          Width="300"
+                          Name="expButton"
+                          IsExpanded="{Binding IsExpandableAddForm}"
+                          HorizontalContentAlignment="Center">
+                            <Expander.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="Formulaire d'ajout d'Examen">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="Light" />
+                                                <Setter Property="FontSize" Value="14" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding ElementName=expButton, Path=IsExpanded}" Value="True">
+                                                        <Setter Property="FontWeight" Value="Bold" />
+                                                        <Setter Property="FontSize" Value="16" />
+                                                        <Setter Property="Foreground" Value="#202020" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+
+                                </DataTemplate>
+                            </Expander.HeaderTemplate>
+
+                            <Border VerticalAlignment="Center"
+                            BorderThickness="2"
+                            BorderBrush="DarkKhaki"
+                            CornerRadius="7">
+
+                                <Grid Margin="13">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="2*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Grid.Row="0" 
+            VerticalAlignment="Center" 
+            HorizontalAlignment="Center">
+
+                                        <WrapPanel Orientation="Vertical" 
+               Margin="0,0,0,5"
+               HorizontalAlignment="Center">
+                                            <Label HorizontalAlignment="Center" >Nom De l'acte</Label>
+                                            <TextBox x:Name="txtExamenName" Text="{Binding  Examen.ExamenName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="210" Padding="7,6"  />
+                                        </WrapPanel>
+
+                                        <WrapPanel Margin="0,0,0,5">
+                                            <WrapPanel Orientation="Vertical"
+                   HorizontalAlignment="Stretch">
+                                                <Label HorizontalAlignment="Center">Reférence</Label>
+                                                <TextBox x:Name="txtReference" Text="{Binding Examen.Reference, UpdateSourceTrigger=PropertyChanged}" Width="60" Padding="7,7" />
+                                            </WrapPanel>
+
+                                            <WrapPanel Orientation="Vertical"
+                   Margin="40,0,0,0">
+                                                <Label HorizontalAlignment="Center">Prix à l'unité</Label>
+                                                <TextBox x:Name="txtPrice"  Text="{Binding Examen.Price, UpdateSourceTrigger=PropertyChanged}"  MinWidth="75" MaxWidth="130" Padding="7,7" />
+                                            </WrapPanel>
+                                        </WrapPanel>
+
+                                    </StackPanel>
+                                    <WrapPanel Grid.Row="1"
+           Orientation="Horizontal"
+           VerticalAlignment="Top"
+           Margin="0,10,0,0">
+
+                                        <Button Content="Tout Effacer"
+            Background="IndianRed"
+            Foreground="White"
+            Padding="7"
+            Command="{Binding ClearExamenCommand}">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Margin" Value="0,0,0,0" />
+                                                    <Setter Property="MinWidth" Value="70" />
+                                                    <Setter Property="Background" Value="#E7E7E7" />
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+
+                                        <Button Content="Ajouter"
+            Background="#008A38"
+            Foreground="White"
+            Padding="7"
+            Command="{Binding CreateExamenCommand}" >
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Margin" Value="70,0,0,0" />
+                                                    <Setter Property="Width" Value="70" />
+                                                    <Setter Property="Background" Value="#E7E7E7" />
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+
+                                    </WrapPanel>
+                                </Grid>
+                            </Border>
+
+                        </Expander>
+                    </Grid>
+
+                    <Grid Grid.Row="1" 
+                  Visibility="{Binding IsVisible, Converter={StaticResource TrueOrFalseToVisibility}}"
+                  >
+                        <StackPanel VerticalAlignment="Top" 
+            HorizontalAlignment="Left"
+            Margin="35,0,0,0"
+            DataContext="{Binding SelectedItem, ElementName=listDataGrid}">
+                            <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
+                                <Label >Nom De l'acte</Label>
+                                <TextBox Width="250" Text="{Binding ExamenName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,6" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center" />
+                            </WrapPanel>
+                            <WrapPanel Margin="0,0,0,10">
+
+                                <WrapPanel Orientation="Vertical">
+                                    <Label >Reférence</Label>
+                                    <TextBox Width="60" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,7" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
+                                </WrapPanel>
+
+                                <WrapPanel Orientation="Vertical" Margin="45,0,0,0">
+                                    <Label >Prix à l'unité</Label>
+                                    <WrapPanel>
+                                        <TextBox  MinWidth="75" MaxWidth="110" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}}" Padding="7,7" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
+                                        <TextBlock VerticalAlignment="Center"
+                           Margin="5,0,0,0"> FCFA</TextBlock>
+                                    </WrapPanel>
+
+                                </WrapPanel>
+                            </WrapPanel>
+
+                            <StackPanel.Resources>
+                                <Style TargetType="Label">
+                                    <Setter Property="Foreground" Value="#202020" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                    <Setter Property="FontSize" Value="13" />
+                                    <Setter Property="Margin" Value="0,0,0,4" />
+
+                                </Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Foreground" Value="#202020" />
+                                    <Setter Property="Background" Value="#fdfffc" />
+                                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                                    <Setter Property="BorderBrush" Value="#2ec4b6" />
+                                    <Setter Property="FontWeight" Value="Normal" />
+                                    <Setter Property="FontSize" Value="13" />
+
+                                    <Style.Triggers>
+                                        <Trigger Property="IsReadOnly" Value="False">
+                                            <Setter Property="BorderBrush" Value="LightBlue" />
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                            <Setter Property="BorderThickness" Value="0,0,0,2" />
+                                            <Setter Property="Background" Value="#E7E7E7" />
+                                            <Setter Property="Foreground" Value="Black" />
+
+                                        </Trigger>
+
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Resources>
+
+                        </StackPanel>
+                        <WrapPanel VerticalAlignment="Bottom" 
+            HorizontalAlignment="Right"
+           Margin="0,0,0,55"
+            >
+                            <Button Content="Editer"
+                            Background="LightGreen"
+                            Foreground="Black"
+                            Padding="10"
+            >
+
+                                <behevior:Interaction.Triggers>
+                                    <behevior:EventTrigger EventName="Click">
+                                        <behevior:InvokeCommandAction Command="{Binding EditableCommand}" />
+                                    </behevior:EventTrigger>
+                                </behevior:Interaction.Triggers>
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="0,0,70,0" />
+                                        <Setter Property="Width" Value="70" />
+                                        <Setter Property="Background" Value="#E7E7E7" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Value="False">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="Terminer"
+            Background="IndianRed"
+            Foreground="White"
+            Padding="10"
+            >
+
+                                <behevior:Interaction.Triggers>
+                                    <behevior:EventTrigger EventName="Click">
+                                        <behevior:InvokeCommandAction Command="{Binding SubmitModifieCommand}" />
+                                    </behevior:EventTrigger>
+                                </behevior:Interaction.Triggers>
+                                
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="0,0,70,0" />
+                                        <Setter Property="MinWidth" Value="70" />
+                                        <Setter Property="Background" Value="#E7E7E7" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Value="true">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </WrapPanel>
+                    </Grid>
+                </Grid>
+
+
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="6*" />
+                    </Grid.RowDefinitions>
+
+
+                    <WrapPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,5">
+                        <TextBlock Focusable="False"
+                           FontWeight="SemiBold"
+                           Foreground="DarkKhaki" 
+                           Text="Actes d'examen"
+                           FontSize="20"/>
                     </WrapPanel>
-                </Button.Content>
-                
-                <behevior:Interaction.Triggers>
-                    <behevior:EventTrigger EventName="Click">
-                        <behevior:InvokeCommandAction Command="{Binding AddExamenPageCommand}" />
-                    </behevior:EventTrigger>
-                </behevior:Interaction.Triggers>
-            </Button>
+                    <DataGrid x:Name="listDataGrid"
+                      Grid.Row="1"
+                      Background="Transparent"
+                      AutoGenerateColumns="False"
+                      ItemsSource="{Binding Examens}"
+                      HorizontalAlignment="Stretch"
+                      MinRowHeight="25"
+                      BorderThickness="0"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      SelectionMode="Single"
+                      HeadersVisibility="Column" 
+                      
+                      Margin="10">
+                        <behevior:Interaction.Triggers>
+                            <behevior:EventTrigger EventName="SelectionChanged">
+                                <behevior:InvokeCommandAction Command="{Binding ChangeVisibilityCommand}" />
+                            </behevior:EventTrigger>
+                        </behevior:Interaction.Triggers>
 
-        </StackPanel>
+                        <DataGrid.Style>
+                            <Style TargetType="DataGrid">
+                                <Setter Property="RowBackground" Value="#F3F3F3"/>
+                                <Setter Property="AlternatingRowBackground" Value="#F0F0F0"/>
+                                <Setter Property="GridLinesVisibility" Value="None"/>
+                                <Setter Property="HorizontalScrollBarVisibility" Value="Visible"/>
+                            </Style>
+                        </DataGrid.Style>
 
-        <ContentControl Grid.Row="2" Content="{Binding CurrentCrudOperation}"
-                                    ContentTemplateSelector="{StaticResource StringTemplateSelector}"></ContentControl>
+                        <!-- Style pour centrer verticalement le contenu des TextBlock dans les cellules -->
+                        <DataGrid.Resources>
+                            <Style x:Key="CenteredTextBlock" TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Setter Property="Margin" Value="10,0,0,2" />
+                                <Setter Property="FontSize" Value="14" />
+                            </Style>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                <Setter Property="MinHeight" Value="30"/>
+                                <Setter Property="Padding" Value="4,2"/>
+                            </Style>
+                        </DataGrid.Resources>
+
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="MinHeight" Value="40 "/>
+                                <Setter Property="Padding" Value="4,2"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#9ECCA9" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+
+                        <!-- CellStyle pour centrer verticalement le contenu de chaque cellule -->
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="HorizontalAlignment" Value="Left"/>
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="Margin" Value="5,0,10,0"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#9ECCA9" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.CellStyle>
+
+                        <DataGrid.Columns>
+
+                            <DataGridTextColumn Width="4*" Header="Acte d'examen" Binding="{Binding ExamenName}" ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="SemiBold" />
+                            <DataGridTextColumn Width="1*" Header="Reference" Binding="{Binding Reference}" ElementStyle="{StaticResource CenteredTextBlock}" />
+                            <DataGridTextColumn Width="2*" 
+                                        Header="Prix" 
+                                        Binding="{Binding Price, ConverterCulture=fr-GA,StringFormat={}{0:C}}"
+                                        ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="SemiBold"  />
+
+                        </DataGrid.Columns>
+
+                    </DataGrid>
+                </Grid>
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>

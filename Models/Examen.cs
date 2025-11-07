@@ -42,8 +42,7 @@ namespace invoice.Models
 
         public decimal Price
         {
-            get => _price;
-            set => SetProperty(ref _price, value);
+            get => _price; set => SetProperty(ref _price,InputValidator.ValidPriceString(value));
         }
 
         public DateTime CreatedAt
