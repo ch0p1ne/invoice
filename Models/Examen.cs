@@ -30,7 +30,7 @@ namespace invoice.Models
             set
             {
                 if (InputValidator.IsValidReferenceString(value))
-                    SetProperty(ref _reference, value);
+                    SetProperty(ref _reference, InputValidator.ToUpperString(value) ?? string.Empty);
             }
         }
 

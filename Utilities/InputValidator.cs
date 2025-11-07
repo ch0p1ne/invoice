@@ -14,20 +14,25 @@ namespace invoice.Utilities
             if (string.IsNullOrEmpty(input))
                 return true;
             var premiereLettre = input[0];
-            var autreNumero = input.Substring(1);
+
             if (!char.IsLetter(premiereLettre))
             {
                 CancelRecentInputChar(input);
                 return false;
             }
-            foreach (var c in autreNumero)
+            if (input?.Length > 2)
             {
-                if (!char.IsDigit(c))
+                var autreNumero = input.Substring(2);
+                foreach (var c in autreNumero)
                 {
-                    CancelRecentInputChar(input);
-                    return false;
+                    if (!char.IsDigit(c))
+                    {
+                        CancelRecentInputChar(input);
+                        return false;
+                    }
                 }
             }
+
             return true;
         }
         public static decimal ValidPriceString(decimal input)

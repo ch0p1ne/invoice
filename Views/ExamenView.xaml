@@ -133,10 +133,10 @@
                                         </Button>
 
                                         <Button Content="Ajouter"
-            Background="#008A38"
-            Foreground="White"
-            Padding="7"
-            Command="{Binding CreateExamenCommand}" >
+                                                Background="#008A38"
+                                                Foreground="White"
+                                                Padding="7"
+                                                Command="{Binding CreateExamenCommand}" >
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Margin" Value="70,0,0,0" />

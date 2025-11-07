@@ -151,8 +151,9 @@ namespace invoice.ViewModels
         [RelayCommand]
         public void ClearExamen()
         {
-            Examen.ExamenName = "";
-            Examen.Reference = "";
+            Examen = new Examen();
+            Examen.ExamenName = string.Empty;
+            Examen.Reference = string.Empty;
             Examen.Price = 0;
             IsExpandableAddForm = false;
         }
