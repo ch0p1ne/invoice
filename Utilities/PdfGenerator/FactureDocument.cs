@@ -138,21 +138,23 @@ public class FactureDocument : IDocument
             column.Item().Row(row =>
             { 
                 row.ConstantItem(180).Text("Patient :").SemiBold().FontSize(9);
-                row.Spacing(15);
+                row.Spacing(10);
                 row.ConstantItem(150).Text("Date de naissance :").SemiBold().FontSize(9);
+                row.ConstantItem(150).Text("Mode de paiement :").SemiBold().FontSize(9);
             });
             column.Spacing(3);
             column.Item().Row(row =>
             {
-                row.ConstantItem(180).Text($"{_patient.FirstName ?? "N/A"} {_patient.LastName ?? "N/A"}").FontSize(12);
+                row.ConstantItem(180).Text($"{_patient.FirstName ?? "N/A"} {_patient.LastName ?? "N/A"}").FontSize(12).Bold();
                 row.Spacing(15);
-                row.ConstantItem(100).Text($"{_patient.DateOfBirth:dd/MM/yyyy}").FontSize(12);
+                row.ConstantItem(100).Text($"{_patient.DateOfBirth:dd/MM/yyyy}").FontSize(12).Bold();
+                row.ConstantItem(100).Text($"{_facture.PaymentMethod}").FontSize(12).Bold();
             });
 
             column.Item().PaddingTop(5).Row(row =>
             {
-                row.ConstantItem(30).Text("Age :").SemiBold().FontSize(9);
-                row.ConstantItem(20).PaddingLeft(5).Text($"{age}").SemiBold().FontSize(10);
+                row.ConstantItem(35).Text("Age :").SemiBold().FontSize(9);
+                row.ConstantItem(30).PaddingLeft(5).Text($"{age}").Bold().FontSize(10);
             });
         });
     }
@@ -232,22 +234,22 @@ public class FactureDocument : IDocument
             // Net à payer
             column.Item().Row(row =>
             {
-                row.RelativeItem().AlignRight().PaddingRight(10).Text($"Net à payer :").SemiBold().FontSize(11).FontColor(Colors.Green.Darken2);
-                row.ConstantItem(80).AlignRight().Text($"{netAPayer:C}").SemiBold().FontSize(10).FontColor(Colors.Green.Darken2);
+                row.RelativeItem().AlignRight().PaddingRight(10).Text($"Net à payer :").SemiBold().FontSize(11);
+                row.ConstantItem(80).AlignRight().Text($"{netAPayer:C}").SemiBold().FontSize(10);
             });
             
             // Montant Payé
             column.Item().Row(row =>
             {
-                row.RelativeItem().AlignRight().PaddingRight(10).Text("Avance :").SemiBold();
-                row.ConstantItem(80).AlignRight().Text($"{amountPaid:C}").SemiBold();
+                row.RelativeItem().AlignRight().PaddingRight(10).Text("Avance :").SemiBold().FontSize(11);
+                row.ConstantItem(80).AlignRight().Text($"{amountPaid:C}").SemiBold().FontSize(10);
             });
 
             // Reste à Payer
             column.Item().Row(row =>
             {
-                row.RelativeItem().AlignRight().PaddingRight(10).Text("Reste à Payer :").ExtraBold().FontSize(14);
-                row.ConstantItem(90).AlignRight().Text($"{amountDue:C}").ExtraBold().FontSize(12).FontColor(Colors.Red.Darken2);
+                row.RelativeItem().AlignRight().PaddingRight(10).Text("Reste à Payer :").ExtraBold().FontSize(13);
+                row.ConstantItem(90).AlignRight().Text($"{amountDue:C}").ExtraBold().FontColor(Colors.Red.Darken2);
             });
         });
     }

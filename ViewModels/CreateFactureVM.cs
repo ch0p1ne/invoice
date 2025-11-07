@@ -239,7 +239,20 @@ namespace invoice.ViewModels
         {
             if (SelectedAvailableExam != null)
             {
-                
+
+                    //if(InvoiceExams.Contains(new InvoiceExam { Exam = SelectedAvailableExam, Qty = SelectedQty }))
+
+                foreach(var item in InvoiceExams)
+                {
+                    if(item.Exam == SelectedAvailableExam)
+                    {
+                        item.Qty += SelectedQty;
+                        SelectedAvailableExam = null;
+                        CalculAllIndexedPrice();
+                        return;
+                    }
+                }
+
                 InvoiceExams.Add( new InvoiceExam { Exam = SelectedAvailableExam, Qty = SelectedQty });
 
                 SelectedAvailableExam = null;
