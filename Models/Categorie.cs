@@ -14,7 +14,7 @@ namespace invoice.Models
         public string CategorieName 
         { get => _categorie;
             set => SetProperty(ref _categorie, InputValidator.ToUpperString(value) ?? value);
-            };
+         }
 
         public string CategorieDescription { get; set; } = string.Empty;
 
