@@ -30,14 +30,14 @@ namespace invoice.Models
             set
             {
                 if (InputValidator.IsValidReferenceString(value))
-                    SetProperty(ref _reference, value);
+                    SetProperty(ref _reference, InputValidator.ToUpperString(value) ?? string.Empty);
             }
         }
         [Column(TypeName = "nvarchar(99)")]
         public string? ExamenName
         {
             get => _examenName; 
-            set => SetProperty(ref _examenName, InputValidator.ToLowerString(value) ?? string.Empty);
+            set => SetProperty(ref _examenName, InputValidator.ToUpperString(value) ?? string.Empty);
         }
 
         public decimal Price

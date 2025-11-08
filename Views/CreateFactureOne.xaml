@@ -107,10 +107,10 @@
                             <ContentControl Content="{Binding LastName}"
                                             Margin="0,0,5,0"
                                             VerticalAlignment="Center"
-                                            FontSize="15"/>
+                                            FontSize="14"/>
                             <ContentControl Content="{Binding FirstName}"
                                             VerticalAlignment="Center"
-                                            FontSize="15"/>
+                                            FontSize="14"/>
                         </StackPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
@@ -190,8 +190,8 @@
                 <WrapPanel Margin="0,0,0,15">
                     <Label Content="Date de Naissance :" 
                VerticalAlignment="Center" />
-                    <DatePicker DisplayDateStart="2020-01-01" 
-                                DisplayDateEnd="2030-12-31"
+                    <DatePicker DisplayDateStart="1901-01-01" 
+                                DisplayDateEnd="2099-12-31"
                                 IsTodayHighlighted="True"
                                 Margin="15,0,0,0"
                                 Style="{StaticResource datePickerIsBinder}"

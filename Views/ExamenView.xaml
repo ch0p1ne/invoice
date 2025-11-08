@@ -133,10 +133,10 @@
                                         </Button>
 
                                         <Button Content="Ajouter"
-            Background="#008A38"
-            Foreground="White"
-            Padding="7"
-            Command="{Binding CreateExamenCommand}" >
+                                                Background="#008A38"
+                                                Foreground="White"
+                                                Padding="7"
+                                                Command="{Binding CreateExamenCommand}" >
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Margin" Value="70,0,0,0" />
@@ -157,9 +157,9 @@
                   Visibility="{Binding IsVisible, Converter={StaticResource TrueOrFalseToVisibility}}"
                   >
                         <StackPanel VerticalAlignment="Top" 
-            HorizontalAlignment="Left"
-            Margin="35,0,0,0"
-            DataContext="{Binding SelectedItem, ElementName=listDataGrid}">
+                                    HorizontalAlignment="Left"
+                                    Margin="35,0,0,0"
+                                    DataContext="{Binding SelectedItem, ElementName=listDataGrid}">
                             <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
                                 <Label >Nom De l'acte</Label>
                                 <TextBox Width="250" Text="{Binding ExamenName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,6" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center" />
@@ -218,16 +218,11 @@
            Margin="0,0,0,55"
             >
                             <Button Content="Editer"
-                            Background="LightGreen"
-                            Foreground="Black"
-                            Padding="10"
-            >
-
-                                <behevior:Interaction.Triggers>
-                                    <behevior:EventTrigger EventName="Click">
-                                        <behevior:InvokeCommandAction Command="{Binding EditableCommand}" />
-                                    </behevior:EventTrigger>
-                                </behevior:Interaction.Triggers>
+                                    Background="LightGreen"
+                                    Foreground="Black"
+                                    Padding="10"
+                                    Command="{Binding EditableCommand}"
+                                         >
                                 <Button.Style>
                                     <Style TargetType="Button">
                                         <Setter Property="Margin" Value="0,0,70,0" />
@@ -241,18 +236,15 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
+                            
                             <Button Content="Terminer"
-            Background="IndianRed"
-            Foreground="White"
-            Padding="10"
-            >
+                                    Background="IndianRed"
+                                    Foreground="White"
+                                    Padding="10"
+                                    Command="{Binding SubmitModifieCommand}"
+                                    CommandParameter="{Binding SelectedItem, ElementName=listDataGrid}"
+                                    >
 
-                                <behevior:Interaction.Triggers>
-                                    <behevior:EventTrigger EventName="Click">
-                                        <behevior:InvokeCommandAction Command="{Binding SubmitModifieCommand}" />
-                                    </behevior:EventTrigger>
-                                </behevior:Interaction.Triggers>
-                                
                                 <Button.Style>
                                     <Style TargetType="Button">
                                         <Setter Property="Margin" Value="0,0,70,0" />
@@ -266,6 +258,7 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
+                            
                         </WrapPanel>
                     </Grid>
                 </Grid>

@@ -94,10 +94,10 @@ namespace invoice.ViewModels
             IsVisible = true;
         }
         [RelayCommand]
-        public async Task SubmitModifie()
+        public async Task SubmitModifie(Examen examen)
         {
             using var context = new ClimaDbContext();
-            context.Examens.Update(Examen);
+            context.Examens.Update(examen);
 
             await context.SaveChangesAsync();
             IsEditable = !IsEditable;
@@ -129,16 +129,16 @@ namespace invoice.ViewModels
             {
                 dispatcher2.Invoke(() =>
                 {
-                    IsExpandableAddForm = false;
                     Examens.Add(Examen);
                     CurrentCrudOperation = "crudList";
+                    ClearExamen();
                 });
             }
             else
             {
-                IsExpandableAddForm = false;
                 Examens.Add(Examen);
                 CurrentCrudOperation = "crudList";
+                ClearExamen();
             }
         }
 
@@ -151,8 +151,9 @@ namespace invoice.ViewModels
         [RelayCommand]
         public void ClearExamen()
         {
-            Examen.ExamenName = "";
-            Examen.Reference = "";
+            Examen = new Examen();
+            Examen.ExamenName = string.Empty;
+            Examen.Reference = string.Empty;
             Examen.Price = 0;
             IsExpandableAddForm = false;
         }

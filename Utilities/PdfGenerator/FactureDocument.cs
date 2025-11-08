@@ -2,25 +2,28 @@
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using invoice.Models; // Assurez-vous d'avoir ce using pour accéder à Facture, Examen, FactureExamen
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using Humanizer;
 
 public class FactureDocument : IDocument
 {
     private string imagePath = Path.Combine(AppContext.BaseDirectory, "Assets", "img", "headerPDF.png");
     private readonly Facture _facture;
     private readonly Patient _patient;
+    private readonly User _user;
+    private int netAPayer;
+    
 
     // La propriété FacturesExamens de Facture sera utilisée pour les lignes
 
-    public FactureDocument(Facture facture, Patient patient)
+    public FactureDocument(Facture facture, Patient patient, User user)
     {
         
         _facture = facture ?? throw new ArgumentNullException(nameof(facture));
 
         _patient = patient ?? throw new ArgumentNullException(nameof(patient));
+
+        _user = user ?? throw new ArgumentNullException(nameof(user));
     }
 
     // ----------------------------------------------------
@@ -78,13 +81,23 @@ public class FactureDocument : IDocument
     public void ComposeFooter(IContainer container)
     {
         container
-            .Height(70)
+            .Height(130)
             .AlignBottom()
             .Row(row =>
             {
                 row.RelativeItem().Column(column =>
                 {
                     column.Spacing(10);
+                    column.Item().Text(x =>
+                    {
+                        x.AlignCenter();
+                        x.Span($"Arrété la présente facture à la somme de :\n{NumberToWordsExtension.ToWords(netAPayer)} FCFA").FontSize(11).Light();
+                    });
+                    column.Item().Text(x =>
+                    {
+                        x.AlignLeft();
+                        x.Span($"{_user.Account_name}").FontSize(7).Light();
+                    });
                     column.Item()
                     .Container()
                         .Height(4)
@@ -96,7 +109,7 @@ public class FactureDocument : IDocument
                     .Text(x =>
                     {
                         x.AlignCenter();
-                        x.Span("S.A.R.L au capital de 2 000 000 de FCFA siège social à owendo, Akournam II non loin du carrefour. NIF: 2024 0102 1465; w: ;RCCM: GA-LBV-01-2024-B12-01194. BP: 7441").FontSize(12).FontColor(Colors.Blue.Lighten2).SemiBold();
+                        x.Span("S.A.R.L au capital de 2 000 000 de FCFA siège social à owendo, Akournam II non loin du carrefour. NIF: 2024 0102 1465 w: RCCM: GA-LBV-01-2024-B12-01194: BP: 7441").FontSize(12).FontColor(Colors.Blue.Darken2).SemiBold();
                     });
 
                     column.Item()
@@ -137,7 +150,7 @@ public class FactureDocument : IDocument
         {
             column.Item().Row(row =>
             { 
-                row.ConstantItem(180).Text("Patient :").NormalWeight().FontSize(11);
+                row.ConstantItem(210).Text("Patient :").NormalWeight().FontSize(11);
                 row.Spacing(2);
                 row.ConstantItem(150).Text("Date de naissance :").NormalWeight().FontSize(11);
                 row.ConstantItem(150).Text("Mode de paiement :").NormalWeight().FontSize(11);
@@ -145,7 +158,7 @@ public class FactureDocument : IDocument
             column.Spacing(3);
             column.Item().Row(row =>
             {
-                row.ConstantItem(180).Text($"{_patient.FirstName ?? "N/A"} {_patient.LastName ?? "N/A"}").FontSize(12).SemiBold();
+                row.ConstantItem(210).Text($"{_patient.FirstName ?? "N/A"} {_patient.LastName ?? "N/A"}").FontSize(11).SemiBold();
                 row.Spacing(2);
                 row.ConstantItem(150).Text($"{_patient.DateOfBirth:dd/MM/yyyy}").FontSize(12).SemiBold();
                 row.ConstantItem(150).Text($"{_facture.PaymentMethod}").FontSize(12).SemiBold();
@@ -191,11 +204,11 @@ public class FactureDocument : IDocument
                 var examen = line.Examen;
                 decimal totalHtLigne = examen!.Price * line.Qte;
 
-                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).Text(examen.Reference.ToString());
-                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).Text(examen.ExamenName);
-                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).AlignRight().Padding(6).Text(line.Qte.ToString());
-                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).AlignRight().Text($"{examen.Price:N2}");
-                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).AlignRight().Text($"{totalHtLigne:N2}");
+                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).Text(examen.Reference.ToString()).FontSize(9);
+                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).Text(examen.ExamenName).FontSize(9);
+                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).AlignRight().Padding(6).Text(line.Qte.ToString()).FontSize(9);
+                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).AlignRight().Text($"{examen.Price:N2}").FontSize(9);
+                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).AlignRight().Text($"{totalHtLigne:N2}").FontSize(9);
             }
         });
     }
@@ -212,6 +225,7 @@ public class FactureDocument : IDocument
         double patientShare = netAPayer * (double)_facture.PatientPercent;
         decimal amountPaid = _facture.AmountPaid ?? 0m;
         double amountDue = netAPayer - (double)amountPaid;
+        this.netAPayer = (int) amountDue;
 
 
         container.AlignRight().PaddingRight(5).Column(column =>
