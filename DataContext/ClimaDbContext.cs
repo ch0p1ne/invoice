@@ -32,7 +32,7 @@ namespace invoice.Context
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
-                .UseSqlServer($"Data Source={sourceNameLocal}\\sqlexpress;database=CLIMAG;Trusted_Connection=True;TrustServerCertificate=True");
+                .UseSqlServer($"Data Source={sourceNameProd}\\sqlexpress;database=CLIMAG;Trusted_Connection=True;TrustServerCertificate=True");
         }
 
 

@@ -130,14 +130,12 @@ namespace invoice.ViewModels
                 dispatcher2.Invoke(() =>
                 {
                     Examens.Add(Examen);
-                    CurrentCrudOperation = "crudList";
                     ClearExamen();
                 });
             }
             else
             {
                 Examens.Add(Examen);
-                CurrentCrudOperation = "crudList";
                 ClearExamen();
             }
         }
@@ -151,10 +149,7 @@ namespace invoice.ViewModels
         [RelayCommand]
         public void ClearExamen()
         {
-            Examen = new Examen();
-            Examen.ExamenName = string.Empty;
-            Examen.Reference = string.Empty;
-            Examen.Price = 0;
+            Examen = new();
             IsExpandableAddForm = false;
         }
 

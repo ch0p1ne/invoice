@@ -22,7 +22,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="7*"/>
+            <RowDefinition Height="30*"/>
         </Grid.RowDefinitions>
 
         <StackPanel VerticalAlignment="Top" Grid.Row="0">
@@ -50,23 +50,23 @@
 
                     <Grid Grid.Row="0"
                   Margin="15,0,0,0">
-                        <Expander Header=" Ajouter"
-                          ExpandDirection="Down"
-                          Width="300"
-                          Name="expButton"
-                          IsExpanded="{Binding IsExpandableAddForm}"
-                          HorizontalContentAlignment="Center">
+                        <Expander Grid.Row="0" Header=" Ajouter"
+                                  ExpandDirection="Down"
+                                  Width="300"
+                                  Name="expButton"
+                                  IsExpanded="{Binding IsExpandableAddForm}"
+                                  HorizontalContentAlignment="Center">
                             <Expander.HeaderTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="Formulaire d'ajout d'Examen">
+                                    <TextBlock Text="Formulaire d'ajout">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
-                                                <Setter Property="FontWeight" Value="Light" />
-                                                <Setter Property="FontSize" Value="14" />
+                                                <Setter Property="FontWeight" Value="Normal" />
+                                                <Setter Property="FontSize" Value="12" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding ElementName=expButton, Path=IsExpanded}" Value="True">
-                                                        <Setter Property="FontWeight" Value="Bold" />
-                                                        <Setter Property="FontSize" Value="16" />
+                                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                                        <Setter Property="FontSize" Value="13" />
                                                         <Setter Property="Foreground" Value="#202020" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
@@ -77,77 +77,82 @@
                                 </DataTemplate>
                             </Expander.HeaderTemplate>
 
-                            <Border VerticalAlignment="Center"
-                            BorderThickness="2"
-                            BorderBrush="DarkKhaki"
-                            CornerRadius="7">
+                            <Border VerticalAlignment="Top"
+                                    BorderThickness="1"
+                                    Margin="0,15,0,0"
+                                    BorderBrush="#fff2ffff"
+                                    CornerRadius="5">
 
-                                <Grid Margin="13">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="2*" />
-                                        <RowDefinition Height="*" />
-                                    </Grid.RowDefinitions>
-                                    <StackPanel Grid.Row="0" 
-            VerticalAlignment="Center" 
-            HorizontalAlignment="Center">
+                                <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                                    <Grid Margin="12">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="2*" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
 
-                                        <WrapPanel Orientation="Vertical" 
-               Margin="0,0,0,5"
-               HorizontalAlignment="Center">
-                                            <Label HorizontalAlignment="Center" >Nom De l'acte</Label>
-                                            <TextBox x:Name="txtExamenName" Text="{Binding  Examen.ExamenName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="210" Padding="7,6"  />
-                                        </WrapPanel>
+                                        <StackPanel Grid.Row="0" 
+                                                    VerticalAlignment="Center" 
+                                                    HorizontalAlignment="Center">
 
-                                        <WrapPanel Margin="0,0,0,5">
-                                            <WrapPanel Orientation="Vertical"
-                   HorizontalAlignment="Stretch">
-                                                <Label HorizontalAlignment="Center">Reférence</Label>
-                                                <TextBox x:Name="txtReference" Text="{Binding Examen.Reference, UpdateSourceTrigger=PropertyChanged}" Width="60" Padding="7,7" />
+                                            <WrapPanel Orientation="Vertical" 
+                               Margin="0,0,0,2"
+                               HorizontalAlignment="Center">
+                                                <Label HorizontalAlignment="Center" FontSize="12" >Nom de l'element</Label>
+                                                <TextBox Style="{StaticResource TextBoxFromStyle}" Text="{Binding  Examen.ExamenName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="210"  />
                                             </WrapPanel>
 
-                                            <WrapPanel Orientation="Vertical"
-                   Margin="40,0,0,0">
-                                                <Label HorizontalAlignment="Center">Prix à l'unité</Label>
-                                                <TextBox x:Name="txtPrice"  Text="{Binding Examen.Price, UpdateSourceTrigger=PropertyChanged}"  MinWidth="75" MaxWidth="130" Padding="7,7" />
+                                            <WrapPanel Margin="0,0,0,15">
+                                                <WrapPanel Orientation="Vertical"
+                                    HorizontalAlignment="Stretch">
+                                                    <Label HorizontalAlignment="Center" FontSize="12">Reférence</Label>
+                                                    <TextBox  Style="{StaticResource TextBoxFromStyle}" Text="{Binding Examen.Reference, UpdateSourceTrigger=PropertyChanged}" Width="60" />
+                                                </WrapPanel>
+
+                                                <WrapPanel Orientation="Vertical"
+                                   Margin="40,0,0,0">
+                                                    <Label HorizontalAlignment="Center" FontSize="12">Prix à l'unité</Label>
+                                                    <TextBox Style="{StaticResource TextBoxFromStyle}" Text="{Binding Examen.Price, UpdateSourceTrigger=PropertyChanged}"  MinWidth="75" MaxWidth="130" />
+                                                </WrapPanel>
                                             </WrapPanel>
+
+                                        </StackPanel>
+                                        <WrapPanel Grid.Row="1"
+                           Orientation="Horizontal"
+                           VerticalAlignment="Top"
+                           Margin="0,10,0,0">
+
+                                            <Button Content="Tout Effacer"
+                            Background="IndianRed"
+                            Foreground="White"
+                            Padding="4"
+                            Command="{Binding ClearExamenCommand}">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Margin" Value="0,0,0,0" />
+                                                        <Setter Property="MinWidth" Value="70" />
+                                                        <Setter Property="Background" Value="#E7E7E7" />
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+
+                                            <Button Content="Ajouter"
+                            Background="#008A38"
+                            Foreground="White"
+                            Padding="4"
+                            Command="{Binding CreateExamenCommand}" >
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Margin" Value="70,0,0,0" />
+                                                        <Setter Property="Width" Value="70" />
+                                                        <Setter Property="Background" Value="#E7E7E7" />
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+
                                         </WrapPanel>
+                                    </Grid>
 
-                                    </StackPanel>
-                                    <WrapPanel Grid.Row="1"
-           Orientation="Horizontal"
-           VerticalAlignment="Top"
-           Margin="0,10,0,0">
-
-                                        <Button Content="Tout Effacer"
-            Background="IndianRed"
-            Foreground="White"
-            Padding="7"
-            Command="{Binding ClearExamenCommand}">
-                                            <Button.Style>
-                                                <Style TargetType="Button">
-                                                    <Setter Property="Margin" Value="0,0,0,0" />
-                                                    <Setter Property="MinWidth" Value="70" />
-                                                    <Setter Property="Background" Value="#E7E7E7" />
-                                                </Style>
-                                            </Button.Style>
-                                        </Button>
-
-                                        <Button Content="Ajouter"
-                                                Background="#008A38"
-                                                Foreground="White"
-                                                Padding="7"
-                                                Command="{Binding CreateExamenCommand}" >
-                                            <Button.Style>
-                                                <Style TargetType="Button">
-                                                    <Setter Property="Margin" Value="70,0,0,0" />
-                                                    <Setter Property="Width" Value="70" />
-                                                    <Setter Property="Background" Value="#E7E7E7" />
-                                                </Style>
-                                            </Button.Style>
-                                        </Button>
-
-                                    </WrapPanel>
-                                </Grid>
+                                </ScrollViewer>
                             </Border>
 
                         </Expander>
@@ -162,21 +167,21 @@
                                     DataContext="{Binding SelectedItem, ElementName=listDataGrid}">
                             <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
                                 <Label >Nom De l'acte</Label>
-                                <TextBox Width="250" Text="{Binding ExamenName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,6" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center" />
+                                <TextBox Style="{StaticResource TextBoxFromStyle}" Width="250" Text="{Binding ExamenName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,6" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center" />
                             </WrapPanel>
                             <WrapPanel Margin="0,0,0,10">
 
                                 <WrapPanel Orientation="Vertical">
                                     <Label >Reférence</Label>
-                                    <TextBox Width="60" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,7" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
+                                    <TextBox Style="{StaticResource TextBoxFromStyle}" Width="60" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,4" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
                                 </WrapPanel>
 
                                 <WrapPanel Orientation="Vertical" Margin="45,0,0,0">
                                     <Label >Prix à l'unité</Label>
                                     <WrapPanel>
-                                        <TextBox  MinWidth="75" MaxWidth="110" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}}" Padding="7,7" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
+                                        <TextBox Style="{StaticResource TextBoxFromStyle}" MinWidth="75" MaxWidth="110" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}}" Padding="7,4" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
                                         <TextBlock VerticalAlignment="Center"
-                           Margin="5,0,0,0"> FCFA</TextBlock>
+                                                    Margin="5,0,0,0"> FCFA</TextBlock>
                                     </WrapPanel>
 
                                 </WrapPanel>

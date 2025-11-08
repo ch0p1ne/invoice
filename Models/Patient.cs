@@ -24,6 +24,6 @@ namespace invoice.Models
 
         public ICollection<Facture> Factures { get; set; } = [];
 
-        public override string ToString() => LastName + FirstName;
+        public override string ToString() => LastName+ " " + FirstName;
     }
 }

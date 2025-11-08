@@ -10,11 +10,12 @@ namespace invoice.Models
         private string _categorie = string.Empty;
         public int CategorieId { get; set; }
 
-        [Column(TypeName ="nvarchar(15)")]
+        [Column(TypeName ="nvarchar(55)")]
         public string CategorieName 
-        { get => _categorie;
+        { 
+            get => _categorie;
             set => SetProperty(ref _categorie, InputValidator.ToUpperString(value) ?? value);
-         }
+        }
 
         public string CategorieDescription { get; set; } = string.Empty;
 

@@ -22,7 +22,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="35*"/>
+            <RowDefinition Height="30*"/>
         </Grid.RowDefinitions>
 
         <StackPanel VerticalAlignment="Top" Grid.Row="0">
@@ -64,7 +64,7 @@
                                     <TextBlock Text="Formulaire d'ajout">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
-                                                <Setter Property="FontWeight" Value="Light" />
+                                                <Setter Property="FontWeight" Value="Normal" />
                                                 <Setter Property="FontSize" Value="12" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding ElementName=expButton, Path=IsExpanded}" Value="True">
@@ -81,18 +81,18 @@
                             </Expander.HeaderTemplate>
 
                             <Border VerticalAlignment="Top"
-                                    BorderThickness="2"
+                                    BorderThickness="1"
                                     Margin="0,15,0,0"
-                                    BorderBrush="DarkKhaki"
-                                    CornerRadius="7">
+                                    BorderBrush="#fff2ffff"
+                                    CornerRadius="5">
 
-                                <ScrollViewer>
+                                <ScrollViewer VerticalScrollBarVisibility="Hidden">
                                     <Grid Margin="12">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="2*" />
                                             <RowDefinition Height="*" />
                                         </Grid.RowDefinitions>
-                                    
+
                                         <StackPanel Grid.Row="0" 
                                                     VerticalAlignment="Center" 
                                                     HorizontalAlignment="Center">
@@ -101,20 +101,20 @@
                                                        Margin="0,0,0,2"
                                                        HorizontalAlignment="Center">
                                                 <Label HorizontalAlignment="Center" FontSize="12" >Nom de l'element</Label>
-                                                <TextBox x:Name="txtPrixHomologueName" Text="{Binding  PrixHomologue.ElementName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="210" Padding="7,3"  />
+                                                <TextBox x:Name="txtPrixHomologueName" Style="{StaticResource TextBoxFromStyle}" Text="{Binding  PrixHomologue.ElementName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="210"  />
                                             </WrapPanel>
 
                                             <WrapPanel Margin="0,0,0,15">
                                                 <WrapPanel Orientation="Vertical"
                                                             HorizontalAlignment="Stretch">
                                                     <Label HorizontalAlignment="Center" FontSize="12">Reférence</Label>
-                                                    <TextBox x:Name="txtReference" Text="{Binding PrixHomologue.Reference, UpdateSourceTrigger=PropertyChanged}" Width="60" Padding="7,3" />
+                                                    <TextBox x:Name="txtReference"  Style="{StaticResource TextBoxFromStyle}" Text="{Binding PrixHomologue.Reference, UpdateSourceTrigger=PropertyChanged}" Width="60" />
                                                 </WrapPanel>
 
                                                 <WrapPanel Orientation="Vertical"
-                       Margin="40,0,0,0">
+                                                           Margin="40,0,0,0">
                                                     <Label HorizontalAlignment="Center" FontSize="12">Prix à l'unité</Label>
-                                                    <TextBox x:Name="txtPrice"  Text="{Binding PrixHomologue.Price, UpdateSourceTrigger=PropertyChanged}"  MinWidth="75" MaxWidth="130" Padding="7,3" />
+                                                    <TextBox x:Name="txtPrice" Style="{StaticResource TextBoxFromStyle}" Text="{Binding PrixHomologue.Price, UpdateSourceTrigger=PropertyChanged}"  MinWidth="75" MaxWidth="130" />
                                                 </WrapPanel>
                                             </WrapPanel>
                                             <WrapPanel Margin="0,0,0,5" 
@@ -124,6 +124,14 @@
                                                           VerticalContentAlignment="Center"
                                                           ItemsSource="{Binding Categories}"
                                                           SelectedItem="{Binding SelectedCategorie, Mode=OneWayToSource}">
+
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{Binding CategorieName}" Margin="0,0,5,0" FontWeight="Bold"/>
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
 
                                                 </ComboBox>
                                             </WrapPanel>
@@ -164,74 +172,98 @@
 
                                         </WrapPanel>
                                     </Grid>
-                                    
+
                                 </ScrollViewer>
                             </Border>
 
                         </Expander>
-                        <ScrollViewer Grid.Row="1"
-                                      Margin="50,10,0,0">
-                            
-                            <StackPanel >
-                                <WrapPanel Orientation="Vertical" 
-                                           Margin="0,0,0,2"
+
+                        <StackPanel Grid.Row="1"
+                                    Margin="50,10,0,0">
+                            <WrapPanel Orientation="Vertical" 
+                                           Margin="0,0,0,4"
                                            HorizontalAlignment="Left">
+
+                                <Label HorizontalAlignment="Center" FontSize="12" >Nom de la categorie</Label>
+                                <TextBox Style="{StaticResource TextBoxFromStyle}" Text="{Binding  Categorie.CategorieName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="210" Padding="7,3"  />
+                            </WrapPanel>
+
+                            <WrapPanel Orientation="Horizontal"
+                                       
+                                       >
                                 
-                                    <Label HorizontalAlignment="Center" FontSize="12" >Nom de la categorie</Label>
-                                    <TextBox  Text="{Binding  Categorie.CategorieName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="210" Padding="7,3"  />
-                                </WrapPanel>
-                            
                                 <WrapPanel Orientation="Vertical" 
-                                           Margin="0,0,0,2"
+                                           Margin="0,0,0,4"
                                            HorizontalAlignment="Left">
+
+                                <Label HorizontalAlignment="Center" FontSize="12" >Description</Label>
+                                    <TextBox Style="{StaticResource TextBoxFromStyle}" Text="{Binding  Categorie.CategorieDescription ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="210" Padding="7,3"  />
                                 
-                                    <Label HorizontalAlignment="Center" FontSize="12" >Description </Label>
-                                    <TextBox  Text="{Binding  Categorie.CategorieDescription ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="210" Padding="7,3"  />
-                                </WrapPanel>
-                            <Button Content="Ajouter"
-                                    Background="#008A38"
-                                    Foreground="White"
-                                    Padding="4"
-                                    Command="{Binding CreateCategorieCommand}" >
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Margin" Value="70,0,0,0" />
-                                        <Setter Property="Width" Value="70" />
-                                        <Setter Property="Background" Value="#E7E7E7" />
-                                    </Style>
-                                </Button.Style>
-                            </Button>
+                            </WrapPanel>
+                                <Button Content="Ajouter"
+                                        Height="30"
+                                        Background="#008A38"
+                                        Foreground="White"
+                                        Margin="100,0,0,-18"
+                                        Padding="4"
+                                        Command="{Binding CreateCategorieCommand}">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Margin" Value="70,0,0,0" />
+                                            <Setter Property="Width" Value="70" />
+                                            <Setter Property="Background" Value="#E7E7E7" />
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </WrapPanel>
+                            
                         </StackPanel>
-                        </ScrollViewer>
                     </Grid>
 
                     <Grid Grid.Row="1" 
                   Visibility="{Binding IsVisible, Converter={StaticResource TrueOrFalseToVisibility}}"
                   >
                         <StackPanel VerticalAlignment="Top" 
-            HorizontalAlignment="Left"
-            Margin="35,0,0,0"
-            DataContext="{Binding SelectedItem, ElementName=listDataGrid}">
+                            HorizontalAlignment="Left"
+                            Margin="35,0,0,0"
+                            DataContext="{Binding SelectedItem, ElementName=listDataGrid}">
                             <WrapPanel Orientation="Vertical" Margin="0,0,0,20"> 
                                 <Label >Nom De l'acte</Label>
-                                <TextBox Width="250" Text="{Binding ElementName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,6" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center" />
+                                <TextBox Style="{StaticResource TextBoxFromStyle}" Width="250" Text="{Binding ElementName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,6" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center" />
                             </WrapPanel>
                             <WrapPanel Margin="0,0,0,10">
 
                                 <WrapPanel Orientation="Vertical">
                                     <Label >Reférence</Label>
-                                    <TextBox Width="60" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,7" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
+                                    <TextBox Style="{StaticResource TextBoxFromStyle}" Width="60" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,7" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
                                 </WrapPanel>
 
                                 <WrapPanel Orientation="Vertical" Margin="45,0,0,0">
                                     <Label >Prix à l'unité</Label>
                                     <WrapPanel>
-                                        <TextBox  MinWidth="75" MaxWidth="110" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}}" Padding="7,7" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
-                                        <TextBlock VerticalAlignment="Center"
+                                        <TextBox Style="{StaticResource TextBoxFromStyle}" MinWidth="75" MaxWidth="110" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}}" Padding="7,7" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
+                                        <TextBlock  VerticalAlignment="Center"
                            Margin="5,0,0,0"> FCFA</TextBlock>
                                     </WrapPanel>
 
                                 </WrapPanel>
+                            </WrapPanel>
+                            
+                            <WrapPanel>
+                                <ComboBox MinWidth="75"
+                                          VerticalContentAlignment="Center"
+                                          ItemsSource="{Binding DataContext.Categories, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                          SelectedItem="{Binding DataContext.SelectedCategorie, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}">
+
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding CategorieName}" Margin="0,0,5,0" FontWeight="Bold"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+
+                                </ComboBox>
                             </WrapPanel>
 
                             <StackPanel.Resources>
@@ -294,10 +326,10 @@
                                 </Button.Style>
                             </Button>
                             <Button Content="Terminer"
-            Background="IndianRed"
-            Foreground="White"
-            Padding="10"
-            >
+                                    Background="IndianRed"
+                                    Foreground="White"
+                                    Padding="10"
+                                    >
 
                                 <behevior:Interaction.Triggers>
                                     <behevior:EventTrigger EventName="Click">
@@ -413,8 +445,9 @@
 
                         <DataGrid.Columns>
 
+                            <DataGridTextColumn Width="2*" Header="Categorie" Binding="{Binding Categorie.CategorieName}" ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="SemiBold" />
                             <DataGridTextColumn Width="4*" Header="Element" Binding="{Binding ElementName}" ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="SemiBold" />
-                            <DataGridTextColumn Width="1*" Header="Reference" Binding="{Binding Reference}" ElementStyle="{StaticResource CenteredTextBlock}" />
+                            <DataGridTextColumn Width="*" Header="Ref" Binding="{Binding Reference}" ElementStyle="{StaticResource CenteredTextBlock}" />
                             <DataGridTextColumn Width="2*" 
                                         Header="Prix" 
                                         Binding="{Binding Price, ConverterCulture=fr-GA,StringFormat={}{0:C}}"

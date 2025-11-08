@@ -33,7 +33,7 @@ namespace invoice.Models
             set
             {
                 if (InputValidator.IsValidReferenceString(value))
-                    SetProperty(ref _reference, value);
+                    SetProperty(ref _reference, InputValidator.ToUpperString(value) ?? string.Empty);
             }
         }
 
@@ -61,7 +61,12 @@ namespace invoice.Models
             set => SetProperty(ref _categorieId, value);
         }
 
-        public Categorie Categorie { get; set; } = new();
+        private Categorie? _categorie;
+        public Categorie? Categorie
+        {
+            get => _categorie;
+            set => SetProperty(ref _categorie, value);
+        }
 
         public override string ToString() => ElementName ?? string.Empty;
     }

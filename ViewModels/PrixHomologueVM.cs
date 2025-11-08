@@ -73,11 +73,16 @@ namespace invoice.ViewModels
         }
 
         public ObservableCollection<PrixHomologue> PrixHomologues { get; set; } = new ObservableCollection<PrixHomologue>();
-        public PrixHomologue PrixHomologue { get; set; } = new PrixHomologue();
+        private PrixHomologue _prixHomologue = new();
+        public PrixHomologue PrixHomologue
+        { 
+            get => _prixHomologue;
+            set => SetProperty(ref _prixHomologue, value);
+        }
 
         public PrixHomologueVM()
         {
-            _categorie = new();
+            _categorie = new() { CategorieDescription = "-- Aucune --" };
             _categories = new();
             _selectedCategorie = new();
             LoadPrixHomologuesAsync().ConfigureAwait(false);
@@ -90,7 +95,7 @@ namespace invoice.ViewModels
         public async Task LoadPrixHomologuesAsync()
         {
             using var context = new ClimaDbContext();
-            var PrixHomologuesList = await context.PrixHomologues.ToListAsync();
+            var PrixHomologuesList = await context.PrixHomologues.Include(e => e.Categorie).ToListAsync();
 
             // Mettre à jour la collection existante pour que les bindings voient les changements
             // Si ce code peut s'exécuter hors du thread UI, utiliser le Dispatcher.
@@ -132,19 +137,28 @@ namespace invoice.ViewModels
         }
 
         [RelayCommand]
-        public void ChangeVisibility()
-        {
-            IsVisible = true;
-        }
-        [RelayCommand]
         public async Task SubmitModifie()
         {
+            // TO DO !!! Les imformations qui sont dans les formulaire NE SONT PAS liée 
+            // à PrixHomologue mais plutot a un selectedItem !!!, il faut que je prennent
+            // ces données et que j'initialise PrixHomologue avec.
             using var context = new ClimaDbContext();
+            PrixHomologue.CategorieId = SelectedCategorie.CategorieId;
+            PrixHomologue.Categorie = null;
             context.PrixHomologues.Update(PrixHomologue);
 
             await context.SaveChangesAsync();
             IsEditable = !IsEditable;
+            ChangeVisibility();
         }
+        [RelayCommand]
+        public void ChangeVisibility()
+        {
+            //IsVisible = !IsVisible;
+            // TEST
+            IsVisible = false;
+        }
+        
         [RelayCommand]
         public void Editable()
         {
@@ -160,8 +174,8 @@ namespace invoice.ViewModels
         public async Task CreatePrixHomologue()
         {
             using var context = new ClimaDbContext();
-            // j'ai une autre option .... PrixHomologue.CategorieId = SelectedCategorie.CategorieID
             PrixHomologue.CategorieId = SelectedCategorie.CategorieId;
+            PrixHomologue.Categorie = null;
 
             context.PrixHomologues.Add(PrixHomologue);
 
@@ -174,16 +188,14 @@ namespace invoice.ViewModels
             {
                 dispatcher2.Invoke(() =>
                 {
-                    IsExpandableAddForm = false;
                     PrixHomologues.Add(PrixHomologue);
-                    CurrentCrudOperation = "crudList";
+                    PrixHomologue = new();
                 });
             }
             else
             {
-                IsExpandableAddForm = false;
                 PrixHomologues.Add(PrixHomologue);
-                CurrentCrudOperation = "crudList";
+                PrixHomologue = new();
             }
         }
         [RelayCommand]
@@ -203,11 +215,13 @@ namespace invoice.ViewModels
                 dispatcher2.Invoke(() =>
                 {
                     Categories.Add(Categorie);
+                    Categorie = new Categorie() { CategorieDescription = "-- Aucune --" };
                 });
             }
             else
             {
                 Categories.Add(Categorie);
+                Categorie = new Categorie() { CategorieDescription = "-- Aucune --" };
             }
         }
 

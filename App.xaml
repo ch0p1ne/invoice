@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="/Assets/styles/LabelAndTexBoxStyle.xaml"/>
                 <ResourceDictionary Source="/Assets/styles/ButtonNextViewFacStyle.xaml" />
                 <ResourceDictionary Source="/Assets/styles/ButtonCircleStyle.xaml" />
+                <ResourceDictionary Source="/Assets/styles/TextBoxFromStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             
