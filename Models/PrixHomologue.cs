@@ -2,7 +2,7 @@
 using invoice.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -10,18 +10,21 @@ using System.Threading.Tasks;
 
 namespace invoice.Models
 {
-    public class Examen : ObservableObject
+    public class PrixHomologue : ObservableObject
     {
-        private int _examenId;
+        
+        private int _elementId;
         private string _reference = string.Empty;
-        private string _examenName = string.Empty;
+        private string _elementName = string.Empty;
         private decimal _price;
+        private int _categorieId;
         private DateTime _createdAt = DateTime.Now;
 
-        public int ExamenId
+        [Key]
+        public int ElementId
         {
-            get => _examenId;
-            set => SetProperty(ref _examenId, value);
+            get => _elementId;
+            set => SetProperty(ref _elementId, value);
         }
         [Column(TypeName = "nvarchar(8)")]
         public string Reference
@@ -33,16 +36,17 @@ namespace invoice.Models
                     SetProperty(ref _reference, value);
             }
         }
+
         [Column(TypeName = "nvarchar(99)")]
-        public string? ExamenName
+        public string? ElementName
         {
-            get => _examenName; 
-            set => SetProperty(ref _examenName, InputValidator.ToLowerString(value) ?? string.Empty);
+            get => _elementName;
+            set => SetProperty(ref _elementName, InputValidator.ToLowerString(value) ?? string.Empty);
         }
 
         public decimal Price
         {
-            get => _price; set => SetProperty(ref _price,InputValidator.ValidPriceString(value));
+            get => _price; set => SetProperty(ref _price, InputValidator.ValidPriceString(value));
         }
 
         public DateTime CreatedAt
@@ -51,9 +55,14 @@ namespace invoice.Models
             set => SetProperty(ref _createdAt, value);
         }
 
-        public ICollection<Facture> Factures { get; set; } = new List<Facture>();
-        public ICollection<FactureExamen> FacturesExamens { get; set; } = new List<FactureExamen>();
+        public int CategorieId
+        {
+            get => _categorieId;
+            set => SetProperty(ref _categorieId, value);
+        }
 
-        public override string ToString() => ExamenName ?? string.Empty;
+        public Categorie Categorie { get; set; } = new();
+
+        public override string ToString() => ElementName ?? string.Empty;
     }
 }

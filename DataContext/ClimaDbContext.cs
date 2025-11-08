@@ -20,6 +20,8 @@ namespace invoice.Context
         public DbSet<Medecin> Medecins { get; set; }
         public DbSet<GreetingMessage> GreetingMessages { get; set; }
         public DbSet<Assurance> Assurances { get; set; }
+        public DbSet<PrixHomologue> PrixHomologues { get; set; }
+        public DbSet<Categorie> Categories { get; set; }
 
         // Junction tables for many-to-many relationship
         public DbSet<UserRole> UsersRoles { get; set; }

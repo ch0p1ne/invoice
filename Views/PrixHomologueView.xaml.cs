@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace invoice.Views
 {
     /// <summary>
-    /// Logique d'interaction pour NewInvoiceView.xaml
+    /// Logique d'interaction pour PrixHomologueView.xaml
     /// </summary>
-    public partial class NewInvoiceView : UserControl
+    public partial class PrixHomologueView : UserControl
     {
-        public NewInvoiceView()
+        public PrixHomologueView()
         {
             InitializeComponent();
         }

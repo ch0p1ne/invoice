@@ -44,7 +44,6 @@ namespace invoice.ViewModels
                        new MenuItem("Nouvelle Facture", null, new CreateFactureVM(sessionService), "/Assets/icons/add.png"),
                        new MenuItem("Vue des Factures", null, null, "/Assets/icons/list.png"),
                    ],
-                   ViewModel = new NewInvoiceVM(),
                    Icon = "/Assets/icons/invoice.png"
 
                },
@@ -56,7 +55,7 @@ namespace invoice.ViewModels
                    [
                      new MenuItem("Consultation", null, null, "/Assets/icons/answer.png"),
                      new MenuItem("Examen", null, new ExamenVM(), "/Assets/icons/exam.png"),
-                     new MenuItem("Medecin", null, null, "/Assets/icons/online-appointment.png"),
+                     new MenuItem("Prix Homologue", null, new PrixHomologueVM(), "/Assets/icons/online-appointment.png"),
                    ],
                    Icon = "/Assets/icons/file.png"
                },
