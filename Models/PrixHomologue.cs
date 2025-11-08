@@ -41,7 +41,7 @@ namespace invoice.Models
         public string? ElementName
         {
             get => _elementName;
-            set => SetProperty(ref _elementName, InputValidator.ToLowerString(value) ?? string.Empty);
+            set => SetProperty(ref _elementName, InputValidator.ToUpperString(value) ?? string.Empty);
         }
 
         public decimal Price
