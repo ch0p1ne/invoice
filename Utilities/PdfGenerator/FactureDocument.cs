@@ -166,8 +166,10 @@ public class FactureDocument : IDocument
 
             column.Item().PaddingTop(5).Row(row =>
             {
-                row.ConstantItem(35).Text("Age :").NormalWeight().FontSize(11);
-                row.ConstantItem(35).PaddingLeft(5).Text($"{age}").SemiBold().FontSize(10);
+                row.ConstantItem(50).Text("Age :").NormalWeight().FontSize(11);
+                row.ConstantItem(70).PaddingLeft(5).Text($"{age} ans").SemiBold().FontSize(10);
+                row.ConstantItem(70).PaddingLeft(50).Text("Nº Tél :").NormalWeight().FontSize(11);
+                row.ConstantItem(150).PaddingLeft(5).Text($"{_patient.PhoneNumber}").SemiBold().FontSize(10);
             });
         });
     }

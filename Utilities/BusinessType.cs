@@ -19,4 +19,10 @@ namespace invoice.Utilities
         Partiellement,
         autre
     }
+    public enum PaymentMethod
+    {
+        Especes,
+        Cheque,
+        MobileMoney
+    }
 }

@@ -53,7 +53,7 @@ namespace invoice.ViewModels
                    Name = "Gestions",
                    Childrens =
                    [
-                     new MenuItem("Consultation", null, null, "/Assets/icons/answer.png"),
+                     new MenuItem("Consultation", null, new ConsultationVM(), "/Assets/icons/answer.png"),
                      new MenuItem("Examen", null, new ExamenVM(), "/Assets/icons/exam.png"),
                      new MenuItem("Prix Homologue", null, new PrixHomologueVM(), "/Assets/icons/online-appointment.png"),
                    ],

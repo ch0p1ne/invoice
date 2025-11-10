@@ -41,7 +41,7 @@ namespace invoice.ViewModels
         private bool _isInsurance = false;
         private double _discountPercent;
         private string _discountType = "Percent";
-        private string _paymentMethod = "Espèces";
+        private PaymentMethod _paymentMethod = Utilities.PaymentMethod.Especes;
         private bool _generatePDFButtonIsEnable = false;
         private double _amountPaid = 0;
 
@@ -79,7 +79,7 @@ namespace invoice.ViewModels
                 SetProperty(ref _discountPercent, value);
             }
         }
-        public string PaymentMethod
+        public PaymentMethod PaymentMethod
         {
             get => _paymentMethod;
             set => SetProperty(ref _paymentMethod, value);
@@ -298,7 +298,7 @@ namespace invoice.ViewModels
                 AmountPaid = (decimal)AmountPaid,
                 DiscountPercent = (decimal)DiscountPercent,
                 Status = StatusType.Non_payer,
-                PaymentMethod = PaymentMethod,
+                PaymentMethod = ConvertPaymentMethodToString(PaymentMethod),
 
                 // Assurez-vous que les objets Patient et User existent ou que leurs IDs sont définis
                 PatientId = Patient!.PatientId,
@@ -517,6 +517,24 @@ namespace invoice.ViewModels
 
             // Génère le PDF et l'ouvre
             document.GeneratePdf(filePath);
+        }
+
+        public string ConvertPaymentMethodToString(PaymentMethod paymentMethod)
+        {
+            switch (paymentMethod)
+            {
+                case PaymentMethod.Especes: // CORRIGÉ : On teste la valeur directement
+                    return "Espèces";
+
+                case PaymentMethod.Cheque: // AJOUTÉ : Deuxième cas
+                    return "Cheque";
+
+                case PaymentMethod.MobileMoney: // AJOUTÉ : Troisième cas
+                    return "Mobile Money";
+
+                default: // AJOUTÉ : Pour gérer les cas imprévus ou futurs
+                    return "Non spécifié";
+            }
         }
 
     }

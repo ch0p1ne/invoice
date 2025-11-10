@@ -11,6 +11,10 @@
     <DataTemplate DataType="{x:Type viewmodels:ExamenVM}">
         <view:ExamenView/>
     </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type viewmodels:ConsultationVM}">
+        <view:ConsultationView/>
+    </DataTemplate>
 
     <DataTemplate DataType="{x:Type viewmodels:PrixHomologueVM}">
         <view:PrixHomologueView/>
