@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using invoice.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,16 +9,36 @@ using System.Threading.Tasks;
 
 namespace invoice.Models
 {
-    public class Patient
+    public class Patient : ObservableObject
     {
+        private string _lastName = string.Empty;
+        private string _firstName = string.Empty;
+        private string _phoneNumber = string.Empty;
+        private string? _assuranceNumber = string.Empty;
         public int PatientId { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
+        public string FirstName
+        {
+            get => _firstName;
+            set => SetProperty(ref _firstName, InputValidator.CapitalizeEachWord(value) ?? value); 
+        }
+        public string LastName
+        { 
+            get => _lastName;
+            set => SetProperty(ref _lastName, InputValidator.ToUpperString(value) ?? value);
+        }
         public DateTime? DateOfBirth { get; set; } = DateTime.MinValue;
-        public string? PhoneNumber { get; set; }
+        public string? PhoneNumber
+        { 
+            get => _phoneNumber;
+            set => SetProperty(ref _phoneNumber, InputValidator.FormatAndValidateInput(value) ?? value);
+        }
         public string? Email { get; set; }
         public string? Address { get; set; }
-        public int? AssuranceNumber { get; set; }
+        public string? AssuranceNumber
+        { 
+            get => _assuranceNumber;
+            set => SetProperty(ref _assuranceNumber, value);
+        }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public int? AssuranceId { get; set; }

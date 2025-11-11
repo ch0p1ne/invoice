@@ -78,7 +78,7 @@
                         Background="#404040">
 
                 </Border>
-                <TextBlock Text="Identité du client" VerticalAlignment="Center"
+                <TextBlock Text="Identité du Patient" VerticalAlignment="Center"
                            FontSize="25"
                            Margin="20,0,0,0"
                            FontFamily="{StaticResource fontSen}"/>
@@ -128,7 +128,7 @@
                VerticalAlignment="Center" />
                     <TextBox Name="txtNom" Width="200"  Height="25"
                  Background="#fdfffc" 
-                 Text="{Binding Patient.LastName, Mode=TwoWay}"
+                 Text="{Binding Patient.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  VerticalAlignment="Center"
                  HorizontalContentAlignment="Left" 
                  Margin="15,0,0,0"
@@ -144,7 +144,7 @@
                VerticalAlignment="Center" />
                     <TextBox Name="txtPrenom" Width="260"  Height="25"
                  Background="#fdfffc" 
-                 Text="{Binding Patient.FirstName, Mode=TwoWay}"
+                 Text="{Binding Patient.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  VerticalAlignment="Center"
                  Style="{StaticResource txtIsBinder}"
                  HorizontalContentAlignment="Left" 
@@ -156,7 +156,7 @@
                VerticalAlignment="Center" />
                     <TextBox Name="txtEmail" Width="260"  Height="25"
                  Background="#fdfffc" 
-                 Text="{Binding Patient.Email, Mode=TwoWay}"
+                 Text="{Binding Patient.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  VerticalAlignment="Center"
                  HorizontalContentAlignment="Left" 
                  Margin="15,0,0,0"
@@ -169,7 +169,7 @@
                     <TextBox Name="txtPhone" Width="180"  Height="25"
                  Background="#fdfffc" 
                  VerticalAlignment="Center"
-                 Text="{Binding Patient.PhoneNumber, Mode=TwoWay}"
+                 Text="{Binding Patient.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  HorizontalContentAlignment="Left" 
                  Style="{StaticResource txtIsBinder}"
                  Margin="15,0,0,0"

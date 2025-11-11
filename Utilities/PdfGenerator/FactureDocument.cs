@@ -12,13 +12,13 @@ public class FactureDocument : IDocument
     private readonly Patient _patient;
     private readonly User _user;
     private int netAPayer;
-    
+
 
     // La propriété FacturesExamens de Facture sera utilisée pour les lignes
 
     public FactureDocument(Facture facture, Patient patient, User user)
     {
-        
+
         _facture = facture ?? throw new ArgumentNullException(nameof(facture));
 
         _patient = patient ?? throw new ArgumentNullException(nameof(patient));
@@ -40,6 +40,8 @@ public class FactureDocument : IDocument
         {
             page.Size(PageSizes.A4);
             page.Margin(30);
+            page.DefaultTextStyle(x =>
+            x.FontFamily("Times New Roman"));
 
             page.Header().AlignLeft().Element(ComposeHeader);
             page.Content().Element(ComposeContent);
@@ -54,14 +56,13 @@ public class FactureDocument : IDocument
     public void ComposeHeader(IContainer container)
     {
         container
-            .Height(180)
-            .PaddingVertical(10)
+            .Height(140)
             .Column(column =>
             {
                 column.Spacing(10);
                 column.Item().Image(imagePath).FitWidth();
 
-                column.Item().PaddingVertical(10).Row(row =>
+                column.Item().PaddingTop(-7).Row(row =>
                 {
                     row.RelativeItem(3).AlignLeft().AlignBottom().Column(column =>
                     {
@@ -81,13 +82,13 @@ public class FactureDocument : IDocument
     public void ComposeFooter(IContainer container)
     {
         container
-            .Height(130)
+            .Height(100)
             .AlignBottom()
             .Row(row =>
             {
                 row.RelativeItem().Column(column =>
                 {
-                    column.Spacing(10);
+                    column.Spacing(5);
                     column.Item().Text(x =>
                     {
                         x.AlignCenter();
@@ -101,7 +102,7 @@ public class FactureDocument : IDocument
                     column.Item()
                     .Container()
                         .Height(4)
-                        .Width(470)
+                        .Width(535)
                         .Background(Colors.Green.Lighten2)
                         .AlignCenter();
 
@@ -135,41 +136,41 @@ public class FactureDocument : IDocument
             column.Item().Element(ComposePatientInfo);
             // 2. Tableau Central des Examens
             column.Item().Element(ComposeInvoiceTable);
-
-            column.Spacing(50);
-            // 3. Totaux et Résumé Financier
-            column.Item().Element(ComposeTotals);
+            column.Spacing(35);
         });
     }
 
     public void ComposePatientInfo(IContainer container)
     {
-        DateTime dateNaissance = (DateTime)_patient?.DateOfBirth;
+        DateTime dateNaissance = (DateTime)_patient.DateOfBirth;
         int age = CalculerAge(dateNaissance);
-        container.Background(Colors.Grey.Lighten4).Padding(10).Column(column =>
+        container.Column(column =>
         {
             column.Item().Row(row =>
-            { 
-                row.ConstantItem(210).Text("Patient :").NormalWeight().FontSize(11);
-                row.Spacing(2);
-                row.ConstantItem(150).Text("Date de naissance :").NormalWeight().FontSize(11);
-                row.ConstantItem(150).Text("Mode de paiement :").NormalWeight().FontSize(11);
+            {
+                row.ConstantItem(55).PaddingTop(5).Text("Patient :").SemiBold().FontSize(14);
+                row.Spacing(15);
+                row.RelativeItem(3).AlignBottom().Text($"{_patient.FirstName ?? "N/A"} {_patient.LastName ?? "N/A"}").FontSize(12).NormalWeight();
             });
-            column.Spacing(3);
+            column.Spacing(2);
             column.Item().Row(row =>
             {
-                row.ConstantItem(210).Text($"{_patient.FirstName ?? "N/A"} {_patient.LastName ?? "N/A"}").FontSize(11).SemiBold();
-                row.Spacing(2);
-                row.ConstantItem(150).Text($"{_patient.DateOfBirth:dd/MM/yyyy}").FontSize(12).SemiBold();
-                row.ConstantItem(150).Text($"{_facture.PaymentMethod}").FontSize(12).SemiBold();
+                row.ConstantItem(120).PaddingTop(3).Text("Date de naissance :").SemiBold().FontSize(14);
+                row.Spacing(10);
+                row.ConstantItem(100).AlignBottom().Text($"{_patient.DateOfBirth:dd/MM/yyyy}").FontSize(12).NormalWeight();
+                row.ConstantItem(32).AlignBottom().Text("Age :").SemiBold().FontSize(14);
+                row.ConstantItem(70).AlignBottom().PaddingLeft(5).Text($"{age} ans").NormalWeight().FontSize(12);
             });
 
-            column.Item().PaddingTop(5).Row(row =>
+            column.Item().Row(row =>
             {
-                row.ConstantItem(50).Text("Age :").NormalWeight().FontSize(11);
-                row.ConstantItem(70).PaddingLeft(5).Text($"{age} ans").SemiBold().FontSize(10);
-                row.ConstantItem(70).PaddingLeft(50).Text("Nº Tél :").NormalWeight().FontSize(11);
-                row.ConstantItem(150).PaddingLeft(5).Text($"{_patient.PhoneNumber}").SemiBold().FontSize(10);
+
+
+                row.ConstantItem(50).PaddingTop(3).Text("Nº Tél :").SemiBold().FontSize(14);
+                row.Spacing(10);
+                row.ConstantItem(170).AlignBottom().Text($"{_patient.PhoneNumber}").NormalWeight().FontSize(12);
+                row.ConstantItem(60).PaddingTop(3).Text("Adresse :").SemiBold().FontSize(14);
+                row.RelativeItem(170).AlignBottom().Text($"{_patient.Address}").NormalWeight().FontSize(12);
             });
         });
     }
@@ -177,97 +178,124 @@ public class FactureDocument : IDocument
     public void ComposeInvoiceTable(IContainer container)
     {
         var lines = _facture.FacturesExamens;
+        int AvailableContent = 21; // Assurez-vous d'avoir ce total quelque part
 
-        container.Table(table =>
-        {
-            table.ColumnsDefinition(column =>
+        container
+            .PaddingTop(-15)
+            .Border(1) // Bordure globale autour du tableau
+            .BorderColor(Colors.Black)
+            .Table(table =>
             {
-                column.ConstantColumn(70);  // Réf Examen
-                column.RelativeColumn(3);   // Description
-                column.ConstantColumn(40);  // Qté
-                column.ConstantColumn(80);  // Prix Unitaire
-                column.ConstantColumn(100);  // Montant HT
+                // Calcul des totaux basiques (assurez-vous que TotalAmountHT est peuplé dans l'entité)
+                decimal totalHT = _facture.TotalAmountHT ?? 0m;
+                decimal totalTVA = totalHT * (_facture.Tva);
+                double remise = (double)(_facture.DiscountPercent ?? 0);
+                double totalTTC = (double)totalHT + (double)totalTVA;
+                double totalWithRemise = (double)totalHT * remise;
+                double netAPayer = totalTTC - totalWithRemise;
+                double patientShare = netAPayer * (double)_facture.PatientPercent;
+                decimal amountPaid = _facture.AmountPaid ?? 0m;
+                double amountDue = netAPayer - (double)amountPaid;
+                this.netAPayer = (int)amountDue;
+
+                // Définition des colonnes (ConstantColumn est très bien ici)
+                table.ColumnsDefinition(column =>
+                {
+                    column.ConstantColumn(45);  // Réf Examen
+                    column.RelativeColumn(3);   // Description
+                    column.ConstantColumn(30);  // Qté
+                    column.ConstantColumn(80);  // Px Unitaire (4ème colonne)
+                    column.ConstantColumn(105); // Montant HT (5ème colonne)
+                });
+
+                // 1. Définition des En-têtes (Header)
+                table.Header(header =>
+                {
+                    // Appliquer BorderBottom(1) sur tout l'header pour la séparation horizontale
+                    header.Cell().BorderBottom(1).Background(Colors.Grey.Lighten3).Padding(5).Text("Réf.").Bold().Style(TextStyle.Default.FontSize(10));
+                    header.Cell().BorderBottom(1).Background(Colors.Grey.Lighten3).AlignLeft().Padding(5).Text("Désignation").Bold().Style(TextStyle.Default.FontSize(10));
+                    header.Cell().BorderBottom(1).Background(Colors.Grey.Lighten3).AlignRight().Padding(5).Text("Qté").Bold().Style(TextStyle.Default.FontSize(10));
+
+                    // 💡 Px Unitaire : Bordure Droite (Verticale)
+                    header.Cell().BorderBottom(1).BorderRight(1).BorderColor(Colors.Black)
+                        .Background(Colors.Grey.Lighten3).AlignRight().Padding(5).Text("Px Unitaire").Bold().Style(TextStyle.Default.FontSize(10));
+
+                    header.Cell().BorderBottom(1).Background(Colors.Grey.Lighten3).AlignRight().Padding(5).Text("Montant HT").Bold().Style(TextStyle.Default.FontSize(10));
+                });
+
+                // 2. Corps du tableau (Lignes d'examens)
+                foreach (var line in lines)
+                {
+                    var examen = line.Examen;
+                    decimal totalHtLigne = examen!.Price * line.Qte;
+
+                    // Lignes de données
+                    table.Cell().Padding(5).Text(examen.Reference.ToString()).FontSize(10);
+                    table.Cell().Padding(5).Text(examen.ExamenName).FontSize(10);
+                    table.Cell().AlignRight().Padding(5).Text(line.Qte.ToString()).FontSize(10);
+
+                    // 💡 Px Unitaire : Bordure Droite (Verticale)
+                    table.Cell().BorderRight(1).BorderColor(Colors.Black)
+                        .Padding(5).AlignRight().Text($"{examen.Price:0 CFA}").FontSize(10);
+
+                    table.Cell().Padding(5).AlignRight().Text($"{totalHtLigne:0 CFA}").FontSize(10);
+                }
+
+                // 💡 Ajouter une ligne vide pour étendre la bordure (si le tableau est court)
+                // Vous devez boucler sur un nombre prédéfini pour assurer une hauteur minimale,
+                // OU appliquer un style à la dernière cellule pour remplir l'espace.
+
+                // Ici, nous ajoutons une seule "cellule" qui couvre 4 colonnes, laissant 
+                while (AvailableContent > 0)
+                {
+                    table.Cell().ColumnSpan(4).BorderRight(1).Text(""); // Ligne vide pour la bordure inférieure;
+                    AvailableContent--;
+                }
+
+                // La dernière colonne est utilisée par le footer.
+
+                // --- 3. Définition du Footer (Total) ---
+                // Un footer QuestPDF utilise les Cellules standard du tableau à la fin.
+
+                // Cellules de la première ligne du Footer (Ex: Total HT)
+                table.Cell().ColumnSpan(3).BorderTop(1).Padding(2).Text("Total HT").Bold().FontSize(11).FontColor(Colors.Blue.Darken4);
+
+                // 💡 Cellule sous Px Unitaire : Garder la bordure droite
+                table.Cell().BorderRight(1).BorderTop(1).BorderColor(Colors.Black).Text("").Bold();
+
+                // Cellule sous Montant HT : Afficher le total
+                table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"{totalHT:C}").Bold().FontSize(12).FontColor(Colors.Blue.Darken4);
+
+                // Remise
+                table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text("Remise").FontSize(11);
+                table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("").Bold();
+                table.Cell().AlignRight().Padding(2).Text($"{totalWithRemise:C}").FontSize(10);
+
+                // Net à payer
+                table.Cell().ColumnSpan(3).PaddingRight(-12).BorderLeft(1).Padding(2).Text("Net à payer").Bold().FontSize(12).FontColor(Colors.Green.Darken4);
+                table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("").Bold();
+                table.Cell().AlignRight().Padding(2).Text($"{netAPayer:C}").Bold().FontSize(12).FontColor(Colors.Green.Darken4);
+
+                // Avance
+                table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text("Avance").FontSize(11);
+                table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("").Bold();
+                table.Cell().AlignRight().Padding(2).Text($"{amountPaid:C}").FontSize(10);
+
+                if (amountPaid > 0)
+                {
+                    // Reste à payer
+                    table.Cell().ColumnSpan(3).BorderLeft(1).PaddingRight(-17).Padding(2).Text("Reste à payer").FontSize(12).Bold();
+                    table.Cell().BorderBottom(1).BorderRight(1).BorderColor(Colors.Black).Text("");
+                    table.Cell().AlignRight().Padding(2).Text($"{amountDue:C}").FontSize(10);
+                }
+                else
+                {
+                    // Reste à payer
+                    table.Cell().ColumnSpan(3).BorderLeft(1).PaddingRight(-17).Padding(2).Text("Reste à payer").FontSize(12).Bold();
+                    table.Cell().BorderBottom(1).BorderRight(1).BorderColor(Colors.Black).Text("");
+                    table.Cell().AlignRight().Padding(2).Text($"0 FCFA").FontSize(10);
+                }
             });
-            // Définition des colonnes
-
-            // En-têtes du tableau
-            table.Header(header =>
-            {
-                header.Cell().BorderHorizontal(1).Background(Colors.Grey.Lighten3).BorderColor(Colors.Grey.Lighten3).BorderVertical(1).BorderColor(Colors.Black).Padding(8).Text("Référence").Bold();
-                header.Cell().BorderHorizontal(1).Background(Colors.Grey.Lighten3).BorderColor(Colors.Grey.Lighten3).BorderVertical(1).BorderColor(Colors.Black).AlignLeft().Padding(8).Text("Désignation").Bold();
-                header.Cell().BorderHorizontal(1).Background(Colors.Grey.Lighten3).BorderColor(Colors.Grey.Lighten3).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(8).Text("Qté").Bold();
-                header.Cell().BorderHorizontal(1).Background(Colors.Grey.Lighten3).BorderColor(Colors.Grey.Lighten3).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(8).Text("Px Unitaire").Bold();
-                header.Cell().BorderHorizontal(1).Background(Colors.Grey.Lighten3).BorderColor(Colors.Grey.Lighten3).BorderVertical(1).BorderColor(Colors.Black).AlignRight().Padding(8).Text("Montant HT").Bold();
-            });
-
-            // Corps du tableau (Lignes d'examens)
-            foreach (var line in lines)
-            {
-                var examen = line.Examen;
-                decimal totalHtLigne = examen!.Price * line.Qte;
-
-                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).Text(examen.Reference.ToString()).FontSize(9);
-                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).Text(examen.ExamenName).FontSize(9);
-                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).AlignRight().Padding(6).Text(line.Qte.ToString()).FontSize(9);
-                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).AlignRight().Text($"{examen.Price:N2}").FontSize(9);
-                table.Cell().BorderVertical(1).BorderColor(Colors.Grey.Lighten3).Padding(6).AlignRight().Text($"{totalHtLigne:N2}").FontSize(9);
-            }
-        });
-    }
-
-    public void ComposeTotals(IContainer container)
-    {
-        // Calcul des totaux basiques (assurez-vous que TotalAmountHT est peuplé dans l'entité)
-        decimal totalHT = _facture.TotalAmountHT ?? 0m;
-        decimal totalTVA = totalHT * (_facture.Tva);
-        double remise = (double)(_facture.DiscountPercent ?? 0);
-        double totalTTC = (double)totalHT + (double)totalTVA;
-        double totalWithRemise = (double)totalHT * remise;
-        double netAPayer = totalTTC - totalWithRemise;
-        double patientShare = netAPayer * (double)_facture.PatientPercent;
-        decimal amountPaid = _facture.AmountPaid ?? 0m;
-        double amountDue = netAPayer - (double)amountPaid;
-        this.netAPayer = (int) amountDue;
-
-
-        container.AlignRight().PaddingRight(5).Column(column =>
-        {
-            column.Spacing(5);
-
-            // Total HT
-            column.Item().Row(row =>
-            {
-                row.RelativeItem().AlignRight().PaddingRight(10).Text("TOTAL HT :").SemiBold().FontSize(11);
-                row.ConstantItem(80).AlignRight().Text($"{totalHT:C}").SemiBold();
-            });
-
-            // Remise
-            column.Item().Row(row =>
-            {
-                row.RelativeItem().AlignRight().PaddingRight(10).Text($"Remise ({remise:P0}) :").SemiBold().FontSize(11).FontColor(Colors.Blue.Darken2);
-                row.ConstantItem(80).AlignRight().Text($"{totalWithRemise:C}").SemiBold().FontSize(10).FontColor(Colors.Blue.Darken2);
-            });
-            // Net à payer
-            column.Item().Row(row =>
-            {
-                row.RelativeItem().AlignRight().PaddingRight(10).Text($"Net à payer :").SemiBold().FontSize(11);
-                row.ConstantItem(80).AlignRight().Text($"{netAPayer:C}").SemiBold().FontSize(10);
-            });
-            
-            // Montant Payé
-            column.Item().Row(row =>
-            {
-                row.RelativeItem().AlignRight().PaddingRight(10).Text("Avance :").SemiBold().FontSize(11);
-                row.ConstantItem(80).AlignRight().Text($"{amountPaid:C}").SemiBold().FontSize(10);
-            });
-
-            // Reste à Payer
-            column.Item().Row(row =>
-            {
-                row.RelativeItem().AlignRight().PaddingRight(10).Text("Reste à Payer :").ExtraBold().FontSize(13);
-                row.ConstantItem(90).AlignRight().Text($"{amountDue:C}").ExtraBold().FontColor(Colors.Red.Darken2);
-            });
-        });
     }
     public static int CalculerAge(DateTime dateDeNaissance)
     {

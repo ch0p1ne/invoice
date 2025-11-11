@@ -96,6 +96,9 @@ namespace invoice.ViewModels
         [RelayCommand]
         public async Task SubmitModifie(Examen examen)
         {
+            // TO DO !!! Les imformations qui sont dans les formulaire NE SONT PAS liée 
+            // à Consultation mais plutot a un selectedItem !!!, il faut que je prennent
+            // ces données et que j'initialise Consultation avec.
             using var context = new ClimaDbContext();
             context.Examens.Update(examen);
 

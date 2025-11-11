@@ -21,7 +21,7 @@ namespace invoice.ViewModels
                 SetProperty(ref _isExpandableAddForm, value);
             }
         }
-        private readonly string _title = "Prix Homologue";
+        private readonly string _title = "Consultation";
         public string Title
         {
             get => _title;

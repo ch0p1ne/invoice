@@ -498,7 +498,7 @@ namespace invoice.ViewModels
         public void GenererFacturePdf()
         {
             var folderPath = "c:/clima-g/factures/";
-            var fileName = $"{Facture.Reference}_{Patient.FirstName}_{Patient.LastName}.pdf";
+            var fileName = $"{Facture.Reference}_{Patient?.FirstName}_{Patient?.LastName}.pdf";
 
             // 1. Définir le chemin complet du fichier
             string filePath = Path.Combine(folderPath, fileName);
