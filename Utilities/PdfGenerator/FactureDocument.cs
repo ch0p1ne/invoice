@@ -225,6 +225,7 @@ public class FactureDocument : IDocument
                 // 2. Corps du tableau (Lignes d'examens)
                 foreach (var line in lines)
                 {
+                    AvailableContent--;
                     var examen = line.Examen;
                     decimal totalHtLigne = examen!.Price * line.Qte;
 
