@@ -94,7 +94,7 @@ public class FactureDocument : IDocument
                     column.Item().Text(x =>
                     {
                         x.AlignCenter();
-                        x.Span($"Arrété la présente facture à la somme de :\n{NumberToWordsExtension.ToWords(netAPayer)} FCFA").FontSize(11).Light();
+                        x.Span($"Arrété la présente facture à la somme de : {NumberToWordsExtension.ToWords(netAPayer)} FCFA").FontSize(11).Light();
                     });
                     column.Item().Text(x =>
                     {
@@ -151,7 +151,7 @@ public class FactureDocument : IDocument
             {
                 row.ConstantItem(55).PaddingTop(15).Text("Patient :").SemiBold().FontSize(14);
                 row.Spacing(15);
-                row.RelativeItem(3).AlignBottom().Text($"{_patient.FirstName ?? "N/A"} {_patient.LastName ?? "N/A"}").FontSize(12).NormalWeight();
+                row.RelativeItem(3).AlignBottom().Text($"{_patient.LastName ?? "N/A"} {_patient.FirstName ?? "N/A"}").FontSize(12).NormalWeight();
             });
             column.Spacing(2);
             column.Item().Row(row =>
@@ -272,7 +272,7 @@ public class FactureDocument : IDocument
                 table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"{totalHT:C}").Bold().FontSize(12).FontColor(Colors.Blue.Darken4);
 
                 // Remise
-                table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text("Remise").FontSize(12);
+                table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text($"Remise ({_facture.DiscountPercent:P0})").FontSize(12);
                 table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("").Bold();
                 table.Cell().AlignRight().Padding(2).Text($"{totalWithRemise:C}").FontSize(10);
 
