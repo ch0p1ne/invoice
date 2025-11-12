@@ -177,7 +177,7 @@ public class FactureDocument : IDocument
     public void ComposeInvoiceTable(IContainer container)
     {
         var lines = _facture.FacturesExamens;
-        int AvailableContent = 23; // Assurez-vous d'avoir ce total quelque part
+        int AvailableContent = 20; // Assurez-vous d'avoir ce total quelque part
 
         container
             .PaddingTop(-15)
@@ -225,7 +225,7 @@ public class FactureDocument : IDocument
                 // 2. Corps du tableau (Lignes d'examens)
                 foreach (var line in lines)
                 {
-                    AvailableContent--;
+                    
                     var examen = line.Examen;
                     decimal totalHtLigne = examen!.Price * line.Qte;
 
@@ -239,6 +239,7 @@ public class FactureDocument : IDocument
                         .Padding(5).AlignRight().Text($"{examen.Price:0 CFA}").FontSize(10);
 
                     table.Cell().Padding(5).AlignRight().Text($"{totalHtLigne:0 CFA}").FontSize(10);
+                    AvailableContent--;
                 }
 
                 // 💡 Ajouter une ligne vide pour étendre la bordure (si le tableau est court)
@@ -246,7 +247,7 @@ public class FactureDocument : IDocument
                 // OU appliquer un style à la dernière cellule pour remplir l'espace.
 
                 // Ici, nous ajoutons une seule "cellule" qui couvre 4 colonnes, laissant 
-                while (AvailableContent > 0)
+                while (AvailableContent > 1)
                 {
                     table.Cell().ColumnSpan(4).BorderRight(1).Text(""); // Ligne vide pour la bordure inférieure;
                     AvailableContent--;
