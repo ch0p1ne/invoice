@@ -111,7 +111,7 @@ namespace invoice.ViewModels
         public async Task<bool> DoRegister()
         {
             using var context = new ClimaDbContext();
-            bool exits = await context.Users.AnyAsync(u => u.Account_name == "Thomas Souah");
+            bool exits = await context.Users.AnyAsync(u => u.Account_name == "Thomas");
             if(exits)
                 return false;
 
@@ -121,7 +121,7 @@ namespace invoice.ViewModels
 
             User user = new User()
             {
-                Account_name = "Thomas Souah",
+                Account_name = "Thomas",
                 Salt = salt,
                 PasswordHash = hash,
                 Email = "souahthomas@prot.com",

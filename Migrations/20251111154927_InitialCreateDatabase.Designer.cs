@@ -12,8 +12,8 @@ using invoice.Context;
 namespace invoice.Migrations
 {
     [DbContext(typeof(ClimaDbContext))]
-    [Migration("20251019204858_RenameColumnRemiseToDiscountPercentOfInvoiceTable")]
-    partial class RenameColumnRemiseToDiscountPercentOfInvoiceTable
+    [Migration("20251111154927_InitialCreateDatabase")]
+    partial class InitialCreateDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,6 +51,27 @@ namespace invoice.Migrations
                     b.ToTable("Assurances");
                 });
 
+            modelBuilder.Entity("invoice.Models.Categorie", b =>
+                {
+                    b.Property<int>("CategorieId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategorieId"));
+
+                    b.Property<string>("CategorieDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CategorieName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(55)");
+
+                    b.HasKey("CategorieId");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("invoice.Models.Consultation", b =>
                 {
                     b.Property<int>("ConsultationId")
@@ -60,7 +81,8 @@ namespace invoice.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ConsultationId"));
 
                     b.Property<string>("ConsultationName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(99)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -68,8 +90,9 @@ namespace invoice.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Reference")
-                        .HasColumnType("int");
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(8)");
 
                     b.HasKey("ConsultationId");
 
@@ -88,13 +111,14 @@ namespace invoice.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ExamenName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(99)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Reference")
-                        .HasColumnType("int");
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(8)");
 
                     b.HasKey("ExamenId");
 
@@ -135,7 +159,7 @@ namespace invoice.Migrations
 
                     b.Property<string>("Reference")
                         .IsRequired()
-                        .HasColumnType("nvarchar(8)");
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");
@@ -259,18 +283,18 @@ namespace invoice.Migrations
 
             modelBuilder.Entity("invoice.Models.FactureExamen", b =>
                 {
-                    b.Property<int>("ExamensExamenId")
+                    b.Property<int>("ExamenId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FacturesFactureId")
+                    b.Property<int>("FactureId")
                         .HasColumnType("int");
 
                     b.Property<int>("Qte")
                         .HasColumnType("int");
 
-                    b.HasKey("ExamensExamenId", "FacturesFactureId");
+                    b.HasKey("ExamenId", "FactureId");
 
-                    b.HasIndex("FacturesFactureId");
+                    b.HasIndex("FactureId");
 
                     b.ToTable("FacturesExamens");
                 });
@@ -354,8 +378,8 @@ namespace invoice.Migrations
                     b.Property<int?>("AssuranceId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("AssuranceNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("AssuranceNumber")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -367,9 +391,11 @@ namespace invoice.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
@@ -384,6 +410,37 @@ namespace invoice.Migrations
                         .HasFilter("[AssuranceNumber] IS NOT NULL");
 
                     b.ToTable("Patients");
+                });
+
+            modelBuilder.Entity("invoice.Models.PrixHomologue", b =>
+                {
+                    b.Property<int>("ElementId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ElementId"));
+
+                    b.Property<int>("CategorieId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ElementName")
+                        .HasColumnType("nvarchar(99)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(8)");
+
+                    b.HasKey("ElementId");
+
+                    b.HasIndex("CategorieId");
+
+                    b.ToTable("PrixHomologues");
                 });
 
             modelBuilder.Entity("invoice.Models.Role", b =>
@@ -540,17 +597,21 @@ namespace invoice.Migrations
 
             modelBuilder.Entity("invoice.Models.FactureExamen", b =>
                 {
-                    b.HasOne("invoice.Models.Examen", null)
+                    b.HasOne("invoice.Models.Examen", "Examen")
                         .WithMany("FacturesExamens")
-                        .HasForeignKey("ExamensExamenId")
+                        .HasForeignKey("ExamenId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("invoice.Models.Facture", null)
-                        .WithMany("FacturseExamens")
-                        .HasForeignKey("FacturesFactureId")
+                    b.HasOne("invoice.Models.Facture", "Facture")
+                        .WithMany("FacturesExamens")
+                        .HasForeignKey("FactureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Examen");
+
+                    b.Navigation("Facture");
                 });
 
             modelBuilder.Entity("invoice.Models.Patient", b =>
@@ -560,6 +621,17 @@ namespace invoice.Migrations
                         .HasForeignKey("AssuranceId");
 
                     b.Navigation("Assurance");
+                });
+
+            modelBuilder.Entity("invoice.Models.PrixHomologue", b =>
+                {
+                    b.HasOne("invoice.Models.Categorie", "Categorie")
+                        .WithMany("PrixHomologues")
+                        .HasForeignKey("CategorieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Categorie");
                 });
 
             modelBuilder.Entity("invoice.Models.UserRole", b =>
@@ -582,6 +654,11 @@ namespace invoice.Migrations
                     b.Navigation("Patients");
                 });
 
+            modelBuilder.Entity("invoice.Models.Categorie", b =>
+                {
+                    b.Navigation("PrixHomologues");
+                });
+
             modelBuilder.Entity("invoice.Models.Consultation", b =>
                 {
                     b.Navigation("FacturesConsultations");
@@ -598,7 +675,7 @@ namespace invoice.Migrations
 
                     b.Navigation("FacturesConsultations");
 
-                    b.Navigation("FacturseExamens");
+                    b.Navigation("FacturesExamens");
                 });
 
             modelBuilder.Entity("invoice.Models.Medecin", b =>

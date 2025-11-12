@@ -56,13 +56,13 @@ public class FactureDocument : IDocument
     public void ComposeHeader(IContainer container)
     {
         container
-            .Height(140)
+            .Height(105)
             .Column(column =>
             {
-                column.Spacing(10);
-                column.Item().Image(imagePath).FitWidth();
+                column.Spacing(0);
+                column.Item().PaddingTop(-20).Image(imagePath).FitWidth();
 
-                column.Item().PaddingTop(-7).Row(row =>
+                column.Item().Row(row =>
                 {
                     row.RelativeItem(3).AlignLeft().AlignBottom().Column(column =>
                     {
@@ -130,25 +130,24 @@ public class FactureDocument : IDocument
     {
         container.Column(column =>
         {
-            column.Spacing(100);
+            column.Spacing(30);
 
             // 1. Informations du Patient
             column.Item().Element(ComposePatientInfo);
             // 2. Tableau Central des Examens
             column.Item().Element(ComposeInvoiceTable);
-            column.Spacing(35);
         });
     }
 
     public void ComposePatientInfo(IContainer container)
     {
-        DateTime dateNaissance = (DateTime)_patient.DateOfBirth;
+        DateTime dateNaissance = (DateTime)_patient.DateOfBirth!;
         int age = CalculerAge(dateNaissance);
         container.Column(column =>
         {
             column.Item().Row(row =>
             {
-                row.ConstantItem(55).PaddingTop(5).Text("Patient :").SemiBold().FontSize(14);
+                row.ConstantItem(55).PaddingTop(15).Text("Patient :").SemiBold().FontSize(14);
                 row.Spacing(15);
                 row.RelativeItem(3).AlignBottom().Text($"{_patient.FirstName ?? "N/A"} {_patient.LastName ?? "N/A"}").FontSize(12).NormalWeight();
             });
@@ -178,7 +177,7 @@ public class FactureDocument : IDocument
     public void ComposeInvoiceTable(IContainer container)
     {
         var lines = _facture.FacturesExamens;
-        int AvailableContent = 21; // Assurez-vous d'avoir ce total quelque part
+        int AvailableContent = 23; // Assurez-vous d'avoir ce total quelque part
 
         container
             .PaddingTop(-15)
@@ -267,7 +266,7 @@ public class FactureDocument : IDocument
                 table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"{totalHT:C}").Bold().FontSize(12).FontColor(Colors.Blue.Darken4);
 
                 // Remise
-                table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text("Remise").FontSize(11);
+                table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text("Remise").FontSize(12);
                 table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("").Bold();
                 table.Cell().AlignRight().Padding(2).Text($"{totalWithRemise:C}").FontSize(10);
 
@@ -277,24 +276,28 @@ public class FactureDocument : IDocument
                 table.Cell().AlignRight().Padding(2).Text($"{netAPayer:C}").Bold().FontSize(12).FontColor(Colors.Green.Darken4);
 
                 // Avance
-                table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text("Avance").FontSize(11);
+                table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text("Avance").FontSize(12);
                 table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("").Bold();
                 table.Cell().AlignRight().Padding(2).Text($"{amountPaid:C}").FontSize(10);
 
                 if (amountPaid > 0)
                 {
                     // Reste à payer
-                    table.Cell().ColumnSpan(3).BorderLeft(1).PaddingRight(-17).Padding(2).Text("Reste à payer").FontSize(12).Bold();
-                    table.Cell().BorderBottom(1).BorderRight(1).BorderColor(Colors.Black).Text("");
-                    table.Cell().AlignRight().Padding(2).Text($"{amountDue:C}").FontSize(10);
+                    table.Cell().ColumnSpan(3).BorderTop(1).PaddingRight(-17).Padding(2).Text("Reste à payer").FontSize(12).Bold();
+                    table.Cell().BorderTop(1).BorderRight(1).BorderColor(Colors.Black).Text("");
+                    table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"{amountDue:C}").FontSize(10);
                 }
                 else
                 {
                     // Reste à payer
-                    table.Cell().ColumnSpan(3).BorderLeft(1).PaddingRight(-17).Padding(2).Text("Reste à payer").FontSize(12).Bold();
-                    table.Cell().BorderBottom(1).BorderRight(1).BorderColor(Colors.Black).Text("");
-                    table.Cell().AlignRight().Padding(2).Text($"0 FCFA").FontSize(10);
+                    table.Cell().ColumnSpan(3).BorderTop(1).PaddingRight(-17).Padding(2).Text("Reste à payer").FontSize(12);
+                    table.Cell().BorderTop(1).BorderRight(1).BorderColor(Colors.Black).Text("");
+                    table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"0 FCFA").FontSize(10);
                 }
+                // Mode de paiement
+                table.Cell().ColumnSpan(3).PaddingRight(-17).Padding(2).Text("Mode de paiement").FontSize(12).Bold();
+                table.Cell().BorderBottom(1).BorderRight(1).BorderColor(Colors.Black).Text("");
+                table.Cell().AlignRight().Padding(2).Text($"{_facture.PaymentMethod}").FontSize(12);
             });
     }
     public static int CalculerAge(DateTime dateDeNaissance)

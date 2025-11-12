@@ -3,6 +3,7 @@ using invoice.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +28,8 @@ namespace invoice.Models
             set => SetProperty(ref _lastName, InputValidator.ToUpperString(value) ?? value);
         }
         public DateTime? DateOfBirth { get; set; } = DateTime.MinValue;
+
+        [Column(TypeName = "nvarchar(13)")]
         public string? PhoneNumber
         { 
             get => _phoneNumber;

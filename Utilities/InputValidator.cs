@@ -43,7 +43,12 @@ namespace invoice.Utilities
             {
                 return string.Empty;
             }
-
+            // Empêche plus de 10 caractère
+            if (rawInput?.Length > 13)
+            {
+                rawInput = CancelRecentInputChar(rawInput);
+                return rawInput;
+            }
             // 1. Nettoyer la saisie : Supprimer les espaces et les caractères non numériques
             StringBuilder digitsOnly = new StringBuilder();
             foreach (char c in rawInput)

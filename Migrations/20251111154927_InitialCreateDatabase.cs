@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace invoice.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDBCreate : Migration
+    public partial class InitialCreateDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -27,13 +27,27 @@ namespace invoice.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    CategorieId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CategorieName = table.Column<string>(type: "nvarchar(55)", nullable: false),
+                    CategorieDescription = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.CategorieId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Consultations",
                 columns: table => new
                 {
                     ConsultationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Reference = table.Column<int>(type: "int", nullable: false),
-                    ConsultationName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Reference = table.Column<string>(type: "nvarchar(8)", nullable: false),
+                    ConsultationName = table.Column<string>(type: "nvarchar(99)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -48,8 +62,8 @@ namespace invoice.Migrations
                 {
                     ExamenId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Reference = table.Column<int>(type: "int", nullable: false),
-                    ExamenName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Reference = table.Column<string>(type: "nvarchar(8)", nullable: false),
+                    ExamenName = table.Column<string>(type: "nvarchar(99)", nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -123,7 +137,8 @@ namespace invoice.Migrations
                     UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Account_name = table.Column<string>(type: "nvarchar(75)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Salt = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(100)", nullable: true),
                     Phone_number_one = table.Column<string>(type: "nvarchar(15)", nullable: false),
                     Created_at = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -139,15 +154,15 @@ namespace invoice.Migrations
                 {
                     PatientId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AssuranceNumber = table.Column<int>(type: "int", nullable: false),
+                    AssuranceNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AssuranceId = table.Column<int>(type: "int", nullable: false)
+                    AssuranceId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -156,7 +171,29 @@ namespace invoice.Migrations
                         name: "FK_Patients_Assurances_AssuranceId",
                         column: x => x.AssuranceId,
                         principalTable: "Assurances",
-                        principalColumn: "AssuranceId",
+                        principalColumn: "AssuranceId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PrixHomologues",
+                columns: table => new
+                {
+                    ElementId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Reference = table.Column<string>(type: "nvarchar(8)", nullable: false),
+                    ElementName = table.Column<string>(type: "nvarchar(99)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CategorieId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PrixHomologues", x => x.ElementId);
+                    table.ForeignKey(
+                        name: "FK_PrixHomologues_Categories_CategorieId",
+                        column: x => x.CategorieId,
+                        principalTable: "Categories",
+                        principalColumn: "CategorieId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -190,18 +227,17 @@ namespace invoice.Migrations
                 {
                     FactureId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Reference = table.Column<string>(type: "nvarchar(8)", nullable: false),
+                    Reference = table.Column<string>(type: "nvarchar(15)", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
-                    Total_amount = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    TotalAmountHT = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
                     Tva = table.Column<decimal>(type: "decimal(3,2)", nullable: false),
                     Css = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Assurance_coverage_percent = table.Column<decimal>(type: "decimal(3,2)", nullable: false),
-                    Patient_responsibility = table.Column<decimal>(type: "decimal(3,2)", nullable: false),
-                    Amount_paid = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    Discount_percent = table.Column<decimal>(type: "decimal(3,2)", nullable: false),
-                    Discount_flat = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    InsuranceCoveragePercent = table.Column<decimal>(type: "decimal(3,2)", nullable: true),
+                    PatientPercent = table.Column<decimal>(type: "decimal(3,2)", nullable: false),
+                    AmountPaid = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    DiscountPercent = table.Column<decimal>(type: "decimal(3,2)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: true),
-                    Payment_method = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
@@ -294,22 +330,22 @@ namespace invoice.Migrations
                 name: "FacturesExamens",
                 columns: table => new
                 {
-                    ExamensExamenId = table.Column<int>(type: "int", nullable: false),
-                    FacturesFactureId = table.Column<int>(type: "int", nullable: false),
+                    FactureId = table.Column<int>(type: "int", nullable: false),
+                    ExamenId = table.Column<int>(type: "int", nullable: false),
                     Qte = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FacturesExamens", x => new { x.ExamensExamenId, x.FacturesFactureId });
+                    table.PrimaryKey("PK_FacturesExamens", x => new { x.ExamenId, x.FactureId });
                     table.ForeignKey(
-                        name: "FK_FacturesExamens_Examens_ExamensExamenId",
-                        column: x => x.ExamensExamenId,
+                        name: "FK_FacturesExamens_Examens_ExamenId",
+                        column: x => x.ExamenId,
                         principalTable: "Examens",
                         principalColumn: "ExamenId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FacturesExamens_Factures_FacturesFactureId",
-                        column: x => x.FacturesFactureId,
+                        name: "FK_FacturesExamens_Factures_FactureId",
+                        column: x => x.FactureId,
                         principalTable: "Factures",
                         principalColumn: "FactureId",
                         onDelete: ReferentialAction.Cascade);
@@ -361,9 +397,9 @@ namespace invoice.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FacturesExamens_FacturesFactureId",
+                name: "IX_FacturesExamens_FactureId",
                 table: "FacturesExamens",
-                column: "FacturesFactureId");
+                column: "FactureId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Patients_AssuranceId",
@@ -374,7 +410,13 @@ namespace invoice.Migrations
                 name: "IX_Patients_AssuranceNumber",
                 table: "Patients",
                 column: "AssuranceNumber",
-                unique: true);
+                unique: true,
+                filter: "[AssuranceNumber] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrixHomologues_CategorieId",
+                table: "PrixHomologues",
+                column: "CategorieId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Roles_Role_name",
@@ -410,6 +452,9 @@ namespace invoice.Migrations
                 name: "GreetingMessages");
 
             migrationBuilder.DropTable(
+                name: "PrixHomologues");
+
+            migrationBuilder.DropTable(
                 name: "UsersRoles");
 
             migrationBuilder.DropTable(
@@ -423,6 +468,9 @@ namespace invoice.Migrations
 
             migrationBuilder.DropTable(
                 name: "Factures");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Roles");
