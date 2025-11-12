@@ -131,7 +131,7 @@
                                Margin="0,0,15,0"/>
                     <Button Style="{StaticResource buttonCircleStyle}"
                             Height="32"
-                            Command="{Binding AddExamCommand}">
+                            Command="{Binding AddInvoiceExamCommand}">
                         <Image Source="/Assets/icons/add.png"  />
                     </Button>
                     <StackPanel Margin="10,0,0,0" Orientation="Horizontal" VerticalAlignment="Center">

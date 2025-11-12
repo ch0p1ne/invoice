@@ -210,7 +210,7 @@ namespace invoice.ViewModels
                 {
                     _selectedAvailableExam = value;
                     OnPropertyChanged(nameof(SelectedAvailableExam));
-                    AddExamCommand.NotifyCanExecuteChanged();
+                    AddInvoiceExamCommand.NotifyCanExecuteChanged();
                 }
             }
         }
@@ -234,8 +234,8 @@ namespace invoice.ViewModels
             CurrentPartOfNewFacture = viewName;
             GetExamenList().ConfigureAwait(false);
         }
-        [RelayCommand(CanExecute = nameof(CanExecuteAddExam))]
-        public void AddExam()
+        [RelayCommand(CanExecute = nameof(CanExecuteAddInvoiceExam))]
+        public void AddInvoiceExam()
         {
             if (SelectedAvailableExam != null)
             {
@@ -258,6 +258,7 @@ namespace invoice.ViewModels
                 SelectedAvailableExam = null;
                 CalculAllIndexedPrice();
             }
+            CreateInvoiceCommand.NotifyCanExecuteChanged();
         }
         [RelayCommand]
         public void removeInvoiceExam(object parameter)
@@ -267,12 +268,13 @@ namespace invoice.ViewModels
                 InvoiceExams.Remove(invoiceExamnsToRemove);
                 CalculAllIndexedPrice();
             }
+            CreateInvoiceCommand.NotifyCanExecuteChanged();
         }
         
         
         //  H A R D - H A R D
         // Fonction à comprendre absolument
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanExecuteCreateFact))]
         public async Task CreateInvoice()
         {
             if (!InvoiceExams.Any())
@@ -490,10 +492,14 @@ namespace invoice.ViewModels
                 throw new System.InvalidOperationException("Erreur lors du chargement des assurances", ex);
             }
         }
-        private bool CanExecuteAddExam()
+        private bool CanExecuteAddInvoiceExam()
         {
             // Le bouton est actif SEULEMENT si un examen est sélectionné dans le ComboBox
             return SelectedAvailableExam != null;
+        }
+        private bool CanExecuteCreateFact()
+        {
+            return InvoiceExams.Count > 0;
         }
         public void GenererFacturePdf()
         {
