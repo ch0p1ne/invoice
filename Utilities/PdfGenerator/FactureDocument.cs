@@ -1,13 +1,15 @@
-﻿using QuestPDF.Fluent;
+﻿using Humanizer;
+using invoice.Models; // Assurez-vous d'avoir ce using pour accéder à Facture, Examen, FactureExamen
+using invoice.ViewModels;
+using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using invoice.Models; // Assurez-vous d'avoir ce using pour accéder à Facture, Examen, FactureExamen
 using System.IO;
-using Humanizer;
+using System.Windows.Shapes;
 
 public class FactureDocument : IDocument
 {
-    private string imagePath = Path.Combine(AppContext.BaseDirectory, "Assets", "img", "headerPDF.png");
+    private string imagePath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets", "img", "headerPDF.png");
     private readonly Facture _facture;
     private readonly Patient _patient;
     private readonly User _user;
@@ -177,7 +179,18 @@ public class FactureDocument : IDocument
     public void ComposeInvoiceTable(IContainer container)
     {
         var lines = _facture.FacturesExamens;
-        int AvailableContent = 20; // Assurez-vous d'avoir ce total quelque part
+        int AvailableContent = 16;
+        // Calcul des totaux basiques (assurez-vous que TotalAmountHT est peuplé dans l'entité)
+        decimal totalHT = _facture.TotalAmountHT ?? 0m;
+        decimal totalTVA = totalHT * (_facture.Tva);
+        double remise = (double)(_facture.DiscountPercent ?? 0);
+        double totalTTC = (double)totalHT + (double)totalTVA;
+        double totalWithRemise = (double)totalHT * remise;
+        double netAPayer = totalTTC - totalWithRemise;
+        double patientShare = netAPayer * (double)_facture.PatientPercent;
+        decimal amountPaid = _facture.AmountPaid ?? 0m;
+        double amountDue = netAPayer - (double)amountPaid;
+        this.netAPayer = (int)amountDue;
 
         container
             .PaddingTop(-15)
@@ -185,17 +198,7 @@ public class FactureDocument : IDocument
             .BorderColor(Colors.Black)
             .Table(table =>
             {
-                // Calcul des totaux basiques (assurez-vous que TotalAmountHT est peuplé dans l'entité)
-                decimal totalHT = _facture.TotalAmountHT ?? 0m;
-                decimal totalTVA = totalHT * (_facture.Tva);
-                double remise = (double)(_facture.DiscountPercent ?? 0);
-                double totalTTC = (double)totalHT + (double)totalTVA;
-                double totalWithRemise = (double)totalHT * remise;
-                double netAPayer = totalTTC - totalWithRemise;
-                double patientShare = netAPayer * (double)_facture.PatientPercent;
-                decimal amountPaid = _facture.AmountPaid ?? 0m;
-                double amountDue = netAPayer - (double)amountPaid;
-                this.netAPayer = (int)amountDue;
+                
 
                 // Définition des colonnes (ConstantColumn est très bien ici)
                 table.ColumnsDefinition(column =>
@@ -225,7 +228,7 @@ public class FactureDocument : IDocument
                 // 2. Corps du tableau (Lignes d'examens)
                 foreach (var line in lines)
                 {
-                    
+                    AvailableContent--;
                     var examen = line.Examen;
                     decimal totalHtLigne = examen!.Price * line.Qte;
 
@@ -239,7 +242,7 @@ public class FactureDocument : IDocument
                         .Padding(5).AlignRight().Text($"{examen.Price:0 CFA}").FontSize(10);
 
                     table.Cell().Padding(5).AlignRight().Text($"{totalHtLigne:0 CFA}").FontSize(10);
-                    AvailableContent--;
+                    
                 }
 
                 // 💡 Ajouter une ligne vide pour étendre la bordure (si le tableau est court)
@@ -247,16 +250,17 @@ public class FactureDocument : IDocument
                 // OU appliquer un style à la dernière cellule pour remplir l'espace.
 
                 // Ici, nous ajoutons une seule "cellule" qui couvre 4 colonnes, laissant 
-                while (AvailableContent > 1)
+                while(AvailableContent > 0)
                 {
-                    table.Cell().ColumnSpan(4).BorderRight(1).Text(""); // Ligne vide pour la bordure inférieure;
                     AvailableContent--;
+                    table.Cell().Padding(5).Text("").FontSize(10); // Ligne vide pour la bordure inférieure;
+                    table.Cell().Padding(5).Text("").FontSize(10);
+                    table.Cell().Padding(5).Text("").FontSize(10);
+                    table.Cell().BorderRight(1).BorderColor(Colors.Black)
+                        .Padding(5).AlignRight().Text("").FontSize(10);
+
+                    table.Cell().Padding(5).AlignRight().Text("").FontSize(10);
                 }
-
-                // La dernière colonne est utilisée par le footer.
-
-                // --- 3. Définition du Footer (Total) ---
-                // Un footer QuestPDF utilise les Cellules standard du tableau à la fin.
 
                 // Cellules de la première ligne du Footer (Ex: Total HT)
                 table.Cell().ColumnSpan(3).BorderTop(1).Padding(2).Text("Total HT").Bold().FontSize(11).FontColor(Colors.Blue.Darken4);
