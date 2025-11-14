@@ -17,7 +17,7 @@ namespace invoice.ViewModels
     {
         private bool _isExpandableAddForm = false;
         public bool IsExpandableAddForm
-        { 
+        {
             get => _isExpandableAddForm;
             set
             {
@@ -35,30 +35,71 @@ namespace invoice.ViewModels
         public bool IsEditable
         {
             get => _isEditable;
-            set => SetProperty(ref _isEditable, value); 
-        }
-        private bool _isVisible = false;
-        public bool IsVisible
-        {
-            get => _isVisible;
-            set => SetProperty(ref _isVisible, value);
+            set => SetProperty(ref _isEditable, value);
         }
         private string _currentCrudOperation = "crudList";
         public string CurrentCrudOperation
         {
             get => _currentCrudOperation;
-            set 
-            { 
+            set
+            {
                 _currentCrudOperation = value;
                 OnPropertyChanged(nameof(CurrentCrudOperation));
             }
         }
-        public ObservableCollection<Examen> Examens { get; set; } = new ObservableCollection<Examen>();
-        public Examen Examen { get; set; } = new Examen();
 
+
+        public ObservableCollection<Examen> Examens { get; set; } = new ObservableCollection<Examen>();
+        private Examen _examen = new();
+        public Examen Examen
+        {
+            get => _examen;
+            set { SetProperty(ref _examen, value); DeleteExamCommand.NotifyCanExecuteChanged(); }
+        }
+
+        // Pour la validation
+        private string _examenName = string.Empty;
+        public string ExamenName
+        {
+            get => _examenName;
+            set
+            {
+                SetProperty(ref _examenName, InputValidator.ToUpperString(value) ?? string.Empty);
+                CreateExamenCommand.NotifyCanExecuteChanged();
+                ClearExamenCommand.NotifyCanExecuteChanged();
+            }
+        }
+        private string _reference = string.Empty;
+        public string Reference
+        {
+            get => _reference;
+            set
+            {
+                if (InputValidator.IsValidReferenceString(value))
+                {
+                    SetProperty(ref _reference, InputValidator.ToUpperString(value) ?? string.Empty);
+                    CreateExamenCommand.NotifyCanExecuteChanged();
+                    ClearExamenCommand.NotifyCanExecuteChanged();
+                }
+            }
+        }
+
+        private decimal _price = decimal.Zero;
+        public decimal Price
+        {
+            get => _price;
+            set
+            {
+                SetProperty(ref _price, InputValidator.ValidPriceString(value));
+                CreateExamenCommand.NotifyCanExecuteChanged();
+                ClearExamenCommand.NotifyCanExecuteChanged();
+            }
+        }
+
+
+        // Constructor
         public ExamenVM()
         {
-            
             LoadExamensasync().ConfigureAwait(false);
         }
 
@@ -89,43 +130,46 @@ namespace invoice.ViewModels
         }
 
         [RelayCommand]
-        public void ChangeVisibility()
-        {
-            IsVisible = true;
-        }
-        [RelayCommand]
         public async Task SubmitModifie(Examen examen)
         {
-            // TO DO !!! Les imformations qui sont dans les formulaire NE SONT PAS liée 
-            // à Consultation mais plutot a un selectedItem !!!, il faut que je prennent
-            // ces données et que j'initialise Consultation avec.
             using var context = new ClimaDbContext();
             context.Examens.Update(examen);
 
             await context.SaveChangesAsync();
+            var MessageBoxService = new ModelOpenner("Modification correctement accomplie");
             IsEditable = !IsEditable;
-        }
-        [RelayCommand]
-        public void Editable()
-        { 
-            IsEditable = !IsEditable;
-        }
-        [RelayCommand]
-        public void AddExamenPage()
-        {
-            CurrentCrudOperation = "crudAdd";
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanExecuteEditableExam))]
+        public void EditableExam(Examen examen)
+        {
+            IsEditable = !IsEditable;
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExecuteDeleteExam))]
+        public async Task DeleteExam(Examen examen)
+        {
+            using var context = new ClimaDbContext();
+            context.Examens.Remove(examen);
+            await context.SaveChangesAsync();
+            var MessageBoxService = new ModelOpenner("Suppression correctement accomplie");
+            Examens.Remove(examen);
+            IsEditable = false;
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExecuteCreateExamen))]
         public async Task CreateExamen()
         {
             using var context = new ClimaDbContext();
+            Examen.ExamenName = ExamenName.Trim();
+            Examen.Reference = Reference;
+            Examen.Price = Price;
 
             context.Examens.Add(Examen);
 
             await context.SaveChangesAsync();
 
-            var MessageBoxService = new ModelOpenner("Opération correctement accomplie");
+            var MessageBoxService = new ModelOpenner("Création correctement accomplie");
 
             var dispatcher2 = System.Windows.Application.Current?.Dispatcher;
             if (dispatcher2 != null && !dispatcher2.CheckAccess())
@@ -134,27 +178,52 @@ namespace invoice.ViewModels
                 {
                     Examens.Add(Examen);
                     ClearExamen();
+                    Examen = new Examen();
+                    IsExpandableAddForm = false;
                 });
             }
             else
             {
                 Examens.Add(Examen);
                 ClearExamen();
+                Examen = new Examen();
+                IsExpandableAddForm = false;
             }
         }
 
-        [RelayCommand]
-        public void UndoAddExamen()
-        {
-            CurrentCrudOperation = "crudList";
-        }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanExecuteClearExamen))]
         public void ClearExamen()
         {
-            Examen = new();
-            IsExpandableAddForm = false;
+            ExamenName = string.Empty;
+            Reference = string.Empty;
+            Price = 0m;
         }
 
+
+        // CanExecute method 
+        public bool CanExecuteCreateExamen()
+        {
+            return !(ExamenName.Length < 2 || Reference.Length < 3 || Price < 0m);
+        }
+        public bool CanExecuteSubmitModifie(Examen examen)
+        {
+            if(examen == null)
+                return false;
+            return !(examen.ExamenName == null || examen.ExamenName.Length < 2 || examen.Reference.Length < 3 || examen.Price < 0m);
+        }
+        public bool CanExecuteDeleteExam(Examen examen)
+        {
+            return examen != null;
+
+        }
+        public bool CanExecuteClearExamen()
+        {
+            return ExamenName.Length > 0 || Reference.Length > 0 || Price != 0m;
+        }
+        public bool CanExecuteEditableExam(Examen examen)
+        {
+            return examen != null;
+        }
     }
 }

@@ -12,6 +12,24 @@ namespace invoice.ViewModels
 {
     public partial class ConsultationVM : VMBase
     {
+        public IEnumerable<MedicalConsultationType> MedicalConsultationType
+        {
+            get
+            {
+                // Convertit toutes les valeurs de l'enum en une collection
+                return (MedicalConsultationType[])Enum.GetValues(typeof(MedicalConsultationType));
+            }
+        }
+        private MedicalConsultationType _selectedMedicalConsultationType;
+        public MedicalConsultationType SelectedMedicalConsultationType
+        {
+            get => _selectedMedicalConsultationType;
+            set
+            {
+                SetProperty(ref _selectedMedicalConsultationType, value);
+            }
+        }
+
         private bool _isExpandableAddForm = false;
         public bool IsExpandableAddForm
         {
@@ -21,6 +39,7 @@ namespace invoice.ViewModels
                 SetProperty(ref _isExpandableAddForm, value);
             }
         }
+
         private readonly string _title = "Consultation";
         public string Title
         {
@@ -34,27 +53,40 @@ namespace invoice.ViewModels
             get => _isEditable;
             set => SetProperty(ref _isEditable, value);
         }
-        private bool _isVisible = false;
-        public bool IsVisible
+
+        private string _consultationName = string.Empty;
+        public string ConsultationName
         {
-            get => _isVisible;
-            set => SetProperty(ref _isVisible, value);
-        }
-        private string _currentCrudOperation = "crudList";
-        public string CurrentCrudOperation
-        {
-            get => _currentCrudOperation;
+            get => _consultationName;
             set
-            {
-                _currentCrudOperation = value;
-                OnPropertyChanged(nameof(CurrentCrudOperation));
+            { 
+                SetProperty(ref _consultationName, InputValidator.ToUpperString(value) ?? string.Empty);
+                CreateConsultationCommand.NotifyCanExecuteChanged();
+                ClearConsultationCommand.NotifyCanExecuteChanged();
             }
         }
-        private Categorie _selectedCategorie;
-        public Categorie SelectedCategorie
+        private decimal _price = decimal.Zero;
+        public decimal Price
         {
-            get => _selectedCategorie;
-            set => SetProperty(ref _selectedCategorie, value);
+            get => _price;
+            set
+            { 
+                SetProperty(ref _price, InputValidator.ValidPriceString(value));
+                CreateConsultationCommand.NotifyCanExecuteChanged();
+                ClearConsultationCommand.NotifyCanExecuteChanged();
+            }
+        }
+        private string _reference = string.Empty;
+        public string Reference
+        {
+            get => _reference;
+            set
+            {
+                if (InputValidator.IsValidReferenceString(value))
+                    SetProperty(ref _reference, InputValidator.ToUpperString(value) ?? string.Empty);
+                CreateConsultationCommand.NotifyCanExecuteChanged();
+                ClearConsultationCommand.NotifyCanExecuteChanged();
+            }
         }
 
         public ObservableCollection<Consultation> Consultations { get; set; } = new ObservableCollection<Consultation>();
@@ -62,12 +94,16 @@ namespace invoice.ViewModels
         public Consultation Consultation
         {
             get => _consultation;
-            set => SetProperty(ref _consultation, value);
+            set
+            {
+                SetProperty(ref _consultation, value);
+                DeleteConsultationCommand.NotifyCanExecuteChanged();
+            }
         }
 
         public ConsultationVM()
         {
-            _selectedCategorie = new();
+            SelectedMedicalConsultationType = Utilities.MedicalConsultationType.MedecineDuTravail;
             LoadConsultationsAsync().ConfigureAwait(false);
         }
 
@@ -96,48 +132,36 @@ namespace invoice.ViewModels
                 foreach (var e in ConsultationsList) Consultations.Add(e);
             }
         }
-        [RelayCommand]
-        public async Task SubmitModifie()
+        [RelayCommand(CanExecute = nameof(CanExecuteSubmitModifie))]
+        public async Task SubmitModifie(Consultation consultation)
         {
-            // TO DO !!! Les imformations qui sont dans les formulaire NE SONT PAS liée 
-            // à Consultation mais plutot a un selectedItem !!!, il faut que je prennent
-            // ces données et que j'initialise Consultation avec.
             using var context = new ClimaDbContext();
-            context.Consultations.Update(Consultation);
+            context.Consultations.Update(consultation);
 
             await context.SaveChangesAsync();
-            IsEditable = !IsEditable;
-            ChangeVisibility();
-        }
-        [RelayCommand]
-        public void ChangeVisibility()
-        {
-            //IsVisible = !IsVisible;
-            // TEST
-            IsVisible = false;
+            var MessageBoxService = new ModelOpenner("Modification correctement accomplie");
         }
 
-        [RelayCommand]
-        public void Editable()
+        [RelayCommand(CanExecute = nameof(CanExecuteEditableExam))]
+        public void EditableConsultation(Consultation consultation)
         {
             IsEditable = !IsEditable;
         }
-        [RelayCommand]
-        public void AddConsultationPage()
-        {
-            CurrentCrudOperation = "crudAdd";
-        }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanExecuteCreateConsultation))]
         public async Task CreateConsultation()
         {
             using var context = new ClimaDbContext();
+            Consultation.Categorie = SelectedMedicalConsultationType;
+            Consultation.ConsultationName = ConsultationName;
+            Consultation.Price = Price;
+            Consultation.Reference = Reference;
 
             context.Consultations.Add(Consultation);
 
             await context.SaveChangesAsync();
 
-            var MessageBoxService = new ModelOpenner("Opération correctement accomplie");
+            var MessageBoxService = new ModelOpenner("Création correctement accomplie");
 
             var dispatcher2 = System.Windows.Application.Current?.Dispatcher;
             if (dispatcher2 != null && !dispatcher2.CheckAccess())
@@ -145,21 +169,66 @@ namespace invoice.ViewModels
                 dispatcher2.Invoke(() =>
                 {
                     Consultations.Add(Consultation);
+                    ClearConsultation();
                     Consultation = new();
+                    IsExpandableAddForm = false;
                 });
             }
             else
             {
                 Consultations.Add(Consultation);
+                ClearConsultation();
                 Consultation = new();
+                IsExpandableAddForm = false;
             }
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanExecuteDeleteExam))]
+        public async Task DeleteConsultation(Consultation consultation)
+        {
+            using var context = new ClimaDbContext();
+            context.Consultations.Remove(consultation);
+            await context.SaveChangesAsync();
+            var MessageBoxService = new ModelOpenner("Suppression correctement accomplie");
+            Consultations.Remove(consultation);
+            IsEditable = false;
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExecuteClearConsultation))]
         public void ClearConsultation()
         {
-            Consultation = new();
-            IsExpandableAddForm = false;
+            ConsultationName = string.Empty;
+            Reference = string.Empty;
+            Price = 0m;
+        }
+
+
+
+        // CanExecute method 
+        public bool CanExecuteCreateConsultation()
+        {
+            return !(ConsultationName.Length < 2 || Reference.Length < 3 || Price < 0m);
+        }
+        public bool CanExecuteSubmitModifie(Consultation consultation)
+        {
+            if (consultation == null) return false;
+            return !(consultation.ConsultationName == null 
+                || consultation.ConsultationName.Length < 2 
+                || consultation.Reference.Length < 3 
+                || consultation.Price < 0m);
+        }
+        public bool CanExecuteDeleteExam(Consultation consultation)
+        {
+            return consultation != null;
+
+        }
+        public bool CanExecuteClearConsultation()
+        {
+            return ConsultationName.Length > 0 || Reference.Length > 0 || Price != 0m;
+        }
+        public bool CanExecuteEditableExam(Consultation consultation)
+        {
+            return consultation != null;
         }
 
     }

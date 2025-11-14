@@ -14,6 +14,7 @@
              xmlns:local="clr-namespace:invoice.Utilities.Converters">
     <UserControl.Resources>
         <local:TrueOrFalseToVisibility x:Key="TrueOrFalseToVisibility" />
+        <local:BoolToInvertValue x:Key="BoolToInvertValue" />
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightBlue" />
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
     </UserControl.Resources>
@@ -98,20 +99,20 @@
                                Margin="0,0,0,2"
                                HorizontalAlignment="Center">
                                                 <Label HorizontalAlignment="Center" FontSize="12" >Nom de l'element</Label>
-                                                <TextBox Style="{StaticResource TextBoxFromStyle}" Text="{Binding  Examen.ExamenName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="210"  />
+                                                <TextBox Style="{StaticResource TextBoxFromStyle}" Text="{Binding  ExamenName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="210"  />
                                             </WrapPanel>
 
                                             <WrapPanel Margin="0,0,0,15">
                                                 <WrapPanel Orientation="Vertical"
                                     HorizontalAlignment="Stretch">
                                                     <Label HorizontalAlignment="Center" FontSize="12">Reférence</Label>
-                                                    <TextBox  Style="{StaticResource TextBoxFromStyle}" Text="{Binding Examen.Reference, UpdateSourceTrigger=PropertyChanged}" Width="60" />
+                                                    <TextBox  Style="{StaticResource TextBoxFromStyle}" Text="{Binding Reference, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="60" />
                                                 </WrapPanel>
 
                                                 <WrapPanel Orientation="Vertical"
                                    Margin="40,0,0,0">
                                                     <Label HorizontalAlignment="Center" FontSize="12">Prix à l'unité</Label>
-                                                    <TextBox Style="{StaticResource TextBoxFromStyle}" Text="{Binding Examen.Price, UpdateSourceTrigger=PropertyChanged}"  MinWidth="75" MaxWidth="130" />
+                                                    <TextBox Style="{StaticResource TextBoxFromStyle}" Text="{Binding Price, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  MinWidth="75" MaxWidth="130" />
                                                 </WrapPanel>
                                             </WrapPanel>
 
@@ -122,10 +123,10 @@
                            Margin="0,10,0,0">
 
                                             <Button Content="Tout Effacer"
-                            Background="IndianRed"
-                            Foreground="White"
-                            Padding="4"
-                            Command="{Binding ClearExamenCommand}">
+                                                    Background="IndianRed"
+                                                    Foreground="White"
+                                                    Padding="4"
+                                                    Command="{Binding ClearExamenCommand}">
                                                 <Button.Style>
                                                     <Style TargetType="Button">
                                                         <Setter Property="Margin" Value="0,0,0,0" />
@@ -158,28 +159,33 @@
                         </Expander>
                     </Grid>
 
-                    <Grid Grid.Row="1" 
-                  Visibility="{Binding IsVisible, Converter={StaticResource TrueOrFalseToVisibility}}"
-                  >
+                    <Grid Grid.Row="1">
                         <StackPanel VerticalAlignment="Top" 
                                     HorizontalAlignment="Left"
                                     Margin="35,0,0,0"
                                     DataContext="{Binding SelectedItem, ElementName=listDataGrid}">
                             <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
                                 <Label >Nom De l'acte</Label>
-                                <TextBox Style="{StaticResource TextBoxFromStyle}" Width="250" Text="{Binding ExamenName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,6" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center" />
+                                <TextBox Style="{StaticResource TextBoxFromStyle}" 
+                                         MaxWidth="290"
+                                         MinWidth="50"
+                                         Text="{Binding ExamenName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                         Padding="7,6" 
+                                         IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToInvertValue}}" HorizontalContentAlignment="Center" />
                             </WrapPanel>
                             <WrapPanel Margin="0,0,0,10">
 
                                 <WrapPanel Orientation="Vertical">
                                     <Label >Reférence</Label>
-                                    <TextBox Style="{StaticResource TextBoxFromStyle}" Width="60" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,4" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
+                                    <TextBox Style="{StaticResource TextBoxFromStyle}" Width="60" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,4" IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToInvertValue}}" HorizontalContentAlignment="Center"/>
                                 </WrapPanel>
 
                                 <WrapPanel Orientation="Vertical" Margin="45,0,0,0">
                                     <Label >Prix à l'unité</Label>
                                     <WrapPanel>
-                                        <TextBox Style="{StaticResource TextBoxFromStyle}" MinWidth="75" MaxWidth="110" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}}" Padding="7,4" IsReadOnly="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
+                                        <TextBox Style="{StaticResource TextBoxFromStyle}" MinWidth="75" MaxWidth="110" 
+                                                 Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}}" Padding="7,4" 
+                                                 IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToInvertValue}}" HorizontalContentAlignment="Center"/>
                                         <TextBlock VerticalAlignment="Center"
                                                     Margin="5,0,0,0"> FCFA</TextBlock>
                                     </WrapPanel>
@@ -222,16 +228,35 @@
             HorizontalAlignment="Right"
            Margin="0,0,0,55"
             >
+                            <Button Content="Supprimer"
+                                    Background="IndianRed"
+                                    Foreground="Black"
+                                    Padding="10"
+                                    Command="{Binding DeleteExamCommand}"
+                                    CommandParameter="{Binding SelectedItem, ElementName=listDataGrid}"
+                                         >
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="0,0,70,0" />
+                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                        
+                                        <Setter Property="Background" Value="#E7E7E7" />
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            
                             <Button Content="Editer"
                                     Background="LightGreen"
                                     Foreground="Black"
                                     Padding="10"
-                                    Command="{Binding EditableCommand}"
+                                    Command="{Binding EditableExamCommand}"
+                                    CommandParameter="{Binding SelectedItem, ElementName=listDataGrid}"
                                          >
                                 <Button.Style>
                                     <Style TargetType="Button">
                                         <Setter Property="Margin" Value="0,0,70,0" />
                                         <Setter Property="Width" Value="70" />
+                                        <Setter Property="FontWeight" Value="SemiBold" />
                                         <Setter Property="Background" Value="#E7E7E7" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Value="False">
@@ -243,8 +268,8 @@
                             </Button>
                             
                             <Button Content="Terminer"
-                                    Background="IndianRed"
-                                    Foreground="White"
+                                    Background="YellowGreen"
+                                    Foreground="Black"
                                     Padding="10"
                                     Command="{Binding SubmitModifieCommand}"
                                     CommandParameter="{Binding SelectedItem, ElementName=listDataGrid}"
@@ -254,6 +279,7 @@
                                     <Style TargetType="Button">
                                         <Setter Property="Margin" Value="0,0,70,0" />
                                         <Setter Property="MinWidth" Value="70" />
+                                        <Setter Property="FontWeight" Value="SemiBold" />
                                         <Setter Property="Background" Value="#E7E7E7" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Value="true">
@@ -296,14 +322,7 @@
                       CanUserDeleteRows="False"
                       SelectionMode="Single"
                       HeadersVisibility="Column" 
-                      
                       Margin="10">
-                        <behevior:Interaction.Triggers>
-                            <behevior:EventTrigger EventName="SelectionChanged">
-                                <behevior:InvokeCommandAction Command="{Binding ChangeVisibilityCommand}" />
-                            </behevior:EventTrigger>
-                        </behevior:Interaction.Triggers>
-
                         <DataGrid.Style>
                             <Style TargetType="DataGrid">
                                 <Setter Property="RowBackground" Value="#F3F3F3"/>

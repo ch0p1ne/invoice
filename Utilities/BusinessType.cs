@@ -25,4 +25,11 @@ namespace invoice.Utilities
         Cheque,
         MobileMoney
     }
+    public enum MedicalConsultationType
+    {
+        MedecineDuTravail,
+        Dental,
+        Veterinary,
+        Other
+    }
 }

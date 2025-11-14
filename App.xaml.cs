@@ -23,7 +23,7 @@ namespace invoice
             var sessionService = new SessionService();
 
             var navigationService = new NavigationService(sessionService);
-            navigationService.NavigateTo<LoginVM>();
+            navigationService.NavigateTo<MainVM>();
 
         }
         protected override void OnStartup(StartupEventArgs e)

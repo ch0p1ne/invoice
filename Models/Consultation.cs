@@ -16,6 +16,7 @@ namespace invoice.Models
         private string _reference = string.Empty;
         private string _consultationName = string.Empty;
         private decimal _price;
+        private MedicalConsultationType _categorie = new();
 
         public int ConsultationId { get; set; }
         [Column(TypeName = "nvarchar(8)")]
@@ -38,6 +39,11 @@ namespace invoice.Models
         {
             get => _price; 
             set => SetProperty(ref _price, InputValidator.ValidPriceString(value));
+        }
+        public MedicalConsultationType Categorie
+        {
+            get => _categorie;
+            set => SetProperty(ref _categorie, value);
         }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

@@ -7,8 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Services.Store;
 
 namespace invoice.ViewModels
 {
@@ -21,7 +23,7 @@ namespace invoice.ViewModels
             set => SetProperty(ref _categorie, value);
         }
         private ObservableCollection<Categorie> _categories;
-        public ObservableCollection<Categorie>  Categories
+        public ObservableCollection<Categorie> Categories
         {
             get => _categories;
             set => SetProperty(ref _categories, value);
@@ -42,6 +44,57 @@ namespace invoice.ViewModels
             get => _title;
         }
 
+        // Pour la validation
+        private string _elementName = string.Empty;
+        public string ElementName
+        {
+            get => _elementName;
+            set
+            {
+                SetProperty(ref _elementName, InputValidator.ToUpperString(value) ?? string.Empty);
+                CreatePrixHomologueCommand.NotifyCanExecuteChanged();
+                ClearPrixHomologueCommand.NotifyCanExecuteChanged();
+            }
+        }
+        private string _reference = string.Empty;
+        public string Reference
+        {
+            get => _reference;
+            set
+            {
+                if (InputValidator.IsValidReferenceString(value))
+                {
+                    SetProperty(ref _reference, InputValidator.ToUpperString(value) ?? string.Empty);
+                    CreatePrixHomologueCommand.NotifyCanExecuteChanged();
+                    ClearPrixHomologueCommand.NotifyCanExecuteChanged();
+                }
+            }
+        }
+        private decimal _price = decimal.Zero;
+        public decimal Price
+        {
+            get => _price;
+            set
+            {
+                SetProperty(ref _price, InputValidator.ValidPriceString(value));
+                CreatePrixHomologueCommand.NotifyCanExecuteChanged();
+                ClearPrixHomologueCommand.NotifyCanExecuteChanged();
+            }
+        }
+
+        private string _categorieName = string.Empty;
+        public string CategorieName
+        {
+            get => _categorieName;
+            set
+            {
+                SetProperty(ref _categorieName, InputValidator.ToUpperString(value) ?? string.Empty);
+                CreateCategorieCommand.NotifyCanExecuteChanged();
+            }
+        }
+
+
+
         //pour modificer une ligne du tableau
         private bool _isEditable = true;
         public bool IsEditable
@@ -49,42 +102,33 @@ namespace invoice.ViewModels
             get => _isEditable;
             set => SetProperty(ref _isEditable, value);
         }
-        private bool _isVisible = false;
-        public bool IsVisible
-        {
-            get => _isVisible;
-            set => SetProperty(ref _isVisible, value);
-        }
-        private string _currentCrudOperation = "crudList";
-        public string CurrentCrudOperation
-        {
-            get => _currentCrudOperation;
-            set
-            {
-                _currentCrudOperation = value;
-                OnPropertyChanged(nameof(CurrentCrudOperation));
-            }
-        }
-        private Categorie _selectedCategorie;
-        public Categorie SelectedCategorie
+
+        private Categorie? _selectedCategorie;
+        public Categorie? SelectedCategorie
         {
             get => _selectedCategorie;
-            set => SetProperty(ref _selectedCategorie, value);
+            set
+            {
+                SetProperty(ref _selectedCategorie, value);
+                SubmitModifieCommand.NotifyCanExecuteChanged();
+            }
         }
 
         public ObservableCollection<PrixHomologue> PrixHomologues { get; set; } = new ObservableCollection<PrixHomologue>();
         private PrixHomologue _prixHomologue = new();
         public PrixHomologue PrixHomologue
-        { 
+        {
             get => _prixHomologue;
             set => SetProperty(ref _prixHomologue, value);
         }
+
+
 
         public PrixHomologueVM()
         {
             _categorie = new() { CategorieDescription = "-- Aucune --" };
             _categories = new();
-            _selectedCategorie = new();
+            _selectedCategorie = null;
             LoadPrixHomologuesAsync().ConfigureAwait(false);
             LoadCategoriesAsync().ConfigureAwait(false);
         }
@@ -136,44 +180,28 @@ namespace invoice.ViewModels
 
         }
 
-        [RelayCommand]
-        public async Task SubmitModifie()
+        [RelayCommand(CanExecute = nameof(CanExecuteSubmitModifie))]
+        public async Task SubmitModifie(PrixHomologue prixHomologue)
         {
-            // TO DO !!! Les imformations qui sont dans les formulaire NE SONT PAS liée 
-            // à PrixHomologue mais plutot a un selectedItem !!!, il faut que je prennent
-            // ces données et que j'initialise PrixHomologue avec.
             using var context = new ClimaDbContext();
-            PrixHomologue.CategorieId = SelectedCategorie.CategorieId;
-            PrixHomologue.Categorie = null;
-            context.PrixHomologues.Update(PrixHomologue);
+            prixHomologue.CategorieId = (int)(SelectedCategorie?.CategorieId!);
+            context.PrixHomologues.Update(prixHomologue);
 
             await context.SaveChangesAsync();
-            IsEditable = !IsEditable;
-            ChangeVisibility();
+            var MessageBoxService = new ModelOpenner("Modification correctement accomplie");
         }
-        [RelayCommand]
-        public void ChangeVisibility()
-        {
-            //IsVisible = !IsVisible;
-            // TEST
-            IsVisible = false;
-        }
-        
-        [RelayCommand]
-        public void Editable()
+        [RelayCommand(CanExecute = nameof(CanExecuteEditablePrixHomologue))]
+        public void EditablePrixHomologue(PrixHomologue prixHomologue)
         {
             IsEditable = !IsEditable;
         }
-        [RelayCommand]
-        public void AddPrixHomologuePage()
-        {
-            CurrentCrudOperation = "crudAdd";
-        }
-
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanExecuteCreatePrixHomologue))]
         public async Task CreatePrixHomologue()
         {
             using var context = new ClimaDbContext();
+            PrixHomologue.ElementName = ElementName;
+            PrixHomologue.Reference = Reference;
+            PrixHomologue.Price = Price;
             PrixHomologue.CategorieId = SelectedCategorie.CategorieId;
             PrixHomologue.Categorie = null;
 
@@ -189,20 +217,34 @@ namespace invoice.ViewModels
                 dispatcher2.Invoke(() =>
                 {
                     PrixHomologues.Add(PrixHomologue);
+                    ClearPrixHomologue();
                     PrixHomologue = new();
+                    IsExpandableAddForm = false;
                 });
             }
             else
             {
                 PrixHomologues.Add(PrixHomologue);
+                ClearPrixHomologue();
                 PrixHomologue = new();
+                IsExpandableAddForm = false;
             }
         }
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanExecuteDeletePrixHomologue))]
+        public async Task DeletePrixHomologue(PrixHomologue prixHomologue)
+        {
+            using var context = new ClimaDbContext();
+            context.PrixHomologues.Remove(prixHomologue);
+            await context.SaveChangesAsync();
+            var MessageBoxService = new ModelOpenner("Suppression correctement accomplie");
+            PrixHomologues.Remove(prixHomologue);
+            IsEditable = true;
+        }
+        [RelayCommand(CanExecute = nameof(CanExecuteCreateCategorie))]
         public async Task CreateCategorie()
         {
             using var context = new ClimaDbContext();
-
+            Categorie.CategorieName = CategorieName;
             context.Categories.Add(Categorie);
 
             await context.SaveChangesAsync();
@@ -224,13 +266,43 @@ namespace invoice.ViewModels
                 Categorie = new Categorie() { CategorieDescription = "-- Aucune --" };
             }
         }
-
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanExecuteClearPrixHomologue))]
         public void ClearPrixHomologue()
         {
-            PrixHomologue = new();
-            IsExpandableAddForm = false;
+            ElementName = string.Empty;
+            Reference = string.Empty;
+            Price = decimal.Zero;
+            SelectedCategorie = null;
         }
 
+
+        // CanExecute method 
+        public bool CanExecuteCreatePrixHomologue()
+        {
+            return !(ElementName.Length < 2 || Reference.Length < 3 || Price < 0m || SelectedCategorie == null);
+        }
+        public bool CanExecuteSubmitModifie(PrixHomologue PrixHomologue)
+        {
+            if (PrixHomologue == null || SelectedCategorie == null)
+                return false;
+            return !(PrixHomologue.ElementName == null || PrixHomologue.ElementName.Length < 2 || PrixHomologue.Reference.Length < 3 || PrixHomologue.Price < 0m);
+        }
+        public bool CanExecuteDeletePrixHomologue(PrixHomologue PrixHomologue)
+        {
+            return PrixHomologue != null;
+
+        }
+        public bool CanExecuteClearPrixHomologue()
+        {
+            return ElementName.Length > 0 || Reference.Length > 0 || Price != 0m;
+        }
+        public bool CanExecuteEditablePrixHomologue(PrixHomologue PrixHomologue)
+        {
+            return PrixHomologue != null;
+        }
+        public bool CanExecuteCreateCategorie()
+        {
+            return !(CategorieName == null || CategorieName.Length < 3);
+        }
     }
 }

@@ -30,21 +30,29 @@ namespace invoice.Models
             set
             {
                 if (InputValidator.IsValidReferenceString(value))
+                {
                     SetProperty(ref _reference, InputValidator.ToUpperString(value) ?? string.Empty);
+                }
             }
         }
         [Column(TypeName = "nvarchar(99)")]
         public string? ExamenName
         {
-            get => _examenName; 
-            set => SetProperty(ref _examenName, InputValidator.ToUpperString(value) ?? string.Empty);
-        }
+            get => _examenName;
+            set
+            {
+                SetProperty(ref _examenName, InputValidator.ToUpperString(value) ?? string.Empty);
 
+            }
+        }
         public decimal Price
         {
-            get => _price; set => SetProperty(ref _price,InputValidator.ValidPriceString(value));
+            get => _price;
+            set
+            {
+                SetProperty(ref _price, InputValidator.ValidPriceString(value));
+            }
         }
-
         public DateTime CreatedAt
         {
             get => _createdAt;
