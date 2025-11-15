@@ -396,7 +396,7 @@
                     Height="42"
                     FontWeight="Bold"
                     Command="{Binding CreateInvoiceCommand}"
-                    Content="Enregistrer">
+                    Content="Enregistrer ET Imprimer">
                 
             </Button>
             <Button Grid.Column="1"  
@@ -404,7 +404,7 @@
                     Height="42"                  
                     FontWeight="Bold"   
                     Margin="0,0,50,0"
-                    Content="Enregistrer ET Imprimer">
+                    Content="Enregistrer">
                 
             </Button>
             <Button Grid.Column="0"

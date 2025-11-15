@@ -47,7 +47,17 @@ namespace invoice.ViewModels
                    Icon = "/Assets/icons/invoice.png"
 
                },
-               new MenuItem() { Name = "Administration", ViewModel = new HomeVM(), Icon = "/Assets/icons/house.png" },
+               new MenuItem() { 
+                   Name = "Administration", 
+                   ViewModel = new HomeVM(), 
+                   Icon = "/Assets/icons/house.png" ,
+                   Childrens =
+                   [
+                     new MenuItem("Utilisateurs et Rôles", null, new UserAndRoleVM(), "/Assets/icons/users.png")
+                     //new MenuItem("Médecins", null, new MedecinVM(), "/Assets/icons/doctor.png"),
+                     //new MenuItem("Assurances", null, new AssuranceVM(), "/Assets/icons/insurance.png"),
+                   ]
+               },
                new MenuItem()
                {
                    Name = "Gestions",

@@ -30,6 +30,7 @@
     <None Remove="Assets\icons\list.png" />
     <None Remove="Assets\icons\logout.png" />
     <None Remove="Assets\icons\online-appointment.png" />
+    <None Remove="Assets\icons\users.png" />
     <None Remove="Assets\icons\view.png" />
     <None Remove="Assets\img\clima-g-logo.png" />
     <None Remove="Assets\img\headerPDF.png" />
@@ -83,6 +84,7 @@
     <Content Include="Assets\img\headerPDF.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Assets\icons\users.png" />
     <Resource Include="Assets\img\img1.jpg" />
     <Resource Include="Assets\img\logo.png" />
     <Resource Include="Assets\img\user-icon01.png" />
