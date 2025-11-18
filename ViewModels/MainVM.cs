@@ -42,7 +42,7 @@ namespace invoice.ViewModels
                    [
                        new MenuItem("Apercu", null, null, "/Assets/icons/house.png"),
                        new MenuItem("Nouvelle Facture", null, new CreateFactureVM(sessionService), "/Assets/icons/add.png"),
-                       new MenuItem("Vue des Factures", null, null, "/Assets/icons/list.png"),
+                       new MenuItem("Vue des Factures", null, new FactureViewVM(), "/Assets/icons/list.png"),
                    ],
                    Icon = "/Assets/icons/invoice.png"
 

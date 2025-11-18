@@ -15,6 +15,12 @@
                 <ResourceDictionary Source="/Assets/styles/ButtonNextViewFacStyle.xaml" />
                 <ResourceDictionary Source="/Assets/styles/ButtonCircleStyle.xaml" />
                 <ResourceDictionary Source="/Assets/styles/TextBoxFromStyle.xaml" />
+                <ResourceDictionary Source="/Assets/styles/DataGridStyle.xaml" />
+                <ResourceDictionary Source="/Assets/styles/SearchTextBoxStyle.xaml" />
+
+                <!-- Provide By JD's Code Lab "Youtube"-->
+                <ResourceDictionary Source="/Assets/Icons.xaml" />
+                <ResourceDictionary Source="/Assets/styles/LightTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             

@@ -351,10 +351,7 @@ namespace invoice.ViewModels
             GeneratePDFButtonIsEnable = true;
             GenererFacturePdf();
             var Messagebox = new ModelOpenner($"Création de la facture {nouvelleFacture.Reference} terminé");
-        }
-        
-        
-        
+        }   
         [RelayCommand]
         public async Task CreatePatient()
         {
@@ -373,18 +370,13 @@ namespace invoice.ViewModels
                 await context.SaveChangesAsync();
                 PatientDefined = true;
                 await LoadPatientsList();
-                var MessageBox = new ModelOpenner("Utilisateur Ajouter correctement ajouter!");
+                var MessageBox = new ModelOpenner("Utilisateur Ajouter correctement ajouter");
             }
             catch (Exception ex)
             {
 
                 throw new System.InvalidOperationException("Erreur lors de la création du patient", ex);
             }
-        }
-        [RelayCommand]
-        public void GenerateInvoicePDF()
-        {
-            
         }
 
 
@@ -403,7 +395,7 @@ namespace invoice.ViewModels
 
                 // Dans le cas ou il ya un immense nombre de facture, on va prendre la
                 // reference de la derniere et l'icrementer
-                var factureCount = await context.Factures.CountAsync();
+                var factureCount = await context.Factures.CountAsync() + 1;
                 reference = "FAC-" + factureCount +  currentDay + currentMonth + currentYear;
 
                 return reference;

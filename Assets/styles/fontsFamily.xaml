@@ -3,5 +3,6 @@
 
     <FontFamily x:Key="fontBase">pack://application:,,,/Assets/fonts/#Montserrat</FontFamily>
     <FontFamily x:Key="fontSen">pack://application:,,,/Assets/fonts/#Sen</FontFamily>
+    <FontFamily x:Key="fontRoboto">pack://application:,,,/Assets/fonts/#Roboto</FontFamily>
 
 </ResourceDictionary>

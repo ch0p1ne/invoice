@@ -15,13 +15,16 @@ namespace invoice.Models
         private string _lastName = string.Empty;
         private string _firstName = string.Empty;
         private string _phoneNumber = string.Empty;
-        private string? _assuranceNumber = string.Empty;
+        private string? _phoneNumber2 = string.Empty;
+        private string? _assuranceNumber = null;
         public int PatientId { get; set; }
+        [Column(TypeName = "nvarchar(70)")]
         public string FirstName
         {
             get => _firstName;
             set => SetProperty(ref _firstName, InputValidator.CapitalizeEachWord(value) ?? value); 
         }
+        [Column(TypeName = "nvarchar(50)")]
         public string LastName
         { 
             get => _lastName;
@@ -29,13 +32,21 @@ namespace invoice.Models
         }
         public DateTime? DateOfBirth { get; set; } = DateTime.MinValue;
 
-        [Column(TypeName = "nvarchar(13)")]
-        public string? PhoneNumber
+        [Column(TypeName = "nvarchar(15)")]
+        public string PhoneNumber
         { 
             get => _phoneNumber;
             set => SetProperty(ref _phoneNumber, InputValidator.FormatAndValidateInput(value) ?? value);
         }
+        [Column(TypeName = "nvarchar(15)")]
+        public string? PhoneNumber2
+        { 
+            get => _phoneNumber2;
+            set => SetProperty(ref _phoneNumber2, InputValidator.FormatAndValidateInput(value) ?? value);
+        }
+        [Column(TypeName = "nvarchar(50)")]
         public string? Email { get; set; }
+        [Column(TypeName = "nvarchar(99)")]
         public string? Address { get; set; }
         public string? AssuranceNumber
         { 

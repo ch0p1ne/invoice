@@ -387,7 +387,7 @@
                       Grid.Row="1"
                       Background="Transparent"
                       AutoGenerateColumns="False"
-                      ItemsSource="{Binding PrixHomologues}"
+                      ItemsSource="{Binding PrixHomologues, UpdateSourceTrigger=PropertyChanged}"
                       HorizontalAlignment="Stretch"
                       MinRowHeight="25"
                       BorderThickness="0"

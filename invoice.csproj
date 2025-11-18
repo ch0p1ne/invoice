@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <None Remove="Assets\fonts\Montserrat.ttf" />
+    <None Remove="Assets\fonts\Roboto.ttf" />
     <None Remove="Assets\fonts\Sen.ttf" />
     <None Remove="Assets\icons\add.png" />
     <None Remove="Assets\icons\answer.png" />
@@ -29,9 +30,17 @@
     <None Remove="Assets\icons\invoice.png" />
     <None Remove="Assets\icons\list.png" />
     <None Remove="Assets\icons\logout.png" />
+    <None Remove="Assets\icons\mark.png" />
     <None Remove="Assets\icons\online-appointment.png" />
+    <None Remove="Assets\icons\printer.png" />
+    <None Remove="Assets\icons\refresh.png" />
+    <None Remove="Assets\icons\search.png" />
+    <None Remove="Assets\icons\sort.png" />
+    <None Remove="Assets\icons\trash.png" />
+    <None Remove="Assets\icons\unmark.png" />
     <None Remove="Assets\icons\users.png" />
     <None Remove="Assets\icons\view.png" />
+    <None Remove="Assets\icons\viewgreen.png" />
     <None Remove="Assets\img\clima-g-logo.png" />
     <None Remove="Assets\img\headerPDF.png" />
     <None Remove="Assets\img\img1.jpg" />
@@ -55,12 +64,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Graph" Version="5.96.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="QuestPDF" Version="2025.7.3" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\fonts\Montserrat.ttf" />
+    <Resource Include="Assets\fonts\Roboto.ttf" />
     <Resource Include="Assets\fonts\Sen.ttf" />
     <Resource Include="Assets\icons\add.png" />
     <Resource Include="Assets\icons\answer.png" />
@@ -78,8 +89,16 @@
     <Resource Include="Assets\icons\invoice.png" />
     <Resource Include="Assets\icons\list.png" />
     <Resource Include="Assets\icons\logout.png" />
+    <Resource Include="Assets\icons\mark.png" />
     <Resource Include="Assets\icons\online-appointment.png" />
+    <Resource Include="Assets\icons\printer.png" />
+    <Resource Include="Assets\icons\refresh.png" />
+    <Resource Include="Assets\icons\search.png" />
+    <Resource Include="Assets\icons\sort.png" />
+    <Resource Include="Assets\icons\trash.png" />
+    <Resource Include="Assets\icons\unmark.png" />
     <Resource Include="Assets\icons\view.png" />
+    <Resource Include="Assets\icons\viewgreen.png" />
     <Resource Include="Assets\img\clima-g-logo.png" />
     <Content Include="Assets\img\headerPDF.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

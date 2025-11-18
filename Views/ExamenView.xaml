@@ -313,7 +313,7 @@
                       Grid.Row="1"
                       Background="Transparent"
                       AutoGenerateColumns="False"
-                      ItemsSource="{Binding Examens}"
+                      ItemsSource="{Binding Examens, UpdateSourceTrigger=PropertyChanged}"
                       HorizontalAlignment="Stretch"
                       MinRowHeight="25"
                       BorderThickness="0"

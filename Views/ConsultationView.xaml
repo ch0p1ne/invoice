@@ -9,7 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800"
              xmlns:view="clr-namespace:invoice.Views"
              x:Name="ConsultationControl"
-             FontFamily="{StaticResource fontBase}"
+             FontFamily="{StaticResource fontRoboto}"
              xmlns:behevior="http://schemas.microsoft.com/xaml/behaviors" 
              xmlns:local="clr-namespace:invoice.Utilities.Converters">
     <UserControl.Resources>
@@ -324,7 +324,7 @@
                       Grid.Row="1"
                       Background="Transparent"
                       AutoGenerateColumns="False"
-                      ItemsSource="{Binding Consultations}"
+                      ItemsSource="{Binding Consultations, UpdateSourceTrigger=PropertyChanged}"
                       HorizontalAlignment="Stretch"
                       MinRowHeight="25"
                       BorderThickness="0"
