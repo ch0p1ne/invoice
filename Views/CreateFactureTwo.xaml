@@ -288,18 +288,6 @@
                             </TextBox.Text>
                         </TextBox>
                               
-                        <RadioButton Style="{StaticResource rdoRemise}" 
-                                     GroupName="remiseType" 
-                                     IsEnabled="False"
-                                     IsChecked="{Binding SelectedDiscountFlat, Mode=TwoWay}" 
-                                     Content="CFA" 
-                                     Margin="25,0,10,0"/>
-                              
-                        <RadioButton GroupName="remiseType"
-                                     Name="rbPercent"
-                                     IsChecked="{Binding SelectedDiscountPercent, Mode=TwoWay}"
-                                     Style="{StaticResource rdoRemise}"
-                                     Content="%" />
                     </WrapPanel>
                 </StackPanel>
                 
@@ -361,11 +349,9 @@
                         <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock  Grid.Column="0" Style="{StaticResource txtLabeled}" Text="Taxe" />
-                    <TextBlock  Grid.Column="1" Style="{StaticResource txtTotal}" Text="{Binding Taxe,StringFormat={}{0:P2}}" />
 
                 </Grid>
-                <Grid Grid.Row="2" Margin="0,10,0,0">
+                <Grid Grid.Row="1" Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="3*" />
@@ -375,7 +361,21 @@
                                 FontWeight="Bold"
                                 FontSize="18"/>
                     <TextBlock  Grid.Column="1" Style="{StaticResource txtTotal}" 
-                                Text="{Binding TotalTTCPrice, StringFormat={}{0:N2} FCFA}" 
+                                Text="{Binding NetAPayer, StringFormat={}{0:N0} FCFA}" 
+                                FontWeight="Bold"
+                                FontSize="18"/>
+                </Grid>
+                <Grid Grid.Row="2" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock  Grid.Column="0" Style="{StaticResource txtLabeled}" 
+                                Text="Reste à payer" 
+                                FontWeight="Normal"
+                                FontSize="14"/>
+                    <TextBlock  Grid.Column="1" Style="{StaticResource txtTotal}" 
+                                Text="{Binding AmountLeft, StringFormat={}{0:N0} FCFA}" 
                                 FontWeight="Bold"
                                 FontSize="18"/>
                 </Grid>
@@ -396,24 +396,16 @@
                     Height="42"
                     FontWeight="Bold"
                     Command="{Binding CreateInvoiceCommand}"
-                    Content="Enregistrer ET Imprimer">
-                
-            </Button>
-            <Button Grid.Column="1"  
-                    Style="{StaticResource buttonCrudStyle}"
-                    Height="42"                  
-                    FontWeight="Bold"   
-                    Margin="0,0,50,0"
                     Content="Enregistrer">
-                
+
             </Button>
             <Button Grid.Column="0"
                     Margin="0,0,100,0"
                     Height="42"
                     Width="200"
-                    IsEnabled="{Binding GeneratePDFButtonIsEnable}"
+                    Command="{Binding PreviewInvoiceCommand}"
                     FontWeight="Bold"
-                    Content="Apercu Impression">
+                    Content="Impression">
                 
             </Button>
         </Grid>

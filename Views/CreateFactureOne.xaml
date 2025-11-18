@@ -123,12 +123,12 @@
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"
             Margin="155,70,0,0">
-                <WrapPanel Margin="0,0,0,15">
+                <WrapPanel Margin="0,0,0,5">
                     <Label Content="_Nom :"  
                VerticalAlignment="Center" />
                     <TextBox Name="txtNom" Width="200"  Height="25"
                  Background="#fdfffc" 
-                 Text="{Binding Patient.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  VerticalAlignment="Center"
                  HorizontalContentAlignment="Left" 
                  Margin="15,0,0,0"
@@ -144,7 +144,7 @@
                VerticalAlignment="Center" />
                     <TextBox Name="txtPrenom" Width="260"  Height="25"
                  Background="#fdfffc" 
-                 Text="{Binding Patient.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  VerticalAlignment="Center"
                  Style="{StaticResource txtIsBinder}"
                  HorizontalContentAlignment="Left" 
@@ -163,13 +163,25 @@
                  Style="{StaticResource txtIsBinder}"
                  FontWeight="Normal"/>
                 </WrapPanel>
-                <WrapPanel Margin="0,0,0,15">
-                    <Label Content="Telephone mobile :"  
+                <WrapPanel Margin="0,0,0,5">
+                    <Label Content="Tel. nº1 :"  
                VerticalAlignment="Center" />
                     <TextBox Name="txtPhone" Width="180"  Height="25"
                  Background="#fdfffc" 
                  VerticalAlignment="Center"
-                 Text="{Binding Patient.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding PhoneNumber1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 HorizontalContentAlignment="Left" 
+                 Style="{StaticResource txtIsBinder}"
+                 Margin="15,0,0,0"
+                 FontWeight="Normal"/>
+                </WrapPanel>
+                <WrapPanel Margin="0,0,0,15">
+                    <Label Content="Tel. nº2 :"  
+               VerticalAlignment="Center" />
+                    <TextBox Name="txtPhone2" Width="180"  Height="25"
+                 Background="#fdfffc" 
+                 VerticalAlignment="Center"
+                 Text="{Binding PhoneNumber2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  HorizontalContentAlignment="Left" 
                  Style="{StaticResource txtIsBinder}"
                  Margin="15,0,0,0"
@@ -187,7 +199,7 @@
                  Margin="15,0,0,0"
                  FontWeight="Normal"/>
                 </WrapPanel>
-                <WrapPanel Margin="0,0,0,15">
+                <WrapPanel Margin="0,0,0,25">
                     <Label Content="Date de Naissance :" 
                VerticalAlignment="Center" />
                     <DatePicker DisplayDateStart="1901-01-01" 
@@ -195,7 +207,7 @@
                                 IsTodayHighlighted="True"
                                 Margin="15,0,0,0"
                                 Style="{StaticResource datePickerIsBinder}"
-                                SelectedDate="{Binding Patient.DateOfBirth, Mode=TwoWay}"
+                                SelectedDate="{Binding DateOfBirth, Mode=TwoWay}"
                                 DisplayDate="2020-01-01"
                                 FontWeight="Normal"/>
                 </WrapPanel>
@@ -302,7 +314,7 @@
 
             <WrapPanel VerticalAlignment="Center" 
                         HorizontalAlignment="Right">
-                    <Button Width="110"
+                <Button Width="110"
                             IsEnabled="{Binding PatientDefined, Converter={StaticResource BoolToInvertValueConverter}}"
                             Command="{Binding CreatePatientCommand}"
                             CommandParameter="CrudCreateTwo"

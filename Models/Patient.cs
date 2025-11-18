@@ -30,7 +30,7 @@ namespace invoice.Models
             get => _lastName;
             set => SetProperty(ref _lastName, InputValidator.ToUpperString(value) ?? value);
         }
-        public DateTime? DateOfBirth { get; set; } = DateTime.MinValue;
+        public DateTime? DateOfBirth { get; set; }
 
         [Column(TypeName = "nvarchar(15)")]
         public string PhoneNumber

@@ -12,11 +12,14 @@ using QuestPDF.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using System.Windows;
+using Windows.Data.Pdf;
 
 namespace invoice.ViewModels
 {
@@ -44,6 +47,14 @@ namespace invoice.ViewModels
         private PaymentMethod _paymentMethod = Utilities.PaymentMethod.Especes;
         private bool _generatePDFButtonIsEnable = false;
         private double _amountPaid = 0;
+        private string _facturePdfPath = string.Empty;
+        private string _lastName = string.Empty;
+        private string _firstName = string.Empty;
+        private string _phoneNumber = string.Empty;
+        private string _phoneNumber2 = string.Empty;
+        private DateTime? _dateOfBirth;
+        private decimal _netApayer = decimal.Zero;
+        private decimal _amountLeft = decimal.Zero;
 
 
 
@@ -58,6 +69,15 @@ namespace invoice.ViewModels
         }
 
         //Property
+        private string FacturePdfPath
+        { 
+            get => _facturePdfPath;
+            set
+            {
+                SetProperty(ref _facturePdfPath, value);
+                PreviewInvoiceCommand.NotifyCanExecuteChanged();
+            }
+        }
         public ISessionService SessionService { get; set; }
         public Facture Facture { get; set; }
         public bool GeneratePDFButtonIsEnable 
@@ -65,10 +85,30 @@ namespace invoice.ViewModels
             get => _generatePDFButtonIsEnable;
             set =>SetProperty(ref _generatePDFButtonIsEnable, value);
         }
+        public decimal NetAPayer
+        {
+            get => _netApayer;
+            set
+            {
+                SetProperty(ref _netApayer, value);
+            }
+        }
         public double AmountPaid
         {
             get => _amountPaid;
-            set => SetProperty(ref _amountPaid, value);
+            set
+            {
+                SetProperty(ref _amountPaid, value);
+                CalculAllIndexedPrice();
+            }
+        }
+        public decimal AmountLeft
+        {
+            get => _amountLeft;
+            set
+            {
+                SetProperty(ref _amountLeft, value);
+            }
         }
         public double DiscountPercent
         {
@@ -77,6 +117,7 @@ namespace invoice.ViewModels
             {
                 value = value / 100;
                 SetProperty(ref _discountPercent, value);
+                CalculAllIndexedPrice();
             }
         }
         public PaymentMethod PaymentMethod
@@ -155,6 +196,11 @@ namespace invoice.ViewModels
                 if (_selectedPatient != value)
                 {
                     _selectedPatient = value;
+                    LastName = _selectedPatient?.LastName ?? string.Empty;
+                    FirstName = _selectedPatient?.FirstName ?? string.Empty;
+                    PhoneNumber1 = _selectedPatient?.PhoneNumber ?? string.Empty;
+                    PhoneNumber2 = _selectedPatient?.PhoneNumber2 ?? string.Empty;
+                    DateOfBirth = _selectedPatient?.DateOfBirth;
                     OnPropertyChanged(nameof(SelectedPatient));
 
                     // 💡 LOGIQUE D'ACTIVATION :
@@ -224,6 +270,51 @@ namespace invoice.ViewModels
         public ObservableCollection<InvoiceExam> InvoiceExams { get; set; } =  [];
         public ObservableCollection<Patient> Patients { get; set; } = [];
         public ObservableCollection<Assurance> Assurances { get; set; } = [];
+        public string LastName
+        { 
+            get => _lastName;
+            set
+            {
+                SetProperty(ref _lastName, InputValidator.ToUpperString(value) ?? value);
+                CreatePatientCommand.NotifyCanExecuteChanged();
+            }
+        }
+        public string FirstName 
+        { 
+            get => _firstName;
+            set
+            {
+                SetProperty(ref _firstName, InputValidator.CapitalizeEachWord(value) ?? value);
+                CreatePatientCommand.NotifyCanExecuteChanged();
+            }
+        }
+        public string PhoneNumber1
+        { 
+            get => _phoneNumber;
+            set
+            {
+                SetProperty(ref _phoneNumber, InputValidator.FormatAndValidateInput(value) ?? value);
+                CreatePatientCommand.NotifyCanExecuteChanged();
+            }
+        }
+        public string PhoneNumber2
+        { 
+            get => _phoneNumber2;
+            set
+            {
+                SetProperty(ref _phoneNumber2, InputValidator.FormatAndValidateInput(value) ?? value);
+                CreatePatientCommand.NotifyCanExecuteChanged();
+            }
+        }
+        public DateTime? DateOfBirth
+        { 
+            get => _dateOfBirth;
+            set
+            {
+                SetProperty(ref _dateOfBirth, value);
+                CreatePatientCommand.NotifyCanExecuteChanged();
+            }
+        }
 
 
 
@@ -277,6 +368,12 @@ namespace invoice.ViewModels
         [RelayCommand(CanExecute = nameof(CanExecuteCreateFact))]
         public async Task CreateInvoice()
         {
+            var messageBox = new ModelOpenner();
+            if (messageBox.Show("Création de la facture en cours...", "Voulez vous vraiment établir une facture ?", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+            {
+                return; // L'utilisateur a annulé l'opération
+            }
+
             if (!InvoiceExams.Any())
             {
                 throw new InvalidOperationException("Impossible de créer une facture sans examens.");
@@ -348,13 +445,23 @@ namespace invoice.ViewModels
             scope.Complete();
             InvoiceExams.Clear();
             Facture = nouvelleFacture;
-            GeneratePDFButtonIsEnable = true;
-            GenererFacturePdf();
+            FacturePdfPath = GenerateFacturePdfPath();
             var Messagebox = new ModelOpenner($"Création de la facture {nouvelleFacture.Reference} terminé");
         }   
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanExecuteCreatePatient))]
         public async Task CreatePatient()
         {
+            var messageBox = new ModelOpenner();
+            if (messageBox.Show("Création de patient", "Voulez vous vraiment ajouter ce patient ?", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+            {
+                return; // L'utilisateur a annulé l'opération
+            }
+            Patient!.FirstName = FirstName;
+            Patient.LastName = LastName;
+            Patient.PhoneNumber = PhoneNumber1;
+            Patient.PhoneNumber2 = PhoneNumber2;
+            Patient.DateOfBirth = DateOfBirth;
+
             try
             {
                 using var context = new ClimaDbContext();
@@ -376,6 +483,36 @@ namespace invoice.ViewModels
             {
 
                 throw new System.InvalidOperationException("Erreur lors de la création du patient", ex);
+            }
+        }
+        [RelayCommand(CanExecute = nameof(CanExecutePreviewFacture))]
+        public void PreviewInvoice()
+        {
+
+            try
+            {
+                // 1. Générer et enregistrer le PDF
+                // Assurez-vous que cette fonction sauvegarde le fichier PDF sur le disque.
+                GenererFacturePdf();
+
+                // 2. Lancer le processus pour ouvrir le fichier
+                // Windows utilise le programme associé au type de fichier (.pdf).
+                Process.Start(new ProcessStartInfo(FacturePdfPath)
+                {
+                    UseShellExecute = true // Crucial pour laisser Windows identifier le programme
+                });
+
+                // 3. Optionnel : Nettoyage différé
+                // Si vous utilisez un fichier temporaire, vous devrez attendre que l'utilisateur ferme 
+                // l'application PDF avant de supprimer le fichier. 
+                // C'est pourquoi il est souvent préférable de ne pas supprimer les fichiers temporaires immédiatement.
+
+                Thread.Sleep(1300); // Attendre 2 secondes (ajustez selon vos besoins)
+                FacturePdfPath = string.Empty; // Réinitialiser le chemin du PDF
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Impossible d'ouvrir le PDF. Veuillez vérifier que Adobe Reader ou un autre lecteur PDF est installé et défini par défaut. Erreur: {ex.Message}");
             }
         }
 
@@ -415,6 +552,8 @@ namespace invoice.ViewModels
             }
 
             TotalHTPrice = total;
+            NetAPayer = (decimal) (TotalHTPrice - TotalHTPrice * DiscountPercent);
+            AmountLeft = NetAPayer - (decimal)AmountPaid;
 
             TotalTTCPrice = TotalHTPrice + (TotalHTPrice * Taxe); // TVA 20% ?
         }
@@ -484,22 +623,10 @@ namespace invoice.ViewModels
                 throw new System.InvalidOperationException("Erreur lors du chargement des assurances", ex);
             }
         }
-        private bool CanExecuteAddInvoiceExam()
-        {
-            // Le bouton est actif SEULEMENT si un examen est sélectionné dans le ComboBox
-            return SelectedAvailableExam != null;
-        }
-        private bool CanExecuteCreateFact()
-        {
-            return InvoiceExams.Count > 0;
-        }
         public void GenererFacturePdf()
         {
             var folderPath = "c:/clima-g/factures/";
-            var fileName = $"{Facture.Reference}_{Patient?.FirstName}_{Patient?.LastName}.pdf";
 
-            // 1. Définir le chemin complet du fichier
-            string filePath = Path.Combine(folderPath, fileName);
             // Vérifie si le dossier n'existe PAS
             if (!Directory.Exists(folderPath))
             {
@@ -514,7 +641,38 @@ namespace invoice.ViewModels
             var document = new FactureDocument(Facture, Patient, SessionService.User!);
 
             // Génère le PDF et l'ouvre
-            document.GeneratePdf(filePath);
+            document.GeneratePdf(FacturePdfPath);
+        }
+        public string GenerateFacturePdfPath()
+        {
+            var folderPath = "c:/clima-g/factures/";
+            var fileName = $"{Facture.Reference}_{Patient?.FirstName}_{Patient?.LastName}.pdf";
+            // 1. Définir le chemin complet du fichier
+            string filePath = Path.Combine(folderPath, fileName);
+
+            return filePath;
+        }
+
+
+        // CanExecute Methods
+        private bool CanExecuteAddInvoiceExam()
+        {
+            // Le bouton est actif SEULEMENT si un examen est sélectionné dans le ComboBox
+            return SelectedAvailableExam != null;
+        }
+        private bool CanExecuteCreateFact()
+        {
+            return InvoiceExams.Count > 0;
+        }
+        private bool CanExecutePreviewFacture()
+        {
+            return FacturePdfPath != string.Empty;
+        }
+        private bool CanExecuteCreatePatient()
+        {
+            return !string.IsNullOrWhiteSpace(FirstName) &&
+                   !string.IsNullOrWhiteSpace(LastName) &&
+                   !string.IsNullOrWhiteSpace(PhoneNumber1) && DateOfBirth is not null;
         }
 
         public string ConvertPaymentMethodToString(PaymentMethod paymentMethod)

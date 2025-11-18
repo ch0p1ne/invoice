@@ -169,7 +169,7 @@ public class FactureDocument : IDocument
 
                 row.ConstantItem(50).PaddingTop(3).Text("Nº Tél :").SemiBold().FontSize(14);
                 row.Spacing(10);
-                row.ConstantItem(170).AlignBottom().Text($"{_patient.PhoneNumber}").NormalWeight().FontSize(12);
+                row.ConstantItem(170).AlignBottom().Text($"{_patient.PhoneNumber} / {_patient.PhoneNumber2}").NormalWeight().FontSize(12);
                 row.ConstantItem(60).PaddingTop(3).Text("Adresse :").SemiBold().FontSize(14);
                 row.RelativeItem(170).AlignBottom().Text($"{_patient.Address}").NormalWeight().FontSize(12);
             });
@@ -190,7 +190,7 @@ public class FactureDocument : IDocument
         double patientShare = netAPayer * (double)_facture.PatientPercent;
         decimal amountPaid = _facture.AmountPaid ?? 0m;
         double amountDue = netAPayer - (double)amountPaid;
-        this.netAPayer = (int)amountDue;
+        this.netAPayer = (int)netAPayer;
 
         container
             .PaddingTop(-15)

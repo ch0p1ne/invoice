@@ -447,6 +447,7 @@
                         
                         <DataGridTextColumn Header="Reference" 
                                             MinWidth="125" 
+                                            Width="*"
                                             Binding="{Binding Reference}" />
                         
                         <DataGridTextColumn Header="Type" 
@@ -460,6 +461,7 @@
 
                         <DataGridTextColumn Header="Total HT" 
                                             MinWidth="110" 
+                                            Width="*"
                                             CellStyle="{DynamicResource DataGridCell2}"
                                             Binding="{Binding TotalAmountHT, ConverterCulture=fr-GA , StringFormat={}{0:C}}">
                         </DataGridTextColumn>
@@ -476,6 +478,7 @@
                         
                         <DataGridTextColumn Header="Status" 
                                             MinWidth="110" 
+                                            CellStyle="{DynamicResource DataGridCell2}"
                                             Binding="{Binding Status}" />
                         
                         <DataGridTextColumn Header="Date de Création" 
