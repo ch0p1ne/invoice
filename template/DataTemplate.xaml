@@ -1,8 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
                     xmlns:viewmodels="clr-namespace:invoice.ViewModels"
+                    xmlns:subviewmodels="clr-namespace:invoice.ViewModels.SubViewModels"
                     xmlns:custom="clr-namespace:invoice.Utilities"
-                    xmlns:view="clr-namespace:invoice.Views">
+                    xmlns:view="clr-namespace:invoice.Views"
+                    xmlns:subView="clr-namespace:invoice.Views.SubViews">
 
     <DataTemplate DataType="{x:Type viewmodels:HomeVM}">
         <view:HomeView/>
@@ -15,7 +17,14 @@
     <DataTemplate DataType="{x:Type viewmodels:UserAndRoleVM}">
         <view:UserAndRoleView/>
     </DataTemplate>
-    
+        <!-- Sub view for UserAndRoleVM-->
+        <DataTemplate DataType="{x:Type subviewmodels:UsersVM}">
+            <subView:UsersView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type subviewmodels:RolesVM}">
+            <subView:RolesView />
+        </DataTemplate>
+
     <DataTemplate DataType="{x:Type viewmodels:ConsultationVM}">
         <view:ConsultationView/>
     </DataTemplate>

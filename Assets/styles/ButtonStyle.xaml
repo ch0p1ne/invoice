@@ -12,7 +12,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <!-- 2. Lier le Background du Border au Background du Button -->
-                    <Border CornerRadius="5" Background="{TemplateBinding Background}" Padding="20,10">
+                    <Border CornerRadius="1" Background="{TemplateBinding Background}" Padding="20,10">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                 </ControlTemplate>

@@ -1,0 +1,203 @@
+﻿<UserControl x:Class="invoice.Views.SubViews.UsersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:invoice.Views.SubViews"
+             mc:Ignorable="d" 
+             xmlns:converter="clr-namespace:invoice.Utilities.Converters"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <converter:BoolToUserStatus x:Key="BoolToUserStatus" />
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+
+        <!-- Header content-->
+        <Border Padding="0"
+                Grid.Row="0"
+                Margin="10"
+                Background="White"
+                CornerRadius="5"
+                BorderThickness="2"
+                BorderBrush="#F6F6F6">
+            
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Left-->
+                <Border Grid.Column="0" 
+                        Margin="10,10,0,10"
+                        BorderThickness="0,0,2,0"
+                        BorderBrush="#F6F6F6">
+                    <WrapPanel 
+                               VerticalAlignment="Center" HorizontalAlignment="Center" >
+                        <Image Source="/Assets/icons/users-enable.png"
+                               Width="64"/>
+                        <StackPanel Orientation="Vertical"
+                                    VerticalAlignment="Center"
+                                    Margin="20,0,0,0">
+                            <TextBlock Text="0"
+                                       HorizontalAlignment="Center"
+                                       FontSize="14"
+                                       Foreground="#666666"/>
+                            <TextBlock Text="Actif"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="#333333"/>
+                        </StackPanel>
+                    </WrapPanel>
+                    
+                </Border>
+                <!-- Right-->
+                <Border Grid.Column="1" 
+                        Margin="10,10,0,10">
+                    <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        
+                        <!-- 1-->
+                        <WrapPanel Margin="75,0,0,0">
+                            <Image Source="/Assets/icons/users-group.png"
+                                   Width="64"/>
+                            <StackPanel Orientation="Vertical"
+                                        VerticalAlignment="Center"
+                                        Margin="20,0,0,0">
+                                <TextBlock Text="{Binding TotalUsersCount}"
+                                           HorizontalAlignment="Center"
+                                           FontSize="14"
+                                           Foreground="#666666"/>
+                                <TextBlock Text="Enregistré"
+                                       FontSize="18"
+                                       FontWeight="Bold"
+                                       Foreground="#333333"/>
+                            </StackPanel>
+                        </WrapPanel>
+                        <!-- 2-->
+                        <StackPanel VerticalAlignment="Center"
+                                    Margin="150,0,0,0">
+                            <Button Content="Ajouter Utilisateur" />
+                        </StackPanel>
+                    </WrapPanel>
+                    
+                </Border>
+            </Grid>
+        </Border>
+
+
+        <!-- Main content-->
+        <Border Padding="0"
+                Grid.Row="1"
+                Margin="10,0,10,0"
+                Background="White"
+                CornerRadius="5"
+                BorderThickness="0,0,0,2"
+                BorderBrush="#F6F6F6">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Main content Header-->
+                <Border Grid.Row="0"
+                        BorderThickness="0,0,0,2"
+                        BorderBrush="#F6F6F6">
+                    <WrapPanel>
+                        <!-- User-->
+                        <WrapPanel HorizontalAlignment="Left"
+                                   Height="16"
+                                   Margin="15,0,0,0"
+                                   >
+                            <!-- To Do : Style-->
+                            <TextBlock Width="55"
+                                     Cursor="Hand"
+                                     Foreground="#1890FF"
+                                     Text="User"/>
+                        </WrapPanel>
+                        <!-- Refresh btn-->
+                        <WrapPanel HorizontalAlignment="Right"
+                                   Margin="0,0,15,0" Height="16"
+                                   >
+                            <Image Source="/Assets/icons/refresh.png" 
+                                   Width="16"
+                                   />
+                        </WrapPanel>
+                        
+                    </WrapPanel>
+                </Border>
+                <!-- Main content body-->
+                <DataGrid Grid.Row="1"
+                          RowStyle="{StaticResource DataGridRowStyle1}"
+                          ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"
+                          Style="{DynamicResource specialDataGrid}" 
+                          ItemsSource="{Binding Users}"
+                          Background="#FAFAFA"
+                          Height="325"
+                          Margin="0,5,0,0"
+                          BorderThickness="0,0,0,2"
+                          BorderBrush="#F6F6F6" 
+                          AutoGenerateColumns="False"
+                          HeadersVisibility="Column"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False" 
+                          IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Identifiant" Binding="{Binding Account_name}" Width="2*"/>
+                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
+                        <DataGridTextColumn Header="Tel. 1" Binding="{Binding Phone_number_one}" Width="*"/>
+                        <DataGridTextColumn Header="Rôle" Binding="{Binding Role}" Width="*"/>
+                        <DataGridTextColumn Header="Statut" Binding="{Binding IsActive, Converter={StaticResource BoolToUserStatus}}" Width="*" 
+                                            CellStyle="{DynamicResource DataGridCell2}"/>
+                        <DataGridTemplateColumn Header="Action" 
+                                                MinWidth="110" 
+                                                HeaderStyle="{DynamicResource DataGridColumnHeaderStyle2}"
+                                                CellStyle="{DynamicResource DataGridCell2}"
+                                            >
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                                        <Button 
+                                                ToolTip="modifier"
+                                                ToolTipService.ShowDuration="1500"
+                                            BorderThickness="0"
+                                            Background="Transparent"
+                                                Padding="2"
+                                                Cursor="Hand"
+                                                Margin="0,0,10,0">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="/Assets/icons/edit.png"
+                                                          Width="14" 
+                                                          VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button 
+                                                ToolTip="Supprimer"
+                                                ToolTipService.ShowDuration="1500"
+                                                Margin="0,0,15,0"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                                Cursor="Hand"
+                                                Padding="2">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="/Assets/icons/trash.png"  
+                                                          Width="14" 
+                                                          VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

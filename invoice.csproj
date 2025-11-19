@@ -22,6 +22,7 @@
     <None Remove="Assets\icons\call-center-agent.png" />
     <None Remove="Assets\icons\client.png" />
     <None Remove="Assets\icons\delete.png" />
+    <None Remove="Assets\icons\edit.png" />
     <None Remove="Assets\icons\exam.png" />
     <None Remove="Assets\icons\exam_soft.png" />
     <None Remove="Assets\icons\file.png" />
@@ -38,6 +39,8 @@
     <None Remove="Assets\icons\sort.png" />
     <None Remove="Assets\icons\trash.png" />
     <None Remove="Assets\icons\unmark.png" />
+    <None Remove="Assets\icons\users-enable.png" />
+    <None Remove="Assets\icons\users-group.png" />
     <None Remove="Assets\icons\users.png" />
     <None Remove="Assets\icons\view.png" />
     <None Remove="Assets\icons\viewgreen.png" />
@@ -81,6 +84,7 @@
     <Resource Include="Assets\icons\call-center-agent.png" />
     <Resource Include="Assets\icons\client.png" />
     <Resource Include="Assets\icons\delete.png" />
+    <Resource Include="Assets\icons\edit.png" />
     <Resource Include="Assets\icons\exam.png" />
     <Resource Include="Assets\icons\exam_soft.png" />
     <Resource Include="Assets\icons\file.png" />
@@ -97,6 +101,8 @@
     <Resource Include="Assets\icons\sort.png" />
     <Resource Include="Assets\icons\trash.png" />
     <Resource Include="Assets\icons\unmark.png" />
+    <Resource Include="Assets\icons\users-enable.png" />
+    <Resource Include="Assets\icons\users-group.png" />
     <Resource Include="Assets\icons\view.png" />
     <Resource Include="Assets\icons\viewgreen.png" />
     <Resource Include="Assets\img\clima-g-logo.png" />
