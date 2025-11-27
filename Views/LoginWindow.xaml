@@ -47,7 +47,8 @@
                 <WrapPanel Margin="5,35,0,0" HorizontalAlignment="center" Orientation="Vertical">
                     <Label FontFamily="{StaticResource fontBase}"  FontWeight="Normal" FontSize="11">Identifiant</Label>
 
-                    <TextBox x:Name="txtUserName" Width="210" HorizontalAlignment="Left" Margin="0,5,0,0" BorderThickness="0,0,0,2" Padding="35,0,0,0" Height="24"  VerticalContentAlignment="Center" FontSize="14" CaretBrush="LightGray" BorderBrush="#04AE9C" FontFamily="{StaticResource fontBase}" Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox x:Name="txtUserName" Width="210" HorizontalAlignment="Left" Margin="0,5,0,0" BorderThickness="0,0,0,2" Padding="35,0,0,0" Height="24"  VerticalContentAlignment="Center" 
+                             FontWeight="Normal"  FontSize="13" CaretBrush="LightGray" BorderBrush="#04AE9C" FontFamily="{StaticResource fontBase}" Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.Background>
                             <ImageBrush ImageSource="/Assets/img/user-icon01.png" Stretch="None" AlignmentX="Left"/>
                         </TextBox.Background>
@@ -69,6 +70,7 @@
                                      Margin="20,5,-10,0"
                                      IsReadOnly="True"
                                      FontSize="14"
+                                     FontWeight="Normal"
                                      BorderThickness="0,0,0,2"
                                      BorderBrush="#04AE9C"
                                      Visibility="{Binding ShowPassword, Converter={StaticResource BoolToVisibilityConverter}}"

@@ -42,7 +42,8 @@ namespace invoice.ViewModels
         private Patient? _patient = new Patient();
         private FactureExamen? _factureExamen;
         private bool _isInsurance = false;
-        private double _discountPercent;
+        private double? _discountPercent = 0;
+        private double? _discountFlat = null;
         private string _discountType = "Percent";
         private PaymentMethod _paymentMethod = Utilities.PaymentMethod.Especes;
         private bool _generatePDFButtonIsEnable = false;
@@ -55,6 +56,7 @@ namespace invoice.ViewModels
         private DateTime? _dateOfBirth;
         private decimal _netApayer = decimal.Zero;
         private decimal _amountLeft = decimal.Zero;
+        private bool _showAdvanceInvoiceParam = false;
 
 
 
@@ -110,7 +112,7 @@ namespace invoice.ViewModels
                 SetProperty(ref _amountLeft, value);
             }
         }
-        public double DiscountPercent
+        public double? DiscountPercent
         {
             get => _discountPercent;
             set
@@ -175,16 +177,29 @@ namespace invoice.ViewModels
             {
                 SetProperty(ref _selectedDiscountPercent, value);
                 if((bool)value)
+                {
+                    _selectedDiscountFlat = false;
                     DiscountType = "Percent";
+                    DiscountFlat = null;
+                    DiscountPercent = 0;
+                }
             }
         }
         public bool SelectedDiscountFlat
         {
             get => _selectedDiscountFlat;
-            set { 
+            set 
+            { 
                 SetProperty(ref _selectedDiscountFlat, value); 
-                if((bool)value)
-                    DiscountType = "Flat"; }
+                if ((bool)value)
+                {
+                    _selectedDiscountPercent = false;
+                    DiscountType = "Flat";
+                    DiscountFlat = 0;
+                    DiscountPercent = null;
+                }
+
+                }
         }
 
         public FactureExamen FactureExam { get; set; }
@@ -316,6 +331,21 @@ namespace invoice.ViewModels
             }
         }
 
+        public double? DiscountFlat 
+        { 
+            get => _discountFlat;
+            set
+            {
+                SetProperty(ref _discountFlat, value);
+                CalculAllIndexedPrice();
+            }
+        }
+        public bool ShowAdvanceInvoiceParam
+        {            
+            get => _showAdvanceInvoiceParam;
+            set => SetProperty(ref _showAdvanceInvoiceParam, value);
+        }
+
 
 
         // Command
@@ -323,6 +353,11 @@ namespace invoice.ViewModels
         public void ChangeCurrentView(string viewName)
         {
             CurrentPartOfNewFacture = viewName;
+            DiscountPercent = 0;
+            DiscountFlat = 0;
+            AmountPaid = 0;
+
+            // TO DO : Load data if needed
             GetExamenList().ConfigureAwait(false);
         }
         [RelayCommand(CanExecute = nameof(CanExecuteAddInvoiceExam))]
@@ -348,6 +383,7 @@ namespace invoice.ViewModels
 
                 SelectedAvailableExam = null;
                 CalculAllIndexedPrice();
+                ShowAdvanceInvoiceParam = true;
             }
             CreateInvoiceCommand.NotifyCanExecuteChanged();
         }
@@ -360,6 +396,10 @@ namespace invoice.ViewModels
                 CalculAllIndexedPrice();
             }
             CreateInvoiceCommand.NotifyCanExecuteChanged();
+            if(InvoiceExams.Count == 0)
+            {
+                ShowAdvanceInvoiceParam = false;
+            }
         }
         
         
@@ -395,7 +435,8 @@ namespace invoice.ViewModels
                 InsuranceCoveragePercent = SelectedAssurance?.CoveragePercent,
                 PatientPercent = SelectedAssurance != null ? (1m - SelectedAssurance.CoveragePercent) : 1m,
                 AmountPaid = (decimal)AmountPaid,
-                DiscountPercent = (decimal)DiscountPercent,
+                DiscountPercent = (decimal?)(DiscountPercent),
+                DiscountFlat = (double?)(DiscountFlat),
                 Status = StatusType.Non_payer,
                 PaymentMethod = ConvertPaymentMethodToString(PaymentMethod),
 
@@ -446,6 +487,10 @@ namespace invoice.ViewModels
             InvoiceExams.Clear();
             Facture = nouvelleFacture;
             FacturePdfPath = GenerateFacturePdfPath();
+            DiscountFlat = null;
+            DiscountPercent = 0;
+            ShowAdvanceInvoiceParam = false;
+            AmountPaid = 0;
             var Messagebox = new ModelOpenner($"Création de la facture {nouvelleFacture.Reference} terminé");
         }   
         [RelayCommand(CanExecute = nameof(CanExecuteCreatePatient))]
@@ -552,7 +597,16 @@ namespace invoice.ViewModels
             }
 
             TotalHTPrice = total;
-            NetAPayer = (decimal) (TotalHTPrice - TotalHTPrice * DiscountPercent);
+            switch(DiscountType)
+            {
+                case "Percent":
+                    NetAPayer = (decimal)(TotalHTPrice - TotalHTPrice * DiscountPercent);
+                    break;
+                case "Flat":
+                    NetAPayer = (decimal)(TotalHTPrice - DiscountFlat);
+                    break;
+            }
+                
             AmountLeft = NetAPayer - (decimal)AmountPaid;
 
             TotalTTCPrice = TotalHTPrice + (TotalHTPrice * Taxe); // TVA 20% ?

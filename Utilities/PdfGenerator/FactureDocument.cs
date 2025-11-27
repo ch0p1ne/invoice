@@ -183,10 +183,23 @@ public class FactureDocument : IDocument
         // Calcul des totaux basiques (assurez-vous que TotalAmountHT est peuplé dans l'entité)
         decimal totalHT = _facture.TotalAmountHT ?? 0m;
         decimal totalTVA = totalHT * (_facture.Tva);
-        double remise = (double)(_facture.DiscountPercent ?? 0);
+        double? remisePercent = (double?)(_facture.DiscountPercent);
+        double? remiseFlat = (double?)(_facture.DiscountFlat);
         double totalTTC = (double)totalHT + (double)totalTVA;
-        double totalWithRemise = (double)totalHT * remise;
-        double netAPayer = totalTTC - totalWithRemise;
+        double totalWithRemise;
+        if(remisePercent.HasValue && remisePercent.Value > 0)
+        {
+            totalWithRemise = totalTTC * (1 -remisePercent.Value);
+        }
+        else if(remiseFlat.HasValue && remiseFlat.Value > 0)
+        {
+            totalWithRemise = totalTTC - remiseFlat.Value;
+        }
+        else
+        {
+            totalWithRemise = totalTTC;
+        }
+        double netAPayer = totalWithRemise;  
         double patientShare = netAPayer * (double)_facture.PatientPercent;
         decimal amountPaid = _facture.AmountPaid ?? 0m;
         double amountDue = netAPayer - (double)amountPaid;
@@ -272,7 +285,12 @@ public class FactureDocument : IDocument
                 table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"{totalHT:C}").Bold().FontSize(12).FontColor(Colors.Blue.Darken4);
 
                 // Remise
-                table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text($"Remise ({_facture.DiscountPercent:P0})").FontSize(12);
+                if(remiseFlat.HasValue && remiseFlat.Value > 0)
+                {
+                    table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text($"Remise ({_facture.DiscountFlat:N0})").FontSize(12);
+                }
+                else if(remisePercent.HasValue && remisePercent.Value > 0)
+                    table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text($"Remise ({_facture.DiscountPercent:P0})").FontSize(12);
                 table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("").Bold();
                 table.Cell().AlignRight().Padding(2).Text($"{totalWithRemise:C}").FontSize(10);
 

@@ -46,7 +46,8 @@
                 <Setter Property="Foreground" Value="#000000" />
                 <Setter Property="Background" Value="#F7F7F7" />
                 <Setter Property="HorizontalAlignment" Value="Right" />
-                <Setter Property="FontSize" Value="15" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontWeight" Value="Normal" />
                 <Setter Property="Padding" Value="30,5" />
             </Style>
             <Style x:Key="rdoRemise" TargetType="RadioButton">
@@ -216,7 +217,7 @@
                                     <TextBlock HorizontalAlignment="Right"  Text="{Binding Qty}" Grid.Column="1" Style="{StaticResource txtLabeled}" 
                                                FontWeight="SemiBold"/>
                                     <TextBlock HorizontalAlignment="Right" FontWeight="Light" Text="Examen" Grid.Column="2" Style="{StaticResource txtLabeled}" />
-                                    <TextBlock Text="{Binding Exam.Price, StringFormat={}{0:N2} fcfa}"
+                                    <TextBlock Text="{Binding Exam.Price, StringFormat={}{0:N0} fcfa}"
                                                Grid.Column="3"
                                                FontSize="12"
                                                FontWeight="Bold"
@@ -265,7 +266,7 @@
                 <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0">
+            <Grid Grid.Column="0" Visibility="{Binding ShowAdvanceInvoiceParam, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
@@ -276,19 +277,67 @@
                                Margin="5,0,0,3"
                                Foreground="#2a9d8f"
                                FontWeight="SemiBold"/>
-                          <WrapPanel>
-                                    <TextBox VerticalContentAlignment="Center"
-                                             Padding="5,0"
-                                             Height="25"
-                                             Width="100"
-                                             Tag=" 0 %"
-                                             >  
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Discount percent-->  
+                        <TextBox Grid.Column="0"
+                                 Name="tbxDiscountAmountPercent"
+                            VerticalContentAlignment="Center"
+                                 BorderThickness="2"
+                                    Padding="5,0"
+                                 FontWeight="Normal"
+                                    Height="25"
+                                    Width="100"
+                                    >  
                             <TextBox.Text>
-                                <Binding Path="DiscountPercent" Mode="TwoWay" UpdateSourceTrigger="LostFocus" />
+                                <Binding Path="DiscountPercent" Mode="OneWayToSource" UpdateSourceTrigger="PropertyChanged" StringFormat="{}{0:N0}" />
                             </TextBox.Text>
                         </TextBox>
-                              
-                    </WrapPanel>
+                        <!-- Discount flat-->  
+                        <TextBox Grid.Column="0"
+                            VerticalContentAlignment="Center"
+                                    Padding="5,0"
+                                 BorderThickness="2"
+                                 FontWeight="Normal"
+                                    Height="25"
+                                 Name="tbxDiscountAmountFlat"
+                                 Visibility="Collapsed"
+                                    Width="100"
+                                    >  
+                            <TextBox.Text>
+                                <Binding Path="DiscountFlat" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" StringFormat="{}{0:N0}" />
+                            </TextBox.Text>
+                        </TextBox>
+                        <WrapPanel Grid.Column="1"
+                                   Margin="10,0,0,0">
+                            <RadioButton GroupName="DiscountType"
+                                         IsChecked="{Binding SelectedDiscountPercent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Click="RadioButton_Percent_Click"
+                                         
+                                         Style="{StaticResource rdoRemise}"
+                                         Margin="10,0,0,0"
+                                         >
+                                <TextBlock Text="%" 
+                                           FontSize="11" 
+                                           Foreground="Black" 
+                                           FontWeight="Bold"/>
+                            </RadioButton>
+                            <RadioButton GroupName="DiscountType"
+                                         IsChecked="{Binding SelectedDiscountFlat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         Click="RadioButton_Flat_Click"
+                                         Name="rdoFlat"
+                                         Style="{StaticResource rdoRemise}"
+                                         Margin="10,0,0,0">
+                                <TextBlock Text="CFA" 
+                                           FontSize="9" 
+                                           Foreground="Black" 
+                                           FontWeight="Bold"/>
+                            </RadioButton>
+                        </WrapPanel>
+                    </Grid>
                 </StackPanel>
                 
                 <StackPanel Grid.Row="1" HorizontalAlignment="Left" Margin="0,5,0,0" Orientation="Horizontal">
@@ -299,27 +348,29 @@
                                    Foreground="#202020"
                                    FontWeight="SemiBold"/>
                         <TextBox VerticalContentAlignment="Center"
+                                 BorderThickness="2"
+                                 FontWeight="Normal"
                                  Padding="5,0"
                                  Height="25"
                                  Width="100"
                                  Tag=" 0 %"
                                  >
                             <TextBox.Text>
-                                <Binding Path="AmountPaid" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" />
+                                <Binding Path="AmountPaid" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" StringFormat="{}{0:N0}" />
                             </TextBox.Text>
                         </TextBox>
                     </StackPanel>
-                    <StackPanel Margin="20,0,0,0">
+                    <StackPanel Margin="10,0,0,0">
                         <TextBlock Text="Mode de paiement" 
                                    FontSize="12"
                                    Foreground="#202020"
-                                   Margin="5,0,0,3"
+                                   Margin="5,0,0,0"
                                    FontWeight="SemiBold"/>
                         <ComboBox ItemsSource="{Binding Source={StaticResource PrioriteData}}"
                                   SelectedItem="{Binding PaymentMethod}"
                                   DisplayMemberPath="."
                                   MinWidth="100"
-                                  Margin="10"/>
+                                  Margin="10,5,10,0"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -341,7 +392,7 @@
                     <TextBlock  Grid.Column="0" Style="{StaticResource txtLabeled}" Text="Total HT" />
                     <TextBlock  Grid.Column="1" Style="{StaticResource txtTotal}" 
                                 Text="{Binding TotalHTPrice,  
-                                                StringFormat={}{0:N2} FCFA}"
+                                                StringFormat={}{0:N0} FCFA}"
                                 />
                 </Grid>
                 <Grid Grid.Row="1" Margin="0,10,0,0">
@@ -357,13 +408,9 @@
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
                     <TextBlock  Grid.Column="0" Style="{StaticResource txtLabeled}" 
-                                Text="Net à payer" 
-                                FontWeight="Bold"
-                                FontSize="18"/>
+                                Text="Net à payer" />
                     <TextBlock  Grid.Column="1" Style="{StaticResource txtTotal}" 
-                                Text="{Binding NetAPayer, StringFormat={}{0:N0} FCFA}" 
-                                FontWeight="Bold"
-                                FontSize="18"/>
+                                Text="{Binding NetAPayer, StringFormat={}{0:N0} FCFA}" />
                 </Grid>
                 <Grid Grid.Row="2" Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>
@@ -375,9 +422,7 @@
                                 FontWeight="Normal"
                                 FontSize="14"/>
                     <TextBlock  Grid.Column="1" Style="{StaticResource txtTotal}" 
-                                Text="{Binding AmountLeft, StringFormat={}{0:N0} FCFA}" 
-                                FontWeight="Bold"
-                                FontSize="18"/>
+                                Text="{Binding AmountLeft, StringFormat={}{0:N0} FCFA}" />
                 </Grid>
             </Grid>
         </Grid>

@@ -23,6 +23,20 @@ namespace invoice.Views
         public CreateFactureTwo()
         {
             InitializeComponent();
+            tbxDiscountAmountPercent.Text = "0";
+        }
+
+        private void RadioButton_Percent_Click(object sender, RoutedEventArgs e)
+        {
+            tbxDiscountAmountFlat.Visibility = Visibility.Collapsed;
+            tbxDiscountAmountPercent.Visibility = Visibility.Visible;
+            tbxDiscountAmountPercent.Text = "0";
+        }
+        private void RadioButton_Flat_Click(object sender, RoutedEventArgs e)
+        {
+            tbxDiscountAmountPercent.Visibility = Visibility.Collapsed;
+            tbxDiscountAmountFlat.Visibility = Visibility.Visible;
+            tbxDiscountAmountPercent.Text = "0";
         }
     }
 }

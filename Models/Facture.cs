@@ -29,6 +29,7 @@ namespace invoice.Models
         public decimal? AmountPaid { get; set; } //  accompte
         [Column(TypeName = "decimal(3,2)")]
         public decimal? DiscountPercent { get; set; } = 0;
+        public double? DiscountFlat { get; set; } = 0;
         public StatusType? Status { get; set; } = StatusType.Non_payer; // En attente, Payée, Annulée
         public string? PaymentMethod { get; set; }
         public DateTime Created_at { get; set; } = DateTime.Now;
