@@ -22,10 +22,12 @@ namespace invoice.Context
         public DbSet<Assurance> Assurances { get; set; }
         public DbSet<PrixHomologue> PrixHomologues { get; set; }
         public DbSet<Categorie> Categories { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
 
         // Junction tables for many-to-many relationship
-        public DbSet<UserRole> UsersRoles { get; set; }
         public DbSet<FactureExamen> FacturesExamens { get; set; }
+        public DbSet<FactureConsultation> FacturesConsultations { get; set; }
+        public DbSet<RolePermission> RolesPermissions { get; set; }
         private string sourceNameLocal= "pc-thomas";
         private string sourceNameProd= "DESKTOP-RVJHVJS";
 
@@ -42,9 +44,8 @@ namespace invoice.Context
                 .HasIndex(u => u.Account_name)
                 .IsUnique();
             modelBuilder.Entity<User>()
-                .HasMany<Role>(u => u.Roles)
-                .WithMany(r => r.Users)
-                .UsingEntity<UserRole>();
+                .HasOne<Role>(u => u.Role)
+                .WithMany(r => r.Users);
 
             modelBuilder.Entity<Role>()
                 .HasIndex(r => r.Role_name)
@@ -89,6 +90,22 @@ namespace invoice.Context
             modelBuilder.Entity<FactureConsultation>()
                 .HasOne(fc => fc.Medecin)
                 .WithMany(m => m.FacturesConsultations);
+
+            // Configure la table de jonction RolePermission
+            modelBuilder.Entity<RolePermission>(entity =>
+            {
+                entity.HasKey(rp => new { rp.RoleId, rp.PermissionId });
+
+                entity.HasOne(rp => rp.Role)
+                      .WithMany(r => r.RolePermissions)
+                      .HasForeignKey(rp => rp.RoleId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(rp => rp.Permission)
+                      .WithMany(p => p.RolePermissions)
+                      .HasForeignKey(rp => rp.PermissionId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }

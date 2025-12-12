@@ -44,13 +44,16 @@
                         Margin="25,0,0,0"
                         >
                 <Grid.Resources>
-                    <Style TargetType="Label">
-                        <Setter Property="FontWeight" Value="Normal" />
-                        <Setter Property="Foreground" Value="#333333" />
+                        <Style TargetType="Label">
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Setter Property="Foreground" Value="#333333" />
 
-                    </Style>
+                        </Style>
                         <Style TargetType="TextBlock">
-                            <Setter Property="Padding" Value="5,2" />
+                            <Setter Property="Padding" Value="6,3" />
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="FontSize" Value="13"/>
+                            <Setter Property="FontWeight" Value="Normal"/>
                             <Style.Triggers>
                                 <Trigger Property="Text" Value="Non_payer">
                                     <Setter Property="Foreground" Value="Red" />
@@ -65,7 +68,7 @@
                         <Style x:Key="StyledTextBorder" TargetType="{x:Type Border}">
                             <Setter Property="Background" Value="White"/>
                             <Setter Property="BorderBrush" Value="#ADD8E6"/>
-                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="BorderThickness" Value="2 "/>
                             <Setter Property="CornerRadius" Value="5"/>
                             <Setter Property="SnapsToDevicePixels" Value="True"/>
 
@@ -100,7 +103,8 @@
                     <WrapPanel Orientation="Vertical">
                         <Label Content="Type de fac."/>
                             <Border Style="{StaticResource StyledTextBorder}"
-        >
+                                    MinWidth="120">
+
                                 <TextBlock Text="{Binding SelectedFacture.Type}" />
                             </Border>
                         </WrapPanel>
@@ -124,7 +128,8 @@
                                    Margin="0,0,0,0">
                             <Label Content="Status"/>
                                 <Border Style="{StaticResource StyledTextBorder}"
-        >
+                                        MinWidth="100">
+                                    
                                     <TextBlock Text="{Binding SelectedFacture.Status}" />
                                 </Border>
                             </WrapPanel>
@@ -421,6 +426,7 @@
                           Style="{DynamicResource specialDataGrid}" 
                           ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}"
                           Background="Transparent"
+                          VerticalScrollBarVisibility="Hidden"
                           MaxHeight="435"
                           BorderThickness="0,0,0,1"
                     x:Name="dtgridView"
@@ -495,19 +501,8 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
                                         <Button 
-                                            ToolTip="Détails"
-                                            ToolTipService.ShowDuration="1500"
-                                            Padding="4"
-                                            Cursor="Hand"
-                                            Margin="0,0,5,0">
-                                            <StackPanel Orientation="Horizontal">
-                                                <Image Source="/Assets/icons/search.png"  
-                                                      Width="16" 
-                                                      Height="16" 
-                                                      VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Button>
-                                        <Button 
+                                            Background="Transparent"
+                                            BorderThickness="0"
                                             ToolTip="Supprimer"
                                             ToolTipService.ShowDuration="1500"
                                             Margin="0,0,5,0"
@@ -522,7 +517,9 @@
                                             </StackPanel>
                                         </Button>
                                         <Button 
+                                            Background="Transparent"
                                             ToolTip="Apercu"
+                                            BorderThickness="0"
                                             ToolTipService.ShowDuration="1500"
                                             Margin="0,0,5,0"
                                             Cursor="Hand"

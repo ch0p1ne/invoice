@@ -39,8 +39,7 @@ namespace invoice.Models
         }
         public DateTime Created_at { get; set; } = DateTime.Now;
 
-        public ICollection<Role> Roles { get; set; } = [];
-        public ICollection<UserRole> UserRoles { get; set; } = [];
+        public Role Role { get; set; }
         public ICollection<Facture>? Factures { get; set; }
 
 

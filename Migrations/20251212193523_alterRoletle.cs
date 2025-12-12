@@ -5,18 +5,21 @@
 namespace invoice.Migrations
 {
     /// <inheritdoc />
-    public partial class AlterPhoneNumberColumnMaxValuePatientsTble : Migration
+    public partial class alterRoletle : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "PhoneNumber",
-                table: "Patients",
-                type: "nvarchar(13)",
-                nullable: true,
+                name: "Role_description",
+                table: "Roles",
+                type: "nvarchar(255)",
+                maxLength: 255,
+                nullable: false,
+                defaultValue: "",
                 oldClrType: typeof(string),
-                oldType: "nvarchar(max)",
+                oldType: "nvarchar(255)",
+                oldMaxLength: 255,
                 oldNullable: true);
         }
 
@@ -24,13 +27,14 @@ namespace invoice.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "PhoneNumber",
-                table: "Patients",
-                type: "nvarchar(max)",
+                name: "Role_description",
+                table: "Roles",
+                type: "nvarchar(255)",
+                maxLength: 255,
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(13)",
-                oldNullable: true);
+                oldType: "nvarchar(255)",
+                oldMaxLength: 255);
         }
     }
 }

@@ -32,4 +32,14 @@ namespace invoice.Utilities
         Veterinary,
         Other
     }
+
+    public enum  PermissionCategorie
+    {
+        Facture,
+        UserManagement,
+        Reporting,
+        Settings,
+        Management,
+        Comptabilite
+    }
 }

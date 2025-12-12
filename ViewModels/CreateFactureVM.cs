@@ -356,6 +356,11 @@ namespace invoice.ViewModels
             DiscountPercent = 0;
             DiscountFlat = 0;
             AmountPaid = 0;
+            PatientDefined = false;
+            if(viewName == "crudCreateOne")
+                Patient = new Patient();
+            ShowAdvanceInvoiceParam = false;
+            InvoiceExams.Clear();
 
             // TO DO : Load data if needed
             GetExamenList().ConfigureAwait(false);

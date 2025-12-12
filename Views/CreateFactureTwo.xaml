@@ -138,11 +138,11 @@
                     <StackPanel Margin="10,0,0,0" Orientation="Horizontal" VerticalAlignment="Center">
                         <WrapPanel >
                             <Image Source="/Assets/icons/exam_soft.png" Height="32" Margin="0,0,10,0" />
-                            <ComboBox MinWidth="170" 
+                            <ComboBox Width="285" 
                                       Height="24"
                                       ItemsSource="{Binding AvailableExamens}"
                                       SelectedItem="{Binding SelectedAvailableExam, Mode=TwoWay}"
-                                      MaxDropDownHeight="155"
+                                      MaxDropDownHeight="150"
                                       BorderThickness="0,0,0,1"
                                       VerticalContentAlignment="Center"
                                       
@@ -158,9 +158,10 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                            <ComboBox MinWidth="60" 
+                            <ComboBox Width="85" 
                                       Height="24"
                                       Margin="10,0,0,0"
+                                      HorizontalContentAlignment="Center"
                                       ItemsSource="{Binding AvailableExamens}"
                                       SelectedItem="{Binding SelectedAvailableExam, Mode=TwoWay}"
                                       MaxDropDownHeight="155"
@@ -180,13 +181,13 @@
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
                         </WrapPanel>
-                        <ComboBox MinWidth="35" 
+                        <ComboBox Width="50" 
                                   VerticalContentAlignment="Center"
+                                  HorizontalContentAlignment="Center"
                                   Height="24"
                                   ItemsSource="{Binding QtyAvailable}"
                                   SelectedItem="{Binding SelectedQty, Mode=TwoWay}"
                                   HorizontalAlignment="Right"
-                                  Width="15"
                                   Margin="15,0,0,0">
 
                         </ComboBox>
@@ -286,33 +287,30 @@
                         <!-- Discount percent-->  
                         <TextBox Grid.Column="0"
                                  Name="tbxDiscountAmountPercent"
-                            VerticalContentAlignment="Center"
-                                 BorderThickness="2"
-                                    Padding="5,0"
-                                 FontWeight="Normal"
-                                    Height="25"
-                                    Width="100"
+                                 Style="{StaticResource MaterialTextBox}"
+                                 Width="100"
+                                 Padding="5,0"
+                                 Height="28"
                                     >  
                             <TextBox.Text>
                                 <Binding Path="DiscountPercent" Mode="OneWayToSource" UpdateSourceTrigger="PropertyChanged" StringFormat="{}{0:N0}" />
                             </TextBox.Text>
                         </TextBox>
-                        <!-- Discount flat-->  
+                        <!-- Discount flat--> 
                         <TextBox Grid.Column="0"
-                            VerticalContentAlignment="Center"
-                                    Padding="5,0"
-                                 BorderThickness="2"
-                                 FontWeight="Normal"
-                                    Height="25"
+                                 Style="{StaticResource MaterialTextBox}"
                                  Name="tbxDiscountAmountFlat"
                                  Visibility="Collapsed"
-                                    Width="100"
+                                 Width="100"
+                                 Padding="5,0"
+                                 Height="28"
                                     >  
                             <TextBox.Text>
                                 <Binding Path="DiscountFlat" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" StringFormat="{}{0:N0}" />
                             </TextBox.Text>
                         </TextBox>
                         <WrapPanel Grid.Column="1"
+                                   VerticalAlignment="Center"
                                    Margin="10,0,0,0">
                             <RadioButton GroupName="DiscountType"
                                          IsChecked="{Binding SelectedDiscountPercent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Click="RadioButton_Percent_Click"
@@ -347,11 +345,9 @@
                                    Margin="5,0,0,3"
                                    Foreground="#202020"
                                    FontWeight="SemiBold"/>
-                        <TextBox VerticalContentAlignment="Center"
-                                 BorderThickness="2"
-                                 FontWeight="Normal"
+                        <TextBox Style="{StaticResource MaterialTextBox}"
                                  Padding="5,0"
-                                 Height="25"
+                                 Height="28"
                                  Width="100"
                                  Tag=" 0 %"
                                  >

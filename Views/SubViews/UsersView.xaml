@@ -4,14 +4,45 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:invoice.Views.SubViews"
+             xmlns:customControl="clr-namespace:invoice.CustomControls"
              mc:Ignorable="d" 
              xmlns:converter="clr-namespace:invoice.Utilities.Converters"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <converter:BoolToUserStatus x:Key="BoolToUserStatus" />
+        <customControl:AddUserForm x:Key="AddUserForm" />
+        <Style x:Key="SegmentButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource SurfaceBlue}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBlue}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                        BorderThickness="2"
+                        BorderBrush="{StaticResource PrimaryBlue}"
+                        Padding="{TemplateBinding Padding}"
+                                CornerRadius="2">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#BEE6FD" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
     
-    <Grid>
+    <!-- RootGrid nommé pour être utilisé dans les animations -->
+    <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="2*"/>
@@ -22,10 +53,10 @@
         <Border Padding="0"
                 Grid.Row="0"
                 Margin="10"
-                Background="White"
+                Background="Transparent"
                 CornerRadius="5"
                 BorderThickness="2"
-                BorderBrush="#F6F6F6">
+                BorderBrush="#3583CF">
             
             <Grid Margin="10">
                 <Grid.ColumnDefinitions>
@@ -37,7 +68,7 @@
                 <Border Grid.Column="0" 
                         Margin="10,10,0,10"
                         BorderThickness="0,0,2,0"
-                        BorderBrush="#F6F6F6">
+                        BorderBrush="#3583CF">
                     <WrapPanel 
                                VerticalAlignment="Center" HorizontalAlignment="Center" >
                         <Image Source="/Assets/icons/users-enable.png"
@@ -45,9 +76,10 @@
                         <StackPanel Orientation="Vertical"
                                     VerticalAlignment="Center"
                                     Margin="20,0,0,0">
-                            <TextBlock Text="0"
+                            <TextBlock Text="{Binding TotalActifUsersCount}"
                                        HorizontalAlignment="Center"
-                                       FontSize="14"
+                                       FontSize="18"
+                                       FontWeight="Bold"
                                        Foreground="#666666"/>
                             <TextBlock Text="Actif"
                                    FontSize="18"
@@ -71,7 +103,8 @@
                                         Margin="20,0,0,0">
                                 <TextBlock Text="{Binding TotalUsersCount}"
                                            HorizontalAlignment="Center"
-                                           FontSize="14"
+                                           FontSize="18"
+                                           FontWeight="Bold"
                                            Foreground="#666666"/>
                                 <TextBlock Text="Enregistré"
                                        FontSize="18"
@@ -82,7 +115,8 @@
                         <!-- 2-->
                         <StackPanel VerticalAlignment="Center"
                                     Margin="150,0,0,0">
-                            <Button Content="Ajouter Utilisateur" />
+                            <!-- gestionnaire Click ajouté -->
+                            <Button Tag="showForm" Content="Ajouter un utilisateur" Style="{StaticResource SegmentButton}" Click="ShowFormButton_Click"/>
                         </StackPanel>
                     </WrapPanel>
                     
@@ -90,12 +124,11 @@
             </Grid>
         </Border>
 
-
         <!-- Main content-->
         <Border Padding="0"
                 Grid.Row="1"
                 Margin="10,0,10,0"
-                Background="White"
+                Background="Transparent"
                 CornerRadius="5"
                 BorderThickness="0,0,0,2"
                 BorderBrush="#F6F6F6">
@@ -108,7 +141,7 @@
                 <!-- Main content Header-->
                 <Border Grid.Row="0"
                         BorderThickness="0,0,0,2"
-                        BorderBrush="#F6F6F6">
+                        BorderBrush="{StaticResource SurfaceBlue}">
                     <WrapPanel>
                         <!-- User-->
                         <WrapPanel HorizontalAlignment="Left"
@@ -138,7 +171,7 @@
                           ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"
                           Style="{DynamicResource specialDataGrid}" 
                           ItemsSource="{Binding Users}"
-                          Background="#FAFAFA"
+                          Background="Transparent"
                           Height="325"
                           Margin="0,5,0,0"
                           BorderThickness="0,0,0,2"
@@ -149,10 +182,11 @@
                           CanUserDeleteRows="False" 
                           IsReadOnly="True">
                     <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nom  complet" Binding="{Binding FullName}" Width="2*"/>
                         <DataGridTextColumn Header="Identifiant" Binding="{Binding Account_name}" Width="2*"/>
                         <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
                         <DataGridTextColumn Header="Tel. 1" Binding="{Binding Phone_number_one}" Width="*"/>
-                        <DataGridTextColumn Header="Rôle" Binding="{Binding Role}" Width="*"/>
+                        <DataGridTextColumn Header="Rôle"  Width="*"/>
                         <DataGridTextColumn Header="Statut" Binding="{Binding IsActive, Converter={StaticResource BoolToUserStatus}}" Width="*" 
                                             CellStyle="{DynamicResource DataGridCell2}"/>
                         <DataGridTemplateColumn Header="Action" 
@@ -199,5 +233,27 @@
                 </DataGrid>
             </Grid>
         </Border>
+
+        <!-- Overlay absolu pour AddUserForm (toujours au-dessus, n'affecte pas la disposition) -->
+        <Grid x:Name="OverlayHost"
+              Grid.Row="0"
+              Grid.RowSpan="2"
+              Visibility="Collapsed"
+              IsHitTestVisible="True"
+              Panel.ZIndex="9999"
+              Background="Transparent">
+            <!-- Fond semi-transparent (opacité animée) -->
+            <Border x:Name="OverlayBackground"
+                    Visibility="Visible"
+                    Background="LightGray"
+                    Opacity="0.05"
+                    CornerRadius="10"/>
+            <!-- Contenu centré ; le contrôle inséré ici aura son propre TranslateTransform animé -->
+            <ContentControl x:Name="OverlayContent"
+                            Grid.Row="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="{DynamicResource AddUserForm}"/>
+        </Grid>
     </Grid>
 </UserControl>

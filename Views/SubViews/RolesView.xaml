@@ -4,13 +4,306 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:invoice.Views.SubViews"
+             xmlns:customControl="clr-namespace:invoice.CustomControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <TextBlock Text="Roles View Content Goes Here"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       FontSize="24"
-                       Foreground="#333333"/>
+             xmlns:converter="clr-namespace:invoice.Utilities.Converters" 
+             xmlns:subviewmodels="clr-namespace:invoice.ViewModels.SubViewModels"
+             d:DataContext="{d:DesignInstance Type=subviewmodels:RolesVM}"
+             d:DesignHeight="450" d:DesignWidth="800"
+             FontFamily="{StaticResource fontBase}">
+
+    <!--
+    PSEUDOCODE (en français, détaillé) :
+    - Objectif : ajouter une animation de translation fluide au survol et à la sélection, et rendre les items du ListView sélectionnables.
+    - Approche :
+      1. Rendre le ListView sélectionnable en définissant SelectionMode et en s'assurant que l'ItemContainerStyle n'enlève pas la sélection.
+      2. Remplacer le style existant 'MaterialListViewItemStyle' par un Template qui enveloppe le contenu dans un Border nommé 'ContainerBorder'.
+         - Ce Border aura un RenderTransform (TranslateTransform) nommé 'ContainerTranslate' que l'on animera.
+         - On conservera un visuel de sélection (Background/BorderBrush) via Setters et triggers.
+      3. Utiliser des Trigger.EnterActions et ExitActions dans le ControlTemplate.Triggers pour démarrer/stopper des Storyboards :
+         - Sur IsMouseOver -> animer TranslateTransform.Y à une petite valeur négative (ex: -6) et assombrir légèrement le fond.
+         - Sur IsSelected -> animer TranslateTransform.Y à une valeur intermédiaire (ex: -10), changer Background/BorderBrush pour indiquer la sélection.
+         - Les ExitActions ramènent la translation à 0 et rétablissent le fond.
+      4. Nettoyer le DataTemplate interne : ne pas dupliquer les animations au niveau du Border du template (éviter conflits).
+      5. Laisser les actions (boutons Edit/Delete) et le binding tels quels. Permettre l'accès à SelectedItem depuis le ViewModel si nécessaire (SelectionMode=Single).
+    - Contraintes :
+      - Aucune modification code-behind.
+      - Utiliser uniquement XAML.
+      - Animations courtes et fluides (Duration ~0.12-0.18s).
+    -->
+
+    <UserControl.Resources>
+        <converter:BoolToUserStatus x:Key="BoolToUserStatus" />
+        <customControl:AddRoleForm x:Key="AddRoleForm" DataContext="{Binding}" />
+        <Style x:Key="SegmentButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource SurfaceBlue}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBlue}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderThickness="2"
+                                BorderBrush="{StaticResource PrimaryBlue}"
+                                Padding="{TemplateBinding Padding}"
+                                CornerRadius="2">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Material-like Role item template (sans animation interne, animation gérée au niveau du ListViewItem) -->
+        <DataTemplate x:Key="RoleItemTemplate" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+            <Border Margin="8"
+                    Padding="10,5"
+                    CornerRadius="4"
+                    Cursor="Hand"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource SurfaceBlue}"
+                    BorderThickness="2"
+                    RenderTransformOrigin="0.5,0.5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Vertical" Grid.Column="0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Role_name}"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="#222222"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <TextBlock Text="{Binding Role_description}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,4,0,0"
+                                   Foreground="#666666"
+                                   FontSize="12"
+                                   Opacity="0.9"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0" VerticalAlignment="Center" >
+                            <Border Background="#F3F7FF"
+                                    CornerRadius="12"
+                                    Padding="6,4"
+                                    VerticalAlignment="Center"
+                                    ToolTip="Nombre d'utilisateur"
+                                    ToolTipService.BetweenShowDelay="1500">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="/Assets/icons/users.png" Width="14" Height="14" Opacity="0.9" Margin="0,0,6,0"/>
+                                    <TextBlock Text="{Binding UsersCount}" FontWeight="SemiBold" Foreground="#1E57A3"
+                                               FontSize="12"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Actions -->
+                            <StackPanel Orientation="Horizontal" Margin="12,0,0,0" HorizontalAlignment="Left">
+                                <Button Width="36" Height="36" Margin="4,0,0,0" ToolTip="Editer" Cursor="Hand"
+                                        Background="Transparent" BorderThickness="0">
+                                    <Image Source="/Assets/icons/edit.png" Width="18" Height="18"/>
+                                </Button>
+                                <Button Width="36" Height="36" Margin="4,0,0,0" ToolTip="Supprimer" Cursor="Hand"
+                                        Background="Transparent" BorderThickness="0" Command="{Binding DataContext.DeleteRoleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                    <Image Source="/Assets/icons/delete.png" Width="18" Height="18"/>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- ItemContainerStyle pour maintenir la sélection et fournir animations de translation -->
+        <Style x:Key="MaterialListViewItemStyle" TargetType="ListViewItem">
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Margin" Value="4,2"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Top"/>
+            <Setter Property="Focusable" Value="True"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Border x:Name="ContainerBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                SnapsToDevicePixels="True"
+                                RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <TranslateTransform x:Name="ContainerTranslate" Y="0"/>
+                            </Border.RenderTransform>
+
+                            <ContentPresenter Margin="{TemplateBinding Margin}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <!-- Sélection : translation plus marquée et fond de sélection -->
+                            <Trigger Property="IsSelected" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ContainerTranslate"
+                                                             Storyboard.TargetProperty="Y"
+                                                             To="-6" Duration="0:0:0.12" />
+                                            <ColorAnimation Storyboard.TargetName="ContainerBorder"
+                                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="#EAF6FF" Duration="0:0:0.12" />
+                                            <ColorAnimation Storyboard.TargetName="ContainerBorder"
+                                                            Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                                            To="#CDE7FF" Duration="0:0:0.12" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ContainerTranslate"
+                                                             Storyboard.TargetProperty="Y"
+                                                             To="0" Duration="0:0:0.12" />
+                                            <ColorAnimation Storyboard.TargetName="ContainerBorder"
+                                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="Transparent" Duration="0:0:0.12" />
+                                            <ColorAnimation Storyboard.TargetName="ContainerBorder"
+                                                            Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+                                                            To="#00000000" Duration="0:0:0.12" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+
+                            <!-- Focus visuel (au clavier) -->
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="ContainerBorder" Property="BorderThickness" Value="1"/>
+                                <Setter TargetName="ContainerBorder" Property="BorderBrush" Value="#D0E9FF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- RootGrid nommé pour être utilisé dans les animations -->
+    <Grid x:Name="RootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+
+        <!-- Header content-->
+        <Border Padding="0"
+                Grid.Row="0"
+                Margin="10"
+                Background="Transparent"
+                CornerRadius="5"
+                BorderThickness="2"
+                BorderBrush="{StaticResource PrimaryBlue}">
+
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left-->
+                <Border Grid.Column="0" 
+                        Margin="10,10,0,10"
+                        BorderThickness="0,0,2,0"
+                        BorderBrush="{StaticResource PrimaryBlue}">
+                    <ListView ItemsSource="{Binding RolesList}"
+                              SelectedItem="{Binding SelectedRole}"
+                              ItemTemplate="{StaticResource RoleItemTemplate}"
+                              ItemContainerStyle="{StaticResource MaterialListViewItemStyle}"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              VerticalAlignment="Stretch"
+                              HorizontalContentAlignment="Stretch"
+                              Margin="0"
+                              SelectionMode="Single"
+                              IsSynchronizedWithCurrentItem="True" d:ItemsSource="{d:SampleData ItemCount=5}" ScrollViewer.VerticalScrollBarVisibility="Hidden"/>
+                </Border>
+                <!-- Right-->
+                <Border Grid.Column="1" 
+                        Margin="10,10,0,10">
+                    
+
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Main content-->
+        <Border Padding="0"
+                Grid.Row="1"
+                Margin="10,0,10,0"
+                Background="Transparent"
+                CornerRadius="5"
+               >
+            <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                <!-- 1 -->
+                <WrapPanel Margin="75,0,0,0" VerticalAlignment="Center">
+                    <Image Source="/Assets/icons/management.png"
+                            Width="64"/>
+                    <StackPanel Orientation="Vertical"
+                                VerticalAlignment="Center"
+                                Margin="20,0,0,0">
+                        <TextBlock Text="{Binding TotalRolesCount}"
+                                   HorizontalAlignment="Center"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="#666666"/>
+                        <TextBlock Text="Roles disponible"
+                                    FontSize="18"
+                                    FontWeight="Bold"
+                                    Foreground="#333333"/>
+                    </StackPanel>
+                </WrapPanel>
+                <!-- 2-->
+                <StackPanel VerticalAlignment="Center"
+                Margin="150,15,0,0">
+                    <!-- gestionnaire Click ajouté -->
+                    <Button Tag="showForm" Content="Ajouter un role" Style="{StaticResource SegmentButton}" Click="ShowFormButton_Click"/>
+                </StackPanel>
+            </WrapPanel>
+        </Border>
+
+        <!-- Overlay absolu pour AddUserForm (toujours au-dessus, n'affecte pas la disposition) -->
+        <Grid x:Name="OverlayHost"
+              Grid.Row="0"
+              Grid.RowSpan="2"
+              Visibility="Collapsed"
+              IsHitTestVisible="True"
+              Panel.ZIndex="9999"
+              Background="Transparent">
+            <!-- Fond semi-transparent (opacité animée) -->
+            <Border x:Name="OverlayBackground"
+                    Visibility="Visible"
+                    Background="LightGray"
+                    Opacity="0.05"
+                    CornerRadius="10"/>
+            <!-- Contenu centré ; le contrôle inséré ici aura son propre TranslateTransform animé -->
+            <ContentControl x:Name="OverlayContent"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="{DynamicResource AddRoleForm}"/>
+        </Grid>
     </Grid>
 </UserControl>

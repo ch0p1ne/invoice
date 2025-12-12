@@ -55,17 +55,17 @@
                 <Setter Property="DetailsVisibility" Value="Collapsed"/>
             </Trigger>
             <DataTrigger Binding="{Binding Status}" Value="Non_Payer">
-                <Setter Property="Background" Value="#fff9f9"/>
+                <Setter Property="Background" Value="#FFFFFF"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding Status}" Value="Payer">
-                <Setter Property="Background" Value="#ebf1ed"/>
+                <Setter Property="Background" Value="#D4F6FF"/>
             </DataTrigger>
         </Style.Triggers>
     </Style>
     <Style x:Key="DataGridColumnHeaderStyle1" TargetType="{x:Type DataGridColumnHeader}">
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Background" 
-                Value="#8dadf2"/>
+                Value="{DynamicResource PrimaryBlue}"/>
         <Setter Property="Foreground" 
                 Value="{DynamicResource DataGrid.Column.Header.Static.Foreground}"/>
         <Setter Property="MinHeight" Value="25"/>
@@ -133,7 +133,7 @@
     <Style x:Key="DataGridColumnHeaderStyle2" TargetType="{x:Type DataGridColumnHeader}">
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Background"
-                Value="#8dadf2" />
+                Value="{DynamicResource PrimaryBlue}" />
         <Setter Property="Foreground" 
                 Value="{DynamicResource DataGrid.Column.Header.Static.Foreground}"/>
         <Setter Property="MinHeight" Value="25"/>
@@ -252,7 +252,10 @@
     </Style>
     <Style TargetType="DataGridCell">
         <Setter Property="Margin" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="FontWeight" Value="Light" />
+        <Setter Property="Foreground" Value="#525252" />
         <Setter Property="Height" Value="45" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -274,7 +277,9 @@
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
                 <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="Background" Value="#7fa1a9" />
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="Background" Value="#F7F7F7" />
             </Trigger>
 
             <Trigger Property="IsKeyboardFocusWithin" Value="True">
@@ -284,10 +289,13 @@
     </Style>
     <Style x:Key="DataGridCell2" TargetType="DataGridCell">
         <Setter Property="Margin" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Height" Value="45" />
         <Setter Property="FontWeight" Value="Light" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="#525252" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="HorizontalContentAlignment" Value="Right" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -306,8 +314,10 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
                 <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="Background" Value="#7fa1a9" />
+                <Setter Property="Background" Value="#F7F7F7" />
             </Trigger>
 
             <Trigger Property="IsKeyboardFocusWithin" Value="True">

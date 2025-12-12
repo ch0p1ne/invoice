@@ -31,6 +31,7 @@
     <None Remove="Assets\icons\invoice.png" />
     <None Remove="Assets\icons\list.png" />
     <None Remove="Assets\icons\logout.png" />
+    <None Remove="Assets\icons\management.png" />
     <None Remove="Assets\icons\mark.png" />
     <None Remove="Assets\icons\online-appointment.png" />
     <None Remove="Assets\icons\printer.png" />
@@ -93,6 +94,7 @@
     <Resource Include="Assets\icons\invoice.png" />
     <Resource Include="Assets\icons\list.png" />
     <Resource Include="Assets\icons\logout.png" />
+    <Resource Include="Assets\icons\management.png" />
     <Resource Include="Assets\icons\mark.png" />
     <Resource Include="Assets\icons\online-appointment.png" />
     <Resource Include="Assets\icons\printer.png" />

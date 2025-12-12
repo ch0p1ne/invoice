@@ -14,13 +14,54 @@
 
         <Style  x:Key="txtIsBinder" TargetType="TextBox">
             <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Padding" Value="7,2" />
+            <Setter Property="Background" Value="{StaticResource LightGray}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Padding" Value="8,6" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Border x:Name="PART_Border"
+						            Background="{TemplateBinding Background}"
+						            CornerRadius="2"
+						            BorderThickness="2"
+						            BorderBrush="LightBlue"
+						            SnapsToDevicePixels="True">
+                                <ScrollViewer x:Name="PART_ContentHost" Margin="4,0"/>
+                            </Border>
+
+                            <!-- underline -->
+                            <Border x:Name="Underline"
+						            Height="1"
+						            VerticalAlignment="Bottom"
+						            Background="{StaticResource LightGray}"
+						            CornerRadius="1"
+						            Margin="2,0,2,2"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Underline" Property="Background" Value="{StaticResource PrimaryBlue}"/>
+                                <Setter TargetName="Underline" Property="Height" Value="1"/>
+                                <Setter TargetName="PART_Border" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#22000000" BlurRadius="8" ShadowDepth="0"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding PatientDefined }" Value="true">
                     <Setter Property="BorderBrush" Value="#9ECCA9" />
                     <Setter Property="BorderThickness" Value="1" />
                     <Setter Property="VerticalContentAlignment" Value="Center" />
-                    <Setter Property="Padding" Value="7,2" />
                     <Setter Property="IsEnabled" Value="False" />
                     <Setter Property="IsReadOnly" Value="True" />
                     <Setter Property="Background" Value="#F0F3EE" />
@@ -29,6 +70,7 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        
         <Style  x:Key="datePickerIsBinder" TargetType="DatePicker">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding PatientDefined }" Value="true">
@@ -95,22 +137,27 @@
                    Margin="0,0,10,0"
                    Height="24"/>
             <ComboBox IsEditable="True" 
-                      MinWidth="100" 
+                      Width="245"
                       SelectedItem="{Binding SelectedPatient, Mode=OneWayToSource}"
                       Name="cbxPatient"
                       ItemsSource="{Binding Patients}"
-                      MaxDropDownHeight="75">
+                      MaxDropDownHeight="100"
+                      >
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <Rectangle Fill="BlueViolet" Width="4" Height="8" Margin="0,2,5,2" />
-                            <ContentControl Content="{Binding LastName}"
-                                            Margin="0,0,5,0"
-                                            VerticalAlignment="Center"
-                                            FontSize="14"/>
-                            <ContentControl Content="{Binding FirstName}"
-                                            VerticalAlignment="Center"
-                                            FontSize="14"/>
+
+                            <Rectangle Fill="LightGreen" Width="4" Height="9" Margin="0,2,5,2" />
+
+                            <StackPanel Orientation="Horizontal">
+                                <ContentControl Content="{Binding LastName}"
+                                                    Margin="0,0,5,0"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="14"/>
+                                <ContentControl Content="{Binding FirstName}"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="14"/>
+                            </StackPanel>
                         </StackPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
@@ -122,94 +169,88 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"
-            Margin="155,70,0,0">
-                <WrapPanel Margin="0,0,0,5">
-                    <Label Content="_Nom :"  
-               VerticalAlignment="Center" />
-                    <TextBox Name="txtNom" Width="200"  Height="25"
-                 Background="#fdfffc" 
-                 Text="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 VerticalAlignment="Center"
-                 HorizontalContentAlignment="Left" 
-                 Margin="15,0,0,0"
-                 FontWeight="Normal" 
-                 Style="{StaticResource txtIsBinder}"
-                 >
-
-                    </TextBox>
+            Margin="155,35,0,0">
+                <WrapPanel Orientation="Vertical">
+                    <TextBlock Text="Nom :"  
+                           Style="{StaticResource FieldLabel}"/>
+                    <TextBox Name="txtNom" Width="250"
+                             Background="#fdfffc" 
+                             Text="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalAlignment="Center"
+                             HorizontalContentAlignment="Left" 
+                             Style="{StaticResource txtIsBinder}"/>
 
                 </WrapPanel>
-                <WrapPanel Margin="0,0,0,15">
-                    <Label Content="_Prenom :"  
-               VerticalAlignment="Center" />
-                    <TextBox Name="txtPrenom" Width="260"  Height="25"
-                 Background="#fdfffc" 
-                 Text="{Binding FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 VerticalAlignment="Center"
-                 Style="{StaticResource txtIsBinder}"
-                 HorizontalContentAlignment="Left" 
-                 Margin="15,0,0,0"
-                 FontWeight="Normal"/>
+                <WrapPanel Margin="0,0,0,15" Orientation="Vertical">
+                    <TextBlock Text="Prenom :"  
+                               Style="{StaticResource FieldLabel}"/>
+                    <TextBox Name="txtPrenom" Width="250"
+                             Background="#fdfffc" 
+                             Text="{Binding FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalAlignment="Center"
+                             Style="{StaticResource txtIsBinder}"
+                             HorizontalContentAlignment="Left" />
                 </WrapPanel>
-                <WrapPanel Margin="0,0,0,15">
-                    <Label Content="_Email :" 
-               VerticalAlignment="Center" />
-                    <TextBox Name="txtEmail" Width="260"  Height="25"
-                 Background="#fdfffc" 
-                 Text="{Binding Patient.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 VerticalAlignment="Center"
-                 HorizontalContentAlignment="Left" 
-                 Margin="15,0,0,0"
-                 Style="{StaticResource txtIsBinder}"
-                 FontWeight="Normal"/>
+                <WrapPanel Margin="0,0,0,0">
+                    <WrapPanel Orientation="Vertical">
+                         <TextBlock Text="Téléphone Principale :"  Style="{StaticResource FieldLabel}"/>
+                        <TextBox Name="txtPhone" Width="185" 
+                             Background="#fdfffc" 
+                             VerticalAlignment="Center"
+                             Text="{Binding PhoneNumber1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             HorizontalContentAlignment="Left" 
+                             Style="{StaticResource txtIsBinder}"
+                             FontWeight="Normal"/>
+                    </WrapPanel>
+
+                    <WrapPanel Margin="75,0,0,0" Orientation="Vertical">
+                        <TextBlock Text="Téléphone Secondaire :"  Style="{StaticResource FieldLabel}"/>
+                        <TextBox Name="txtPhone2" Width="185" 
+                             Background="#fdfffc" 
+                             VerticalAlignment="Center"
+                             Text="{Binding PhoneNumber2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             HorizontalContentAlignment="Left" 
+                             Style="{StaticResource txtIsBinder}"
+ 
+                             FontWeight="Normal"/>
+                    </WrapPanel>
                 </WrapPanel>
-                <WrapPanel Margin="0,0,0,5">
-                    <Label Content="Tel. nº1 :"  
-               VerticalAlignment="Center" />
-                    <TextBox Name="txtPhone" Width="180"  Height="25"
-                 Background="#fdfffc" 
-                 VerticalAlignment="Center"
-                 Text="{Binding PhoneNumber1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 HorizontalContentAlignment="Left" 
-                 Style="{StaticResource txtIsBinder}"
-                 Margin="15,0,0,0"
-                 FontWeight="Normal"/>
-                </WrapPanel>
-                <WrapPanel Margin="0,0,0,15">
-                    <Label Content="Tel. nº2 :"  
-               VerticalAlignment="Center" />
-                    <TextBox Name="txtPhone2" Width="180"  Height="25"
-                 Background="#fdfffc" 
-                 VerticalAlignment="Center"
-                 Text="{Binding PhoneNumber2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 HorizontalContentAlignment="Left" 
-                 Style="{StaticResource txtIsBinder}"
-                 Margin="15,0,0,0"
-                 FontWeight="Normal"/>
-                </WrapPanel>
-                <WrapPanel Margin="0,0,0,15">
-                    <Label Content="Adresse :" 
-               VerticalAlignment="Center" />
-                    <TextBox Name="txtAdress" Width="180"  Height="25"
-                 Background="#fdfffc" 
-                 VerticalAlignment="Center"
-                 Text="{Binding Patient.Address, Mode=TwoWay}"
-                    Style="{StaticResource txtIsBinder}"
-                 HorizontalContentAlignment="Left" 
-                 Margin="15,0,0,0"
-                 FontWeight="Normal"/>
-                </WrapPanel>
-                <WrapPanel Margin="0,0,0,25">
-                    <Label Content="Date de Naissance :" 
-               VerticalAlignment="Center" />
+                <WrapPanel Margin="0,0,0,15" Orientation="Vertical">
+                    <TextBlock Text="Date de Naissance :" Style="{StaticResource FieldLabel}"/>
                     <DatePicker DisplayDateStart="1901-01-01" 
                                 DisplayDateEnd="2099-12-31"
+                                Width="185"
                                 IsTodayHighlighted="True"
-                                Margin="15,0,0,0"
                                 Style="{StaticResource datePickerIsBinder}"
                                 SelectedDate="{Binding DateOfBirth, Mode=TwoWay}"
                                 DisplayDate="2020-01-01"
-                                FontWeight="Normal"/>
+                                Background="Transparent"
+                                Padding="8,6"
+                                FontSize="12"
+                                FontWeight="SemiBold"/>
+                </WrapPanel>
+                <WrapPanel>
+                    <WrapPanel Orientation="Vertical">
+                        <TextBlock Text="Email :" Style="{StaticResource FieldLabel}"/>
+                        <TextBox Name="txtEmail" Width="185"
+                             Background="#fdfffc" 
+                             Text="{Binding Patient.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalAlignment="Center"
+                             HorizontalContentAlignment="Left" 
+                             Style="{StaticResource txtIsBinder}"
+                                 FontWeight="Normal"/>
+                    </WrapPanel>
+                    
+                    <WrapPanel Orientation="Vertical" Margin="75,0,0,0">
+                        <TextBlock Text="Adresse :"  Style="{StaticResource FieldLabel}" />
+                        <TextBox Name="txtAdress" Width="185"
+                             Background="#fdfffc" 
+                             VerticalAlignment="Center"
+                             Text="{Binding Patient.Address, Mode=TwoWay}"
+                                Style="{StaticResource txtIsBinder}"
+                             HorizontalContentAlignment="Left" 
+                             FontWeight="Normal"/>
+                    </WrapPanel>
                 </WrapPanel>
             </StackPanel>
 

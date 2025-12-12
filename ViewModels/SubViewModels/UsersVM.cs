@@ -15,6 +15,7 @@ namespace invoice.ViewModels.SubViewModels
     {
         // Fields
         private int _totalUsersCount;
+        private int _totalActifUsersCount;
 
         // Property
         public ObservableCollection<User> Users { get; set; } = new();
@@ -22,6 +23,11 @@ namespace invoice.ViewModels.SubViewModels
         {
             get => _totalUsersCount;
             set => SetProperty(ref _totalUsersCount, value);
+        }
+        public int TotalActifUsersCount 
+        { 
+            get => _totalActifUsersCount;
+            set => SetProperty(ref _totalActifUsersCount, value);
         }
 
 
@@ -40,6 +46,7 @@ namespace invoice.ViewModels.SubViewModels
                 using var context = new ClimaDbContext();
                 var users = await context.Users.ToListAsync();
                 TotalUsersCount = users.Count;
+                TotalActifUsersCount = users.Count(u => u.IsActive);
                 Users.Clear();
                 foreach (var user in users)
                 {

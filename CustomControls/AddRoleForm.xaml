@@ -1,0 +1,170 @@
+﻿<UserControl x:Class="invoice.CustomControls.AddRoleForm"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:invoice.CustomControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="340" d:DesignWidth="425"
+             Width="340"
+             Height="425"
+             Background="Transparent"
+             FontFamily="{StaticResource fontBase}">
+
+    <!--
+    Pseudocode / Plan détaillé (à l'intention des développeurs) :
+    1) Objectif : ajouter des animations d'entrée/sortie "material-like" pour le contrôle
+       afin qu'il s'anime lorsqu'il est injecté dans l'Overlay de la vue UsersView.
+    2) Choix simple : animation d'opacité et translation verticale (Y) du conteneur principal.
+    3) Implémentation :
+       - Donner un x:Name au Border racine (RootBorder).
+       - Mettre son Opacity initial à 0 et ajouter un RenderTransform TranslateTransform.
+       - Définir deux Storyboards en ressources : EnterStoryboard et ExitStoryboard.
+           * EnterStoryboard : Opacity 0 -> 1, Translate Y 40 -> 0, durée ~220ms, easing.
+           * ExitStoryboard  : Opacity 1 -> 0, Translate Y 0 -> 40, durée ~180ms, easing.
+       - Lancer EnterStoryboard sur l'événement Loaded via EventTrigger.
+       - Fournir les Storyboards en tant que ressources publiques (nommées) pour que la vue hôte
+         puisse démarrer ExitStoryboard si nécessaire (ex : UsersView.BeginStoryboard).
+    4) Contraintes :
+       - Ne pas modifier la structure visuelle existante ; ne changer que les propriétés
+         du conteneur principal et ajouter des ressources/trigger.
+       - Conserver la palette et styles définis dans le fichier initial.
+    5) Résultat : contrôle autonome qui s'anime proprement lorsqu'il apparaît dans l'overlay.
+    -->
+
+    <UserControl.Resources>
+
+        <!-- Animation Storyboards -->
+        <Storyboard x:Key="EnterStoryboard">
+            <!-- Opacity -->
+            <DoubleAnimation Storyboard.TargetName="RootBorder"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1"
+                             Duration="0:0:0.22">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+
+            <!-- Translate Y -->
+            <DoubleAnimation Storyboard.TargetName="RootBorder"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                             From="40" To="0"
+                             Duration="0:0:0.22">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="ExitStoryboard">
+            <!-- Opacity -->
+            <DoubleAnimation Storyboard.TargetName="RootBorder"
+                             Storyboard.TargetProperty="Opacity"
+                             From="1" To="0"
+                             Duration="0:0:0.18">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseIn"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+
+            <!-- Translate Y -->
+            <DoubleAnimation Storyboard.TargetName="RootBorder"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                             From="0" To="40"
+                             Duration="0:0:0.18">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseIn"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+    </UserControl.Resources>
+
+    <Border x:Name="RootBorder"
+            CornerRadius="20"
+            BorderThickness="2"
+            BorderBrush="AliceBlue"
+            Background="{StaticResource SurfaceWhite}"
+                Padding="35,20"
+            Opacity="1"
+            RenderTransformOrigin="0.5,0.5">
+        <!-- Local DropShadow definition (inline to avoid resource lookup issues) -->
+        <Border.RenderTransform>
+            <TranslateTransform Y="40"/>
+        </Border.RenderTransform>
+
+        <Border.Effect>
+            <DropShadowEffect Color="#F6F6F6" BlurRadius="15" ShadowDepth="2" Direction="270" />
+        </Border.Effect>
+
+        <!-- Démarrer l'animation d'entrée lors du Loaded -->
+        <Border.Triggers>
+            <EventTrigger RoutedEvent="Border.Loaded">
+                <BeginStoryboard Storyboard="{StaticResource EnterStoryboard}" />
+            </EventTrigger>
+        </Border.Triggers>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Ajouter un role"
+                       Grid.Row="0"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Foreground="{StaticResource PrimaryBlue}"
+                       Margin="4,0,0,16"/>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- left -->
+                <StackPanel Grid.Row="0" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Stretch" Width="235">
+                    <!-- Nom -->
+                    <TextBlock Text="Nom du role" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Style="{StaticResource MaterialTextBox}" x:Name="LastNameTextBox"
+                             Text="{Binding RoleName, UpdateSourceTrigger=PropertyChanged}"
+                             Margin="0,2,0,8"/>
+
+                    <!-- Prénom -->
+                    <TextBlock Text="Description" Style="{StaticResource FieldLabel}"
+                               />
+                    <TextBox Style="{StaticResource MaterialTextBox}" x:Name="FirstNameTextBox"
+                             Text="{Binding RoleDescription, UpdateSourceTrigger=PropertyChanged}"
+                             Margin="0,2,0,8"/>
+                </StackPanel>
+                
+            </Grid>
+
+
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                <Button Content="Annuler"
+                        Width="100"
+                        Height="35"
+                        Margin="0,0,10,0"
+                        Background="Transparent"
+                        BorderBrush="{StaticResource PrimaryBlue}"
+                        BorderThickness="2"
+                        Foreground="{StaticResource PrimaryBlue}"
+                        FontWeight="SemiBold"
+                        />
+                <Button Content="Ajouter"
+                        Command="{Binding AddRoleCommand}"
+                        Click="CancelButton_Click"
+                        Width="100"
+                        Height="35"
+                        Background="{StaticResource PrimaryBlue}"
+                        BorderBrush="{StaticResource PrimaryBlue}"
+                        BorderThickness="2"
+                        Foreground="White"
+                        FontWeight="SemiBold" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

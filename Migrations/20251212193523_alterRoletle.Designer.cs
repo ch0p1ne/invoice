@@ -12,8 +12,8 @@ using invoice.Context;
 namespace invoice.Migrations
 {
     [DbContext(typeof(ClimaDbContext))]
-    [Migration("20251112135912_AlterPhoneNumberColumnMaxValuePatientsTble")]
-    partial class AlterPhoneNumberColumnMaxValuePatientsTble
+    [Migration("20251212193523_alterRoletle")]
+    partial class alterRoletle
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -80,6 +80,9 @@ namespace invoice.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ConsultationId"));
 
+                    b.Property<int>("Categorie")
+                        .HasColumnType("int");
+
                     b.Property<string>("ConsultationName")
                         .IsRequired()
                         .HasColumnType("nvarchar(99)");
@@ -141,6 +144,9 @@ namespace invoice.Migrations
 
                     b.Property<decimal>("Css")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<double?>("DiscountFlat")
+                        .HasColumnType("float");
 
                     b.Property<decimal?>("DiscountPercent")
                         .HasColumnType("decimal(3,2)");
@@ -278,7 +284,7 @@ namespace invoice.Migrations
 
                     b.HasIndex("MedecinId");
 
-                    b.ToTable("FactureConsultation");
+                    b.ToTable("FacturesConsultations");
                 });
 
             modelBuilder.Entity("invoice.Models.FactureExamen", b =>
@@ -373,7 +379,7 @@ namespace invoice.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PatientId"));
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(99)");
 
                     b.Property<int?>("AssuranceId")
                         .HasColumnType("int");
@@ -388,18 +394,22 @@ namespace invoice.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(70)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(13)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<string>("PhoneNumber2")
+                        .HasColumnType("nvarchar(15)");
 
                     b.HasKey("PatientId");
 
@@ -410,6 +420,38 @@ namespace invoice.Migrations
                         .HasFilter("[AssuranceNumber] IS NOT NULL");
 
                     b.ToTable("Patients");
+                });
+
+            modelBuilder.Entity("invoice.Models.Permission", b =>
+                {
+                    b.Property<int>("PermissionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PermissionId"));
+
+                    b.Property<int>("Categorie")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created_at")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Permission_name")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .HasColumnType("nvarchar(75)");
+
+                    b.Property<DateTime>("Updated_at")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("PermissionId");
+
+                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("invoice.Models.PrixHomologue", b =>
@@ -451,33 +493,18 @@ namespace invoice.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
 
-                    b.Property<int>("Create_fac")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Create_patient")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("Created_at")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Manage_consul")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Manage_exam")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Manage_fac")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Manage_med")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Manage_user")
-                        .HasColumnType("int");
+                    b.Property<string>("Role_description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Role_name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(75)
+                        .HasColumnType("nvarchar(75)");
 
                     b.HasKey("RoleId");
 
@@ -485,6 +512,21 @@ namespace invoice.Migrations
                         .IsUnique();
 
                     b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("invoice.Models.RolePermission", b =>
+                {
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PermissionId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("RolesPermissions");
                 });
 
             modelBuilder.Entity("invoice.Models.User", b =>
@@ -497,13 +539,22 @@ namespace invoice.Migrations
 
                     b.Property<string>("Account_name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(75)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("Created_at")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(99)
+                        .HasColumnType("nvarchar(99)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_active");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -513,6 +564,9 @@ namespace invoice.Migrations
                     b.Property<string>("Phone_number_one")
                         .IsRequired()
                         .HasColumnType("nvarchar(15)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Salt")
                         .IsRequired()
@@ -524,22 +578,9 @@ namespace invoice.Migrations
                     b.HasIndex("Account_name")
                         .IsUnique();
 
+                    b.HasIndex("RoleId");
+
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("invoice.Models.UserRole", b =>
-                {
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("RoleId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UsersRoles");
                 });
 
             modelBuilder.Entity("invoice.Models.Facture", b =>
@@ -634,19 +675,34 @@ namespace invoice.Migrations
                     b.Navigation("Categorie");
                 });
 
-            modelBuilder.Entity("invoice.Models.UserRole", b =>
+            modelBuilder.Entity("invoice.Models.RolePermission", b =>
                 {
-                    b.HasOne("invoice.Models.Role", null)
-                        .WithMany("UserRoles")
+                    b.HasOne("invoice.Models.Permission", "Permission")
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("invoice.Models.Role", "Role")
+                        .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("invoice.Models.User", null)
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("invoice.Models.User", b =>
+                {
+                    b.HasOne("invoice.Models.Role", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("invoice.Models.Assurance", b =>
@@ -690,14 +746,12 @@ namespace invoice.Migrations
 
             modelBuilder.Entity("invoice.Models.Role", b =>
                 {
-                    b.Navigation("UserRoles");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("invoice.Models.User", b =>
                 {
                     b.Navigation("Factures");
-
-                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,29 +1,32 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace invoice.Models
 {
-    public class Role
+    public class Role : ObservableObject
     {
+        private string _roleName = String.Empty;
+        private string _roleDescription = String.Empty;
         public int RoleId { get; set; }
-        
-        public string Role_name { get; set; } = string.Empty;
-        public int Create_patient { get; set; } = 0;
-        public int Create_fac { get; set; } = 0;
-        public int Manage_fac { get; set; } = 0;
-        public int Manage_user { get; set; } = 0;
-        public int Manage_med { get; set; } = 0;
-        public int Manage_exam { get; set; } = 0;
-        public int Manage_consul { get; set; } = 0;
+
+        [MaxLength(75)]
+        public string Role_name
+        { 
+            get => _roleName; 
+            set => SetProperty(ref _roleName, value);
+        }
+        [MaxLength(255)]
+        public string Role_description
+        {
+            get => _roleDescription;
+            set => SetProperty(ref _roleDescription, value);
+        }
         public DateTime Created_at { get; set; }
+        public ICollection<User> Users { get; set; } = new List<User>();
 
-        public ICollection<User> Users { get; set; } = [];
-        public ICollection<UserRole> UserRoles { get; set; } = [];
-
+        // Collection de jonction explicite
+        public ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
     }
 }
