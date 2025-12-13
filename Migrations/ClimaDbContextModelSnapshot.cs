@@ -573,6 +573,9 @@ namespace invoice.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<DateTime>("Updated_at")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("UserId");
 
                     b.HasIndex("Account_name")

@@ -6,6 +6,7 @@
     <Color x:Key="PrimaryBlueDarkColor">#1565C0</Color>
     <Color x:Key="SurfaceBlueColor">#CDE9FF</Color>
     <Color x:Key="SurfaceWhiteColor">#FFFFFFFF</Color>
+    <Color x:Key="BackgroundLightBlue">#C0D6ED</Color>
     <Color x:Key="LightGrayColor">#FFF1F3F5</Color>
     <Color x:Key="LabelGrayColor">#FF7A7A7A</Color>
     <Color x:Key="ErrorColor">#D32F2F</Color>
@@ -14,6 +15,7 @@
     <SolidColorBrush x:Key="PrimaryBlueDark" Color="{StaticResource PrimaryBlueDarkColor}"/>
     <SolidColorBrush x:Key="SurfaceBlue" Color="{StaticResource SurfaceBlueColor}"/>
     <SolidColorBrush x:Key="SurfaceWhite" Color="{StaticResource SurfaceWhiteColor}"/>
+    <SolidColorBrush x:Key="BackgroundBlue" Color="{StaticResource BackgroundLightBlue}"/>
     <SolidColorBrush x:Key="LightGray" Color="{StaticResource LightGrayColor}"/>
     <SolidColorBrush x:Key="LabelGray" Color="{StaticResource LabelGrayColor}"/>
     <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>

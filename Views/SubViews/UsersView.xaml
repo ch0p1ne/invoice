@@ -6,11 +6,13 @@
              xmlns:local="clr-namespace:invoice.Views.SubViews"
              xmlns:customControl="clr-namespace:invoice.CustomControls"
              mc:Ignorable="d" 
+             xmlns:subviewmodels="clr-namespace:invoice.ViewModels.SubViewModels"
+             d:DataContext="{d:DesignInstance Type=subviewmodels:UsersVM}"
              xmlns:converter="clr-namespace:invoice.Utilities.Converters"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <converter:BoolToUserStatus x:Key="BoolToUserStatus" />
-        <customControl:AddUserForm x:Key="AddUserForm" />
+        <customControl:AddUserForm x:Key="AddUserForm" DataContext="{Binding}" PasswordSecure="{Binding PasswordSecureString, Mode=OneWayToSource}"/>
         <Style x:Key="SegmentButton" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource SurfaceBlue}"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -142,27 +144,13 @@
                 <Border Grid.Row="0"
                         BorderThickness="0,0,0,2"
                         BorderBrush="{StaticResource SurfaceBlue}">
-                    <WrapPanel>
-                        <!-- User-->
-                        <WrapPanel HorizontalAlignment="Left"
-                                   Height="16"
-                                   Margin="15,0,0,0"
-                                   >
-                            <!-- To Do : Style-->
-                            <TextBlock Width="55"
-                                     Cursor="Hand"
-                                     Foreground="#1890FF"
-                                     Text="User"/>
-                        </WrapPanel>
+                    <WrapPanel HorizontalAlignment="Right">
                         <!-- Refresh btn-->
-                        <WrapPanel HorizontalAlignment="Right"
-                                   Margin="0,0,15,0" Height="16"
-                                   >
+
+                        <Button>
                             <Image Source="/Assets/icons/refresh.png" 
-                                   Width="16"
-                                   />
-                        </WrapPanel>
-                        
+                                    Width="16" />
+                        </Button>
                     </WrapPanel>
                 </Border>
                 <!-- Main content body-->
@@ -186,7 +174,7 @@
                         <DataGridTextColumn Header="Identifiant" Binding="{Binding Account_name}" Width="2*"/>
                         <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
                         <DataGridTextColumn Header="Tel. 1" Binding="{Binding Phone_number_one}" Width="*"/>
-                        <DataGridTextColumn Header="Rôle"  Width="*"/>
+                        <DataGridTextColumn Header="Rôle" Binding="{Binding Role.Role_name}" Width="*"/>
                         <DataGridTextColumn Header="Statut" Binding="{Binding IsActive, Converter={StaticResource BoolToUserStatus}}" Width="*" 
                                             CellStyle="{DynamicResource DataGridCell2}"/>
                         <DataGridTemplateColumn Header="Action" 
@@ -253,7 +241,8 @@
                             Grid.Row="0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Content="{DynamicResource AddUserForm}"/>
+                            Content="{DynamicResource AddUserForm}"
+                            />
         </Grid>
     </Grid>
 </UserControl>

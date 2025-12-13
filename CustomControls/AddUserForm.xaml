@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:invoice.CustomControls"
              mc:Ignorable="d" 
+             xmlns:subviewmodels="clr-namespace:invoice.ViewModels.SubViewModels"
+             d:DataContext="{d:DesignInstance Type=subviewmodels:UsersVM}"
              d:DesignHeight="450" d:DesignWidth="900"
              Width="740"
              Height="425"
@@ -130,18 +132,18 @@
                     <!-- Nom -->
                     <TextBlock Text="Nom d'utilisateur" Style="{StaticResource FieldLabel}"/>
                     <TextBox Style="{StaticResource MaterialTextBox}" x:Name="LastNameTextBox" 
-                             Margin="0,2,0,8"/>
+                             Margin="0,2,0,8" Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <!-- Prénom -->
                     <TextBlock Text="Nom complet" Style="{StaticResource FieldLabel}"
                                />
                     <TextBox Style="{StaticResource MaterialTextBox}" x:Name="FirstNameTextBox"
-                             Margin="0,2,0,8"/>
+                             Margin="0,2,0,8" Text="{Binding FullName}"/>
 
                     <!-- Mot de passe -->
                     <TextBlock Text="Mot de passe" Style="{StaticResource FieldLabel}"/>
                     <PasswordBox Style="{StaticResource MaterialPasswordBox}" x:Name="PasswordBox"
-                                 Margin="0,2,0,8"/>
+                                 Margin="0,2,0,8" />
 
                 </StackPanel>
                 <!-- right -->
@@ -154,34 +156,32 @@
                     <!-- E-mail -->
                     <TextBlock Text="E-mail" Style="{StaticResource FieldLabel}"/>
                     <TextBox Style="{StaticResource MaterialTextBox}" x:Name="EmailTextBox" 
-                             Margin="0,2,0,8"/>
+                             Margin="0,2,0,8" Text="{Binding Email}"/>
                     
                     <!-- Numéro de portable -->
                     <TextBlock Text="Numéro de télephone" Style="{StaticResource FieldLabel}"/>
                     <TextBox Style="{StaticResource MaterialTextBox}" x:Name="PhoneTextBox" 
-                             Margin="0,2,0,8"/>
+                             Margin="0,2,0,8" Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"/>
                     <!-- Rôles -->
                     <TextBlock Text="Rôle" Style="{StaticResource FieldLabel}"/>
                     <ComboBox Template="{DynamicResource MaterialComboBox1}" Style="{StaticResource MaterialComboBox}" x:Name="RoleTextBox" 
                              Margin="0,2,0,8"
+                              ItemsSource="{Binding AvailableRoles}"
+                                SelectedItem="{Binding SelectedRole}"
                              >
-                        <ComboBoxItem Content="Administrateur"/>
-                        <ComboBoxItem Content="Utilisateur"/>
-                        <ComboBoxItem Content="Invité"/>
-                        <ComboBoxItem Content="Invité1"/>
-                        <ComboBoxItem Content="Invité3"/>
-                        <ComboBoxItem Content="Invité4"/>
                     </ComboBox>
                 </StackPanel>
             </Grid>
 
+            <!-- Checkbox for activate account-->
             <StackPanel Orientation="Horizontal"
                         Grid.Row="2"
                         Margin="10,0,0,8">
                 
                 <!-- Activé le compte à la création-->
                 <CheckBox x:Name="IsActifCheckBox"
-                          Style="{DynamicResource MaterialCheckBox}"> Activé le compte à la création ?</CheckBox>
+                          Style="{DynamicResource MaterialCheckBox}"
+                          IsChecked="{Binding IsActivateAccountIsCheck}"> Activé le compte à la création ?</CheckBox>
 
             </StackPanel>
             
@@ -199,6 +199,8 @@
                 <Button Content="Ajouter"
                         Width="100"
                         Height="35"
+                        Click="CancelButton_Click"
+                        Command="{Binding CreateUserCommand}"
                         Background="{StaticResource PrimaryBlue}"
                         BorderBrush="{StaticResource PrimaryBlue}"
                         BorderThickness="2"

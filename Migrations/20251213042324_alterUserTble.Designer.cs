@@ -12,8 +12,8 @@ using invoice.Context;
 namespace invoice.Migrations
 {
     [DbContext(typeof(ClimaDbContext))]
-    [Migration("20251212193523_alterRoletle")]
-    partial class alterRoletle
+    [Migration("20251213042324_alterUserTble")]
+    partial class alterUserTble
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -516,15 +516,18 @@ namespace invoice.Migrations
 
             modelBuilder.Entity("invoice.Models.RolePermission", b =>
                 {
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("int");
-
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.HasKey("PermissionId", "RoleId");
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("RoleId");
+                    b.Property<DateTime>("GrantedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("RoleId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
 
                     b.ToTable("RolesPermissions");
                 });
@@ -572,6 +575,9 @@ namespace invoice.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("Updated_at")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("UserId");
 
@@ -678,13 +684,13 @@ namespace invoice.Migrations
             modelBuilder.Entity("invoice.Models.RolePermission", b =>
                 {
                     b.HasOne("invoice.Models.Permission", "Permission")
-                        .WithMany()
+                        .WithMany("RolePermissions")
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("invoice.Models.Role", "Role")
-                        .WithMany()
+                        .WithMany("RolePermissions")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -744,8 +750,15 @@ namespace invoice.Migrations
                     b.Navigation("Factures");
                 });
 
+            modelBuilder.Entity("invoice.Models.Permission", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
             modelBuilder.Entity("invoice.Models.Role", b =>
                 {
+                    b.Navigation("RolePermissions");
+
                     b.Navigation("Users");
                 });
 

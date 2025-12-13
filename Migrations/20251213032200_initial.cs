@@ -134,7 +134,7 @@ namespace invoice.Migrations
                     RoleId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Role_name = table.Column<string>(type: "nvarchar(75)", maxLength: 75, nullable: false),
-                    Role_description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Role_description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Created_at = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -197,11 +197,12 @@ namespace invoice.Migrations
                 columns: table => new
                 {
                     RoleId = table.Column<int>(type: "int", nullable: false),
-                    PermissionId = table.Column<int>(type: "int", nullable: false)
+                    PermissionId = table.Column<int>(type: "int", nullable: false),
+                    GrantedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RolesPermissions", x => new { x.PermissionId, x.RoleId });
+                    table.PrimaryKey("PK_RolesPermissions", x => new { x.RoleId, x.PermissionId });
                     table.ForeignKey(
                         name: "FK_RolesPermissions_Permissions_PermissionId",
                         column: x => x.PermissionId,
@@ -230,6 +231,7 @@ namespace invoice.Migrations
                     Phone_number_one = table.Column<string>(type: "nvarchar(15)", nullable: false),
                     is_active = table.Column<bool>(type: "bit", nullable: false),
                     Created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RoleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -448,9 +450,9 @@ namespace invoice.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_RolesPermissions_RoleId",
+                name: "IX_RolesPermissions_PermissionId",
                 table: "RolesPermissions",
-                column: "RoleId");
+                column: "PermissionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Account_name",

@@ -28,5 +28,10 @@ namespace invoice.Models
 
         // Collection de jonction explicite
         public ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
+
+        public override string ToString()
+        {
+            return Role_name;
+        }
     }
 }

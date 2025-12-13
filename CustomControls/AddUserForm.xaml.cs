@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,12 +17,28 @@ using System.Windows.Shapes;
 
 namespace invoice.CustomControls
 {
-    /// <summary>
-    /// Logique d'interaction pour AddUserForm.xaml
-    /// </summary>
     public partial class AddUserForm : UserControl
     {
-        // Routed event pour demander la fermeture (bubbling)
+        public static readonly DependencyProperty PasswordProperty =
+            DependencyProperty.Register(
+                "PasswordSecure",
+                typeof(SecureString),
+                typeof(AddUserForm),
+                new FrameworkPropertyMetadata(
+                    default(SecureString),
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        public SecureString PasswordSecure
+        {
+            get { return (SecureString)GetValue(PasswordProperty); }
+            set { SetValue(PasswordProperty, value); }
+        }
+
+        private void OnPasswordChanged(object sender, RoutedEventArgs e)
+        {
+            PasswordSecure = PasswordBox.SecurePassword;
+        }
+
         public static readonly RoutedEvent RequestCloseEvent =
             EventManager.RegisterRoutedEvent(
                 nameof(RequestClose),
@@ -39,13 +56,11 @@ namespace invoice.CustomControls
         {
             InitializeComponent();
             Loaded += AddUserForm_Loaded;
-            DataContext = new UsersVM();
+            PasswordBox.PasswordChanged += OnPasswordChanged;
         }
 
         private void AddUserForm_Loaded(object sender, RoutedEventArgs e)
         {
-            // Cherche un bouton dont le contenu est "Annuler" et attache le handler
-            // Cela évite d'éditer le XAML si le nom du bouton est inconnu
             AttachCancelHandler(this);
         }
 
@@ -73,7 +88,6 @@ namespace invoice.CustomControls
             RaiseRequestClose();
         }
 
-        // Méthode publique que le bouton Cancel dans le XAML doit appeler
         public void RaiseRequestClose()
         {
             RaiseEvent(new RoutedEventArgs(RequestCloseEvent, this));
