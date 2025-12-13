@@ -101,6 +101,11 @@ namespace invoice.ViewModels
                 ErrorMessage = "Le Mots de passe est incorrect";
                 return;
             }
+            if (user.IsActive == false)
+            {
+                ErrorMessage = "Compte Utilisateur désactivé. Veuillez contacter l'administrateur.";
+                return;
+            }
             _sessionService.User = user;
             // user credentials are correct so launch mainview;
             _navigationService.NavigateTo<MainVM>();

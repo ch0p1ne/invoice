@@ -12,7 +12,9 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <converter:BoolToUserStatus x:Key="BoolToUserStatus" />
-        <customControl:AddUserForm x:Key="AddUserForm" DataContext="{Binding}" PasswordSecure="{Binding PasswordSecureString, Mode=OneWayToSource}"/>
+        <customControl:AddUserForm x:Key="AddUserForm" DataContext="{Binding}" PasswordSecure="{Binding PasswordSecureString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <customControl:EditUserForm x:Key="EditUserForm" DataContext="{Binding}" PasswordSecure="{Binding PasswordSecureString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
         <Style x:Key="SegmentButton" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource SurfaceBlue}"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -38,6 +40,74 @@
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#BEE6FD" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="SegmentButtonDelete" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource SurfaceRed}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryRedDark}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryRedDark}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Padding="{TemplateBinding Padding}"
+                                        CornerRadius="2">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource BackgroundRed}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{StaticResource LightGray}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource LightGray}"/>
+                    <Setter Property="Foreground" Value="DarkGray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="SegmentButtonUpdate" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource SurfaceOrange}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="DarkOrange"/>
+            <Setter Property="Foreground" Value="DarkOrange"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        Padding="{TemplateBinding Padding}"
+                                CornerRadius="2">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource BackgroundRed}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{StaticResource LightGray}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource LightGray}"/>
+                    <Setter Property="Foreground" Value="DarkGray"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -119,6 +189,17 @@
                                     Margin="150,0,0,0">
                             <!-- gestionnaire Click ajouté -->
                             <Button Tag="showForm" Content="Ajouter un utilisateur" Style="{StaticResource SegmentButton}" Click="ShowFormButton_Click"/>
+                            <!-- Supprimer-->
+                            <Button Content="Supprimer"
+                                    Margin="0,10,0,0"
+                                    Style="{StaticResource SegmentButtonDelete}"
+                                    Command="{Binding DeleteUserCommand}"/>
+                            <!-- Modifier-->
+                            <Button Content="Modifier"
+                                    Margin="0,10,0,0"
+                                    Style="{StaticResource SegmentButtonUpdate}"
+                                    Click="ShowFormEditButton_Click"
+                                    Command="{Binding LoadSelectedUserDataCommand}"/>
                         </StackPanel>
                     </WrapPanel>
                     
@@ -147,9 +228,12 @@
                     <WrapPanel HorizontalAlignment="Right">
                         <!-- Refresh btn-->
 
-                        <Button>
+                        <Button Style="{StaticResource TabButtonStyle2}"
+                                Command="{Binding LoadUsersCommand}"
+                                Margin="0,0,0,10">
                             <Image Source="/Assets/icons/refresh.png" 
-                                    Width="16" />
+                                    Width="24" 
+                                   />
                         </Button>
                     </WrapPanel>
                 </Border>
@@ -159,10 +243,11 @@
                           ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"
                           Style="{DynamicResource specialDataGrid}" 
                           ItemsSource="{Binding Users}"
+                          SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
                           Background="Transparent"
                           Height="325"
                           Margin="0,5,0,0"
-                          BorderThickness="0,0,0,2"
+                          BorderThickness="0,0,0,0"
                           BorderBrush="#F6F6F6" 
                           AutoGenerateColumns="False"
                           HeadersVisibility="Column"
@@ -171,52 +256,12 @@
                           IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Nom  complet" Binding="{Binding FullName}" Width="2*"/>
-                        <DataGridTextColumn Header="Identifiant" Binding="{Binding Account_name}" Width="2*"/>
+                        <DataGridTextColumn Header="Identifiant" Binding="{Binding Account_name}" Width="*"/>
                         <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
                         <DataGridTextColumn Header="Tel. 1" Binding="{Binding Phone_number_one}" Width="*"/>
                         <DataGridTextColumn Header="Rôle" Binding="{Binding Role.Role_name}" Width="*"/>
                         <DataGridTextColumn Header="Statut" Binding="{Binding IsActive, Converter={StaticResource BoolToUserStatus}}" Width="*" 
                                             CellStyle="{DynamicResource DataGridCell2}"/>
-                        <DataGridTemplateColumn Header="Action" 
-                                                MinWidth="110" 
-                                                HeaderStyle="{DynamicResource DataGridColumnHeaderStyle2}"
-                                                CellStyle="{DynamicResource DataGridCell2}"
-                                            >
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
-                                        <Button 
-                                                ToolTip="modifier"
-                                                ToolTipService.ShowDuration="1500"
-                                            BorderThickness="0"
-                                            Background="Transparent"
-                                                Padding="2"
-                                                Cursor="Hand"
-                                                Margin="0,0,10,0">
-                                            <StackPanel Orientation="Horizontal">
-                                                <Image Source="/Assets/icons/edit.png"
-                                                          Width="14" 
-                                                          VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Button>
-                                        <Button 
-                                                ToolTip="Supprimer"
-                                                ToolTipService.ShowDuration="1500"
-                                                Margin="0,0,15,0"
-                                            Background="Transparent"
-                                            BorderThickness="0"
-                                                Cursor="Hand"
-                                                Padding="2">
-                                            <StackPanel Orientation="Horizontal">
-                                                <Image Source="/Assets/icons/trash.png"  
-                                                          Width="14" 
-                                                          VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Button>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
@@ -242,6 +287,28 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Content="{DynamicResource AddUserForm}"
+                            />
+        </Grid>
+        <!-- Overlay absolu pour EditUserForm (toujours au-dessus, n'affecte pas la disposition) -->
+        <Grid x:Name="OverlayHostEdit"
+              Grid.Row="0"
+              Grid.RowSpan="2"
+              Visibility="Collapsed"
+              IsHitTestVisible="True"
+              Panel.ZIndex="9999"
+              Background="Transparent">
+            <!-- Fond semi-transparent (opacité animée) -->
+            <Border x:Name="OverlayBackgroundEdit"
+                    Visibility="Visible"
+                    Background="LightGray"
+                    Opacity="0.05"
+                    CornerRadius="10"/>
+            <!-- Contenu centré ; le contrôle inséré ici aura son propre TranslateTransform animé -->
+            <ContentControl x:Name="OverlayContentEdit"
+                            Grid.Row="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="{DynamicResource EditUserForm}"
                             />
         </Grid>
     </Grid>

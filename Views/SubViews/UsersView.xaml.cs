@@ -17,6 +17,8 @@ namespace invoice.Views.SubViews
 
             // Écoute de l'événement RequestClose provenant du AddUserForm (bubbling)
             OverlayContent.AddHandler(AddUserForm.RequestCloseEvent, new RoutedEventHandler(OnAddUserFormRequestClose));
+            // Écoute de l'événement RequestClose provenant du EditUserForm (bubbling)
+            OverlayContentEdit.AddHandler(EditUserForm.RequestCloseEvent, new RoutedEventHandler(OnEditUserFormRequestClose));
         }
 
         private void ShowFormButton_Click(object sender, RoutedEventArgs e)
@@ -27,6 +29,21 @@ namespace invoice.Views.SubViews
 
             // Optionnel : lancer un storyboard d'entrée si présent
             if (OverlayContent.Content is AddUserForm form)
+            {
+                if (form.TryFindResource("EnterStoryboard") is Storyboard enterSb)
+                {
+                    enterSb.Begin(form);
+                }
+            }
+        }
+        private void ShowFormEditButton_Click(object sender, RoutedEventArgs e)
+        {
+            OverlayHostEdit.Visibility = Visibility.Visible;
+            OverlayHostEdit.IsHitTestVisible = true;
+            OverlayContentEdit.Content = this.Resources["EditUserForm"] as EditUserForm;
+
+            // Optionnel : lancer un storyboard d'entrée si présent
+            if (OverlayContentEdit.Content is EditUserForm form)
             {
                 if (form.TryFindResource("EnterStoryboard") is Storyboard enterSb)
                 {
@@ -56,6 +73,41 @@ namespace invoice.Views.SubViews
 
                     // Lancer l'animation en ciblant le contrôle
                     sb.Begin(addUserForm);
+                    return;
+                }
+
+                // Fallback : si pas d'animation, masquer immédiatement
+                OverlayHost.Visibility = Visibility.Collapsed;
+                OverlayContent.Content = null;
+                OverlayHost.IsHitTestVisible = false;
+            }
+            else
+            {
+                // Aucun contrôle trouvé → masquer par sécurité
+                OverlayHost.Visibility = Visibility.Collapsed;
+            }
+        }
+        private void OnEditUserFormRequestClose(object? sender, RoutedEventArgs e)
+        {
+            // Récupérer l'instance réelle du contrôle ajouté
+            if (OverlayContentEdit.Content is EditUserForm editUserForm)
+            {
+                // Chercher le Storyboard nommé ExitStoryboard dans les ressources du contrôle
+                if (editUserForm.TryFindResource("ExitStoryboard") is Storyboard sb)
+                {
+                    // Lorsque l'animation est terminée, masquer l'overlay et nettoyer si besoin
+                    void OnCompleted(object s, EventArgs args)
+                    {
+                        sb.Completed -= OnCompleted;
+                        OverlayHostEdit.Visibility = Visibility.Collapsed;
+                        OverlayContentEdit.Content = null;
+                        OverlayHostEdit.IsHitTestVisible = false;
+                    }
+
+                    sb.Completed += OnCompleted;
+
+                    // Lancer l'animation en ciblant le contrôle
+                    sb.Begin(editUserForm);
                     return;
                 }
 

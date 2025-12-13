@@ -4,18 +4,26 @@
     <!-- Couleurs -->
     <Color x:Key="PrimaryBlueColor">#1976D2</Color>
     <Color x:Key="PrimaryBlueDarkColor">#1565C0</Color>
+    <Color x:Key="PrimaryRedDarkColor">#E72300</Color>
     <Color x:Key="SurfaceBlueColor">#CDE9FF</Color>
     <Color x:Key="SurfaceWhiteColor">#FFFFFFFF</Color>
+    <Color x:Key="SurfaceRedColor">#F3D2CC</Color>
+    <Color x:Key="SurfaceOrangeColor">#F7D1AE</Color>
     <Color x:Key="BackgroundLightBlue">#C0D6ED</Color>
+    <Color x:Key="BackgroundLightRed">#F7E8E3</Color>
     <Color x:Key="LightGrayColor">#FFF1F3F5</Color>
     <Color x:Key="LabelGrayColor">#FF7A7A7A</Color>
     <Color x:Key="ErrorColor">#D32F2F</Color>
 
     <SolidColorBrush x:Key="PrimaryBlue" Color="{StaticResource PrimaryBlueColor}"/>
     <SolidColorBrush x:Key="PrimaryBlueDark" Color="{StaticResource PrimaryBlueDarkColor}"/>
+    <SolidColorBrush x:Key="PrimaryRedDark" Color="{StaticResource PrimaryRedDarkColor}"/>
     <SolidColorBrush x:Key="SurfaceBlue" Color="{StaticResource SurfaceBlueColor}"/>
     <SolidColorBrush x:Key="SurfaceWhite" Color="{StaticResource SurfaceWhiteColor}"/>
+    <SolidColorBrush x:Key="SurfaceRed" Color="{StaticResource SurfaceRedColor}"/>
+    <SolidColorBrush x:Key="SurfaceOrange" Color="{StaticResource SurfaceOrangeColor}"/>
     <SolidColorBrush x:Key="BackgroundBlue" Color="{StaticResource BackgroundLightBlue}"/>
+    <SolidColorBrush x:Key="BackgroundRed" Color="{StaticResource BackgroundLightRed}"/>
     <SolidColorBrush x:Key="LightGray" Color="{StaticResource LightGrayColor}"/>
     <SolidColorBrush x:Key="LabelGray" Color="{StaticResource LabelGrayColor}"/>
     <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>

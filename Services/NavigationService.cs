@@ -12,7 +12,7 @@ namespace invoice.Services
 {
     public class NavigationService : INavigationService
     {
-        // Mapping d'un viewModel a sa View correspondante.
+        // Mapping d'un viewModel a sa View (Window) correspondante.
         private readonly Dictionary<Type, Type> _mappingViewAndViewModel = new()
         {
             { typeof(LoginVM), typeof(LoginWindow) },

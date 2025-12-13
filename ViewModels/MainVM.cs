@@ -31,7 +31,7 @@ namespace invoice.ViewModels
         {
             _navigationService = navigationService;
             _sessionService = sessionService;
-            CurrentViewModel = new CreateFactureVM(sessionService);
+            CurrentViewModel = new ExamenVM();
 
             MenuItems = new ObservableCollection<MenuItem>()
             {

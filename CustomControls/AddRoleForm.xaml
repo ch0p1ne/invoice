@@ -8,6 +8,7 @@
              d:DesignHeight="340" d:DesignWidth="425"
              Width="340"
              Height="425"
+             xmlns:converter="clr-namespace:invoice.Utilities.Converters"
              Background="Transparent"
              FontFamily="{StaticResource fontBase}">
 
@@ -33,7 +34,7 @@
     -->
 
     <UserControl.Resources>
-
+        <converter:BoolToInvertValue x:Key="BoolToInvertValue"/>
         <!-- Animation Storyboards -->
         <Storyboard x:Key="EnterStoryboard">
             <!-- Opacity -->
@@ -156,7 +157,7 @@
                         />
                 <Button Content="Ajouter"
                         Command="{Binding AddRoleCommand}"
-                        Click="CancelButton_Click"
+                        Margin="0,0,10,0"
                         Width="100"
                         Height="35"
                         Background="{StaticResource PrimaryBlue}"
