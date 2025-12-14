@@ -25,7 +25,7 @@ namespace invoice.Models
         }
         public DateTime Created_at { get; set; }
         public ICollection<User> Users { get; set; } = new List<User>();
-
+        
         // Collection de jonction explicite
         public ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 

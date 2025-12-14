@@ -12,8 +12,8 @@ using invoice.Context;
 namespace invoice.Migrations
 {
     [DbContext(typeof(ClimaDbContext))]
-    [Migration("20251213042324_alterUserTble")]
-    partial class alterUserTble
+    [Migration("20251214192304_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -429,9 +429,6 @@ namespace invoice.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PermissionId"));
-
-                    b.Property<int>("Categorie")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("Created_at")
                         .HasColumnType("datetime2");

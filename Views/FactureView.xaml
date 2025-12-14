@@ -313,31 +313,31 @@
                             HorizontalAlignment="Right"
                             Orientation="Horizontal">
 
-                    <Button Style="{StaticResource MaterialButton}"
+                    <Button Style="{StaticResource GenericOperationBtn}"
                             VerticalAlignment="Center"
-                        Command="{Binding MarquerPayerCommand}"
+                            Width="150"
+                            Command="{Binding MarquerPayerCommand}"
                             BorderThickness="3"
                             Effect="{x:Null}"
                             Margin="0,0,10,0"
-                            BorderBrush="{StaticResource SurfaceBlue}"
-                        Background="Transparent">
-                    <StackPanel Orientation="Horizontal" Width="Auto">
-                        <Image Source="/Assets/icons/mark.png" Height="16"/>
-                        <TextBlock Text="Marqué Payé" Margin="5,0,0,0" Foreground="#222222" />
-                    </StackPanel>
+                            BorderBrush="{StaticResource SurfaceBlue}">
+                        <StackPanel Orientation="Horizontal" Width="Auto">
+                            <Image Source="/Assets/icons/mark.png" Height="16"/>
+                            <TextBlock Text="Marqué Payé" Margin="5,0,0,0" />
+                        </StackPanel>
 
                     </Button>
-                    <Button Style="{StaticResource MaterialButton}"
+                    <Button Style="{StaticResource GenericOperationBtn}"
                             VerticalAlignment="Center"
-                        Command="{Binding MarquerNonPayerCommand}"
+                            Command="{Binding MarquerNonPayerCommand}"
+                            Width="150"
                             Effect="{x:Null}"
                             BorderThickness="3"
                             Margin="0,0,10,0"
-                            BorderBrush="{StaticResource SurfaceBlue}"
-                        Background="Transparent">
+                            BorderBrush="{StaticResource SurfaceBlue}">
                         <StackPanel Orientation="Horizontal" Width="Auto">
                             <Image Source="/Assets/icons/unmark.png" Height="16" />
-                            <TextBlock Text="Marqué Non Payé" Margin="5,0,0,0" Foreground="#333333"/>
+                            <TextBlock Text="Marqué Non Payé" Margin="5,0,0,0"/>
                         </StackPanel>
 
                     </Button>

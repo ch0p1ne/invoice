@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,17 +17,41 @@ namespace invoice.ViewModels.SubViewModels
 {
     public partial class RolesVM : VMBase
     {
+
         // Constructor
         public RolesVM()
         {
             _ = LoadRolesAsync();
+            _ = LoadPermissionAsync();
         }
-
+        
+        public ObservableCollection<Permission> AvailablePermissions { get; set; } = new ObservableCollection<Permission>();
+        public ObservableCollection<Permission> GrantedPermissions { get; set; } = new ObservableCollection<Permission>();
+        private Permission _selectedPermission;
+        public Permission SelectedPermission
+        {
+            get => _selectedPermission;
+            set
+            {
+                SetProperty(ref _selectedPermission, value);
+                GrantPermissionCommand.NotifyCanExecuteChanged();
+            }
+        }
+        private Permission _selectedGrantPermission;
+        public Permission SelectedGrantPermission
+        {
+            get => _selectedGrantPermission;
+            set => SetProperty(ref _selectedGrantPermission, value);
+        }
         private Role _selectedRole;
         public Role SelectedRole
         {
             get => _selectedRole;
-            set => SetProperty(ref _selectedRole, value);
+            set
+            {
+                SetProperty(ref _selectedRole, value);
+                GrantPermissionCommand.NotifyCanExecuteChanged();
+            }
         }
         public ObservableCollection<Role> RolesList { get; set; } = new ObservableCollection<Role>();
 
@@ -150,7 +175,26 @@ namespace invoice.ViewModels.SubViewModels
                 return;
             }
         }
-
+        [RelayCommand]
+        public async Task LoadPermissionAsync()
+        {
+            using var context = new ClimaDbContext();
+            try
+                {
+                var permissions = await context.Permissions.ToListAsync();
+                AvailablePermissions.Clear();
+                foreach (var p in permissions)
+                {
+                    AvailablePermissions.Add(p);
+                }
+            }
+            catch (Exception ex)
+            {
+                var messageBox = new ModelOpenner();
+                messageBox.Show("Erreur", $"Une erreur est survenue lors du chargement des permissions : {ex.Message}", MessageBoxButton.OK);
+                return;
+            }
+        }
         [RelayCommand]
         public async Task RefreshRolesAsync()
         {
@@ -190,5 +234,25 @@ namespace invoice.ViewModels.SubViewModels
                 return;
             }
         }
-    }
+        [RelayCommand(CanExecute = nameof(CanGrantPermission))]
+        public async Task GrantPermissionAsync()
+        {
+            GrantedPermissions.Add(SelectedPermission);
+            AvailablePermissions.Remove(SelectedPermission);
+        }
+
+        // Methods for granting and revoking permissions can be added here
+        public async Task LoadGrantedPermissionAsync()
+        {
+            using var context = new ClimaDbContext();
+        }
+
+        // CanExecute methods
+
+        private bool CanGrantPermission()
+        {
+            return SelectedPermission != null && SelectedRole != null;
+        }
+
+        }
 }

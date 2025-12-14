@@ -12,9 +12,9 @@ namespace invoice.Utilities.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value is bool status)
+            if(value is bool lilas)
             {
-                switch(status)
+                switch(lilas)
                 {
                     case true:
                         return "Actif";
@@ -27,9 +27,9 @@ namespace invoice.Utilities.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value is string status)
+            if(value is string lilas)
             {
-                switch (status)
+                switch (lilas)
                 {
                     case "Actif":
                         return true;

@@ -34,6 +34,7 @@
     <None Remove="Assets\icons\management.png" />
     <None Remove="Assets\icons\mark.png" />
     <None Remove="Assets\icons\online-appointment.png" />
+    <None Remove="Assets\icons\plus.png" />
     <None Remove="Assets\icons\printer.png" />
     <None Remove="Assets\icons\refresh.png" />
     <None Remove="Assets\icons\search.png" />
@@ -97,6 +98,7 @@
     <Resource Include="Assets\icons\management.png" />
     <Resource Include="Assets\icons\mark.png" />
     <Resource Include="Assets\icons\online-appointment.png" />
+    <Resource Include="Assets\icons\plus.png" />
     <Resource Include="Assets\icons\printer.png" />
     <Resource Include="Assets\icons\refresh.png" />
     <Resource Include="Assets\icons\search.png" />

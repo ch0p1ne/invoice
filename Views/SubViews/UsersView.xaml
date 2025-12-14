@@ -15,6 +15,30 @@
         <customControl:AddUserForm x:Key="AddUserForm" DataContext="{Binding}" PasswordSecure="{Binding PasswordSecureString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         <customControl:EditUserForm x:Key="EditUserForm" DataContext="{Binding}" PasswordSecure="{Binding PasswordSecureString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
+        <!-- Correction : style local pour DataGridRow qui utilise IsActive (remplace tout binding vers Status) -->
+        <Style x:Key="DataGridRowStyle1" TargetType="DataGridRow">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Style.Triggers>
+                <!-- Utilise IsActive, pas Status -->
+                <DataTrigger Binding="{Binding IsActive}" Value="True">
+                    <Setter Property="Background" Value="#FFF7FFFA"/>
+                    <Setter Property="Opacity" Value="1"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsActive}" Value="False">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Opacity" Value="0.8"/>
+                </DataTrigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#EAF6FF"/>
+                    <Setter Property="Opacity" Value="1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="SegmentButton" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource SurfaceBlue}"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -261,7 +285,7 @@
                         <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
                         <DataGridTextColumn Header="Tel. 1" Binding="{Binding Phone_number_one}" Width="*"/>
                         <DataGridTextColumn Header="Rôle" Binding="{Binding Role.Role_name}" Width="*"/>
-                        <DataGridTextColumn Header="Statut" Binding="{Binding IsActive, Converter={StaticResource BoolToUserStatus}}" Width="*" 
+                        <DataGridTextColumn Header="Statuss" Binding="{Binding IsActive, Converter={StaticResource BoolToUserStatus}}" Width="*" 
                                             CellStyle="{DynamicResource DataGridCell2}"/>
                     </DataGrid.Columns>
                 </DataGrid>

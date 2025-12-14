@@ -71,5 +71,6 @@ namespace invoice.Views.SubViews
                 OverlayHost.Visibility = Visibility.Collapsed;
             }
         }
+
     }
 }

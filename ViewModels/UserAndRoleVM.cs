@@ -14,6 +14,7 @@ namespace invoice.ViewModels
         // Fields
         // Field for the current sub-view model : can be UserVM or RoleVM
         private VMBase _currentSubViewModel = new UsersVM();
+        private int _currentIndex = 0;
 
         // Properties
         // Property for the current sub-view model
@@ -26,6 +27,12 @@ namespace invoice.ViewModels
                 ShowUsersViewCommand.NotifyCanExecuteChanged();
                 ShowRolesViewCommand.NotifyCanExecuteChanged();
             }
+        }
+
+        public int CurrentIndex
+        { 
+            get => _currentIndex;
+            set => SetProperty(ref _currentIndex, value); 
         }
 
 

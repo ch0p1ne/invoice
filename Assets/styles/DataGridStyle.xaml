@@ -55,10 +55,10 @@
                 <Setter Property="DetailsVisibility" Value="Collapsed"/>
             </Trigger>
             <DataTrigger Binding="{Binding Status}" Value="Non_Payer">
-                <Setter Property="Background" Value="#FFFFFF"/>
+                <Setter Property="Background" Value="Transparent"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding Status}" Value="Payer">
-                <Setter Property="Background" Value="#D4F6FF"/>
+                <Setter Property="Background" Value="Transparent"/>
             </DataTrigger>
         </Style.Triggers>
     </Style>
@@ -79,7 +79,8 @@
                     <Grid>
                         <Border Background="{TemplateBinding Background}" 
                                                     BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" 
-                                                    Padding="{TemplateBinding Padding}" >
+                                                    Padding="{TemplateBinding Padding}" 
+                                CornerRadius="12">
                             <Grid Margin="{TemplateBinding Padding}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -148,7 +149,8 @@
                     <Grid>
                         <Border Background="{TemplateBinding Background}" 
                                             BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" 
-                                            Padding="{TemplateBinding Padding}" >
+                                            Padding="{TemplateBinding Padding}" 
+                                CornerRadius="15">
                             <Grid Margin="{TemplateBinding Padding}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>

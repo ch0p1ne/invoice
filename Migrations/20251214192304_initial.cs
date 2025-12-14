@@ -118,7 +118,6 @@ namespace invoice.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Permission_name = table.Column<string>(type: "nvarchar(75)", maxLength: 75, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Categorie = table.Column<int>(type: "int", nullable: false),
                     Created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Updated_at = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },

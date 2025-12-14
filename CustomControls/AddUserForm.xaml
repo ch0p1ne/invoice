@@ -80,39 +80,6 @@
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
         </Storyboard>
-
-        <Style x:Key="GenericOperationBtn" TargetType="Button">
-            <Setter Property="Width" Value="100"/>
-            <Setter Property="Height" Value="35"/>
-            <Setter Property="Background" Value="{StaticResource PrimaryBlue}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource PrimaryBlue}"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="LightGray"/>
-                    <Setter Property="BorderBrush" Value="Gray"/>
-                    <Setter Property="Foreground" Value="Gray"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="CancelOperationBtn" TargetType="Button">
-            <Setter Property="Width" Value="100"/>
-            <Setter Property="Height" Value="35"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderBrush" Value="{StaticResource PrimaryBlue}"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryBlue}"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="LightGray"/>
-                    <Setter Property="BorderBrush" Value="Gray"/>
-                    <Setter Property="Foreground" Value="Gray"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
     </UserControl.Resources>
 
     <Border x:Name="RootBorder"
