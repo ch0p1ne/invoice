@@ -9,34 +9,30 @@
              xmlns:behevior="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              FontFamily="{StaticResource fontBase}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             Style="{StaticResource Page_Style}">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
         <converter:InvertBoolToVisibilityConverter x:Key="InvertBoolToVisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="130"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Border Grid.Row="0"
+        <Border Grid.Row="1"
             CornerRadius="15"
                 Background="AliceBlue">
             
         <Grid>
             <!-- Header or navigation elements can go here -->
-            <StackPanel Grid.Row="0" 
+                <StackPanel Grid.Row="0" 
                         Orientation="Horizontal" 
                         HorizontalAlignment="Center" 
                         VerticalAlignment="Center"
                         Visibility="{Binding IsFactureIsSelected, Converter={StaticResource InvertBoolToVisibilityConverter}}"
                         Margin="0,0,15,0"
-                        >
-                <TextBlock Text="Détail de facture ici" 
-                           FontSize="24" 
-                           FontWeight="Light" 
-                        />
-            </StackPanel>
+                        ></StackPanel>
             
             <Grid Grid.Row="0" 
                         Visibility="{Binding IsFactureIsSelected, Converter={StaticResource BoolToVisConverter}}"
@@ -66,9 +62,9 @@
                             </Style.Triggers>
                         </Style>
                         <Style x:Key="StyledTextBorder" TargetType="{x:Type Border}">
-                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="Background" Value="{StaticResource SurfaceBlue}"/>
                             <Setter Property="BorderBrush" Value="#ADD8E6"/>
-                            <Setter Property="BorderThickness" Value="2 "/>
+                            <Setter Property="BorderThickness" Value="2"/>
                             <Setter Property="CornerRadius" Value="5"/>
                             <Setter Property="SnapsToDevicePixels" Value="True"/>
 
@@ -91,21 +87,23 @@
 
                 <StackPanel
                     MinWidth="150"
-                     Grid.Column="0">
+                     Grid.Column="0"
+                    >
                     
                     <WrapPanel Orientation="Vertical">
-                        <Label Content="Ref."/>
+                        <Label Content="Ref." FontFamily="{StaticResource fontSen}"/>
                             <Border Style="{StaticResource StyledTextBorder}"
+                                    Width="155"
                                     >
-                                <TextBlock Text="{Binding SelectedFacture.Reference}" />
+                                <TextBlock Text="{Binding SelectedFacture.Reference}"  Padding="6,4"/>
                             </Border>
                         </WrapPanel>
                     <WrapPanel Orientation="Vertical">
                         <Label Content="Type de fac."/>
                             <Border Style="{StaticResource StyledTextBorder}"
-                                    MinWidth="120">
+                                    Width="155">
 
-                                <TextBlock Text="{Binding SelectedFacture.Type}" />
+                                <TextBlock Text="{Binding SelectedFacture.Type}" Padding="6,4" />
                             </Border>
                         </WrapPanel>
 
@@ -114,67 +112,66 @@
                     Grid.Column="1"
                     Margin="5,0,0,0">
 
-                    <WrapPanel>
-                        <WrapPanel Orientation="Vertical"
-                                   Width="110">
-                            <Label Content="Avance"/>
+                        <WrapPanel>
+
+                            <WrapPanel Orientation="Vertical"
+                                   Margin="20,0,0,0">
+                                <Label Content="Total HT" />
                                 <Border Style="{StaticResource StyledTextBorder}"
+                                        Width="145"
         >
-                                    <TextBlock Text="{Binding SelectedFacture.AmountPaid, ConverterCulture=fr-GA,StringFormat={}{0:C}}" />
+                                    <TextBlock Text="{Binding SelectedFacture.TotalAmountHT, ConverterCulture=fr-GA,StringFormat={}{0:C}}" Padding="6,4"/>
                                 </Border>
-                         </WrapPanel>
-                        
-                        <WrapPanel Orientation="Vertical"
-                                   Margin="0,0,0,0">
-                            <Label Content="Status"/>
+                            </WrapPanel>
+                            <WrapPanel Orientation="Vertical"
+                                   Margin="20,0,0,0">
+                                <Label Content="Status"/>
                                 <Border Style="{StaticResource StyledTextBorder}"
-                                        MinWidth="100">
+                                        Width="145">
                                     
-                                    <TextBlock Text="{Binding SelectedFacture.Status}" />
+                                    <TextBlock Text="{Binding SelectedFacture.Status}" Padding="6,4" />
                                 </Border>
                             </WrapPanel>
-                        <WrapPanel Orientation="Vertical"
-                                   Margin="15,0,0,0">
-                            <Label Content="R. à payer"/>
-                                <Border Style="{StaticResource StyledTextBorder}"
-        >
-                                    <TextBlock Text="{Binding AmountLeft, ConverterCulture=fr-Ga, StringFormat={}{0:C}}" />
-                                </Border>
-                            </WrapPanel>
+
                     </WrapPanel>
 
                     <WrapPanel>
-                        <WrapPanel Orientation="Vertical"
-                                   Width="80">
-                            <Label Content="Remise (%)"/>
+                            <WrapPanel Orientation="Vertical"
+                                   Margin="20,0,0,0">
+                                <Label Content="Avance"/>
                                 <Border Style="{StaticResource StyledTextBorder}"
+                                        Width="145"
         >
-                                    <TextBlock Text="{Binding SelectedFacture.DiscountPercent, StringFormat={}{0:P0}}"
-                                               Width="30"/>
+                                    <TextBlock Text="{Binding SelectedFacture.AmountPaid, ConverterCulture=fr-GA,StringFormat={}{0:C}}"
+                                               Padding="6,4"
+                                               />
                                 </Border>
                             </WrapPanel>
-                        
-                        <WrapPanel Orientation="Vertical"
-                                   Margin="30,0,0,0">
-                            <Label Content="Total HT" />
+                            <WrapPanel Orientation="Vertical"
+                                   Margin="20,0,0,0">
+                                <Label Content="R. à payer"/>
                                 <Border Style="{StaticResource StyledTextBorder}"
+                                        Width="145"
         >
-                                    <TextBlock Text="{Binding SelectedFacture.TotalAmountHT, ConverterCulture=fr-GA,StringFormat={}{0:C}}" />
+                                    <TextBlock Text="{Binding AmountLeft, ConverterCulture=fr-Ga, StringFormat={}{0:C}}" Padding="6,4" />
                                 </Border>
                             </WrapPanel>
-                    </WrapPanel>
+                        </WrapPanel>
 
+                    
                 </StackPanel>
                 <StackPanel
                     Grid.Column="2"
                     Margin="15,0,0,0">
+                    
 
                         <WrapPanel Orientation="Vertical"
                                    >
                             <Label Content="Methode de paiement"/>
                             <Border Style="{StaticResource StyledTextBorder}"
+                                    Width="145"
         >
-                                <TextBlock Text="{Binding SelectedFacture.PaymentMethod}" />
+                                <TextBlock Text="{Binding SelectedFacture.PaymentMethod}" Padding="6,4" />
                             </Border>
                         </WrapPanel >
                     
@@ -182,8 +179,9 @@
                                    >
                             <Label Content="Date d'établissement"/>
                             <Border Style="{StaticResource StyledTextBorder}"
+                                    Width="145"
         >
-                                <TextBlock Text="{Binding SelectedFacture.Created_at, ConverterCulture=fr-GA, StringFormat={}{0:dd/MM/yyyy HH:mm}}" />
+                                <TextBlock Text="{Binding SelectedFacture.Created_at, ConverterCulture=fr-GA, StringFormat={}{0:dd/MM/yyyy HH:mm}}"  Padding="6,4"/>
                             </Border>
                         </WrapPanel>
                 </StackPanel>
@@ -198,14 +196,14 @@
                             <Label Content="Nom du patient"/>
                                 <Border Style="{StaticResource StyledTextBorder}"
         >
-                                    <TextBlock Text="{Binding SelectedFacture.Patient.LastName}" />
+                                    <TextBlock Text="{Binding SelectedFacture.Patient.LastName}"  Padding="6,4"/>
                                 </Border>
                             </WrapPanel>
                         <WrapPanel Orientation="Vertical">
                             <Label Content="Prénom"/>
                                 <Border Style="{StaticResource StyledTextBorder}"
         >
-                                    <TextBlock Text="{Binding SelectedFacture.Patient.FirstName}" />
+                                    <TextBlock Text="{Binding SelectedFacture.Patient.FirstName}" Padding="6,4" />
                                 </Border>
                             </WrapPanel>
                     </WrapPanel>
@@ -216,7 +214,7 @@
         </Grid>
         </Border>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50" />
                 <RowDefinition Height="50" />
@@ -315,25 +313,27 @@
                             HorizontalAlignment="Right"
                             Orientation="Horizontal">
 
-                    <Button Style="{StaticResource TabButtonStyle2}"
+                    <Button Style="{StaticResource MaterialButton}"
                             VerticalAlignment="Center"
                         Command="{Binding MarquerPayerCommand}"
-                            BorderThickness="1"
+                            BorderThickness="3"
+                            Effect="{x:Null}"
                             Margin="0,0,10,0"
-                            BorderBrush="#EDEDED"
+                            BorderBrush="{StaticResource SurfaceBlue}"
                         Background="Transparent">
                     <StackPanel Orientation="Horizontal" Width="Auto">
-                        <Image Source="/Assets/icons/mark.png" Height="16" />
-                        <TextBlock Text="Marqué Payé" Margin="5,0,0,0" Foreground="#333333"/>
+                        <Image Source="/Assets/icons/mark.png" Height="16"/>
+                        <TextBlock Text="Marqué Payé" Margin="5,0,0,0" Foreground="#222222" />
                     </StackPanel>
 
                     </Button>
-                    <Button Style="{StaticResource TabButtonStyle2}"
+                    <Button Style="{StaticResource MaterialButton}"
                             VerticalAlignment="Center"
                         Command="{Binding MarquerNonPayerCommand}"
-                            BorderThickness="1"
+                            Effect="{x:Null}"
+                            BorderThickness="3"
                             Margin="0,0,10,0"
-                            BorderBrush="#EDEDED"
+                            BorderBrush="{StaticResource SurfaceBlue}"
                         Background="Transparent">
                         <StackPanel Orientation="Horizontal" Width="Auto">
                             <Image Source="/Assets/icons/unmark.png" Height="16" />
@@ -346,10 +346,10 @@
                             ToolTip="Imprimer la facture séléctionné"
                             ToolTipService.ShowDuration="1500"
                         Command="{Binding PrintInvoiceDirectlyCommand}"
-                            BorderThickness="1"
+                            BorderThickness="2"
                             Margin="0,0,10,0"
-                            BorderBrush="LightGray"
-                        Background="#EDEDED">
+                            BorderBrush="{StaticResource SurfaceBlue}"
+                        Background="Transparent">
                         <StackPanel Orientation="Horizontal" Width="Auto">
                         <Image Source="/Assets/icons/printer.png" Height="16" />
                     </StackPanel>
@@ -360,10 +360,10 @@
                             ToolTip="Rafraichir la liste"
                             ToolTipService.ShowDuration="1500"
                             Command="{Binding RefreshFacturesCommand}"
-                                BorderThickness="1"
+                                BorderThickness="2"
                                 Margin="0,0,325,0"
-                                BorderBrush="LightGray"
-                            Background="#EDEDED">
+                                BorderBrush="{StaticResource SurfaceBlue}"
+                            Background="Transparent">
                         <StackPanel Orientation="Horizontal" Width="Auto">
                         <Image Source="/Assets/icons/refresh.png" Height="16" />
                     </StackPanel>
@@ -383,14 +383,13 @@
             </StackPanel>
             <StackPanel Grid.Row="2" 
                         Margin="15,5,15,0">
-                
-                <DataGrid RowStyle="{DynamicResource DataGridRowStyle1}" 
-                          Style="{DynamicResource specialDataGrid}" 
-                          ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}"
-                          Background="Transparent"
+
+                <DataGrid RowStyle="{StaticResource DataGridRowStyle1}" 
+                          Style="{StaticResource specialDataGrid}" 
+                          ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"
                           VerticalScrollBarVisibility="Hidden"
                           MaxHeight="435"
-                          BorderThickness="0,0,0,1"
+                          BorderThickness="0,0,0,0"
                     x:Name="dtgridView"
                     IsReadOnly="True"
                           SelectedItem="{Binding SelectedFacture, Mode=TwoWay}"

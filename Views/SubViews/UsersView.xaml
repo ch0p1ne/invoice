@@ -239,6 +239,7 @@
                 </Border>
                 <!-- Main content body-->
                 <DataGrid Grid.Row="1"
+                          Focusable="False"
                           RowStyle="{StaticResource DataGridRowStyle1}"
                           ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"
                           Style="{DynamicResource specialDataGrid}" 

@@ -11,7 +11,8 @@
              x:Name="PrixHomologueControl"
              FontFamily="{StaticResource fontBase}"
              xmlns:behevior="http://schemas.microsoft.com/xaml/behaviors" 
-             xmlns:local="clr-namespace:invoice.Utilities.Converters">
+             xmlns:local="clr-namespace:invoice.Utilities.Converters"
+             Style="{StaticResource Page_Style}">
     <UserControl.Resources>
         <local:TrueOrFalseToVisibility x:Key="TrueOrFalseToVisibility" />
         <local:BoolToInvertValue x:Key="BoolToInvertValue" />

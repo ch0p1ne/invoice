@@ -356,14 +356,18 @@ namespace invoice.ViewModels
             DiscountPercent = 0;
             DiscountFlat = 0;
             AmountPaid = 0;
-            PatientDefined = false;
             if(viewName == "crudCreateOne")
+            {
+                PatientDefined = false;
                 Patient = new Patient();
+
+            }
             ShowAdvanceInvoiceParam = false;
             InvoiceExams.Clear();
 
             // TO DO : Load data if needed
-            GetExamenList().ConfigureAwait(false);
+            if(viewName == "CrudCreateTwo")
+                _ = GetExamenList();
         }
         [RelayCommand(CanExecute = nameof(CanExecuteAddInvoiceExam))]
         public void AddInvoiceExam()
@@ -618,16 +622,20 @@ namespace invoice.ViewModels
         }
         public async Task GetExamenList()
         {
+            var messageBox = new ModelOpenner();
             try
             {
                 using var context = new ClimaDbContext();
                 var examensList = await context.Examens.ToListAsync();
-                AvailableExamens = new ObservableCollection<Examen>(examensList);
+                AvailableExamens.Clear();
+                foreach (var e in examensList) AvailableExamens.Add(e);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                messageBox.Show("Erreur lors du chargement des examens", $"Erreur {ex.Message}", MessageBoxButton.OK);
+                if(ex.InnerException != null)
+                    MessageBox.Show("Détails de l'erreur interne", $"Erreur {ex.InnerException.Message}", MessageBoxButton.OK);
             }
         }
         public async Task LoadPatientsList()

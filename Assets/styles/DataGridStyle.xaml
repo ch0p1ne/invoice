@@ -15,7 +15,7 @@
         </Setter>
     </Style>
     <Style x:Key="DataGridRowStyle1" TargetType="{x:Type DataGridRow}">
-        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Background" Value="{StaticResource AppBackground}"/>
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="FontFamily" Value="{DynamicResource fontSen}" />
         <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
@@ -64,13 +64,14 @@
     </Style>
     <Style x:Key="DataGridColumnHeaderStyle1" TargetType="{x:Type DataGridColumnHeader}">
         <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Focusable" Value="False"/>
         <Setter Property="Background" 
                 Value="{DynamicResource PrimaryBlue}"/>
         <Setter Property="Foreground" 
                 Value="{DynamicResource DataGrid.Column.Header.Static.Foreground}"/>
         <Setter Property="MinHeight" Value="25"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="FontFamily" Value="{StaticResource fontSen}"/>
+        <Setter Property="FontFamily" Value="{StaticResource fontBase}"/>
         <Setter Property="Padding" Value="5,6"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -188,15 +189,16 @@
         </Setter>
     </Style>
     <Style x:Key="specialDataGrid" TargetType="{x:Type DataGrid}">
-        <Setter Property="AlternatingRowBackground" Value="{DynamicResource DataGrid.AlternateRow.Static.Background}"/>
-        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="AlternatingRowBackground" Value="Black"/>
+        <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
         <Setter Property="BorderThickness" Value="0,0,0,0"/>
         <Setter Property="BorderBrush" Value="#8dadf2"/>
         <Setter Property="GridLinesVisibility" Value="None"/>
         <Setter Property="HeadersVisibility" Value="Column"/>
         <Setter Property="SelectionMode" Value="Single"/>
-        <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource Datagrid.Grid.HorizontalLineBrush}"/>
+        <!-- <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource Datagrid.Grid.HorizontalLineBrush}"/> -->
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected"/>
         <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
@@ -252,6 +254,9 @@
     </Style>
     <Style TargetType="DataGridCell">
         <Setter Property="Margin" Value="0" />
+        <Setter Property="Background" Value="{StaticResource AppBackground}" />
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="FontFamily" Value="{StaticResource fontBase}"/>
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="FontSize" Value="15" />
         <Setter Property="FontWeight" Value="Light" />
@@ -263,7 +268,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="DataGridCell">
                     <Border
-                        Background="Transparent"
+                        Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
                         <ContentPresenter
@@ -279,7 +284,7 @@
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
                 <Setter Property="Foreground" Value="Black"/>
-                <Setter Property="Background" Value="#F7F7F7" />
+                <Setter Property="Background" Value="#ECFFFF" />
             </Trigger>
 
             <Trigger Property="IsKeyboardFocusWithin" Value="True">
@@ -289,6 +294,7 @@
     </Style>
     <Style x:Key="DataGridCell2" TargetType="DataGridCell">
         <Setter Property="Margin" Value="0" />
+        <Setter Property="Background" Value="{StaticResource AppBackground}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Height" Value="45" />
         <Setter Property="FontWeight" Value="Light" />
@@ -317,7 +323,7 @@
                 <Setter Property="Foreground" Value="Black"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
                 <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Background" Value="{StaticResource AppBackground}" />
             </Trigger>
 
             <Trigger Property="IsKeyboardFocusWithin" Value="True">

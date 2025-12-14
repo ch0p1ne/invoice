@@ -10,6 +10,7 @@
              Name="baseViewCreateFacture"
              d:DesignHeight="450" d:DesignWidth="800"
              FontFamily="{StaticResource fontBase}"
+             Style="{StaticResource Page_Style}"
             >
 
 
@@ -28,6 +29,7 @@
         </StackPanel>
 
         <ContentControl Margin="0,25,0,0" Grid.Row="1" Content="{Binding CurrentPartOfNewFacture}"
-                                ContentTemplateSelector="{StaticResource StringTemplateFactureSelector}"></ContentControl>
+                                ContentTemplateSelector="{StaticResource StringTemplateFactureSelector}"
+                        Focusable="False"/>
     </Grid>
 </UserControl>

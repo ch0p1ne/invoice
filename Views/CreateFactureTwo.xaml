@@ -10,6 +10,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Language="fr-FR"
+             Style="{StaticResource Page_Style}"
              >
     <UserControl.Resources>
         <converters:DiscountFormatConverter x:Key="DiscountFormatConverter" />

@@ -10,7 +10,8 @@
              xmlns:subviewmodels="clr-namespace:invoice.ViewModels.SubViewModels"
              d:DataContext="{d:DesignInstance Type=subviewmodels:RolesVM}"
              d:DesignHeight="450" d:DesignWidth="800"
-             FontFamily="{StaticResource fontBase}">
+             FontFamily="{StaticResource fontBase}"
+             Style="{StaticResource Page_Style}">
 
     <!--
     PSEUDOCODE (en français, détaillé) :

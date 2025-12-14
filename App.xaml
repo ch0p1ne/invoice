@@ -6,6 +6,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Assets/styles/MenuBtnStyle.xaml"/>
                 <ResourceDictionary Source="/Assets/styles/ColorCollection.xaml"/>
                 <ResourceDictionary Source="/Assets/styles/GenericButtonStyles.xaml" />
                 <ResourceDictionary Source="/Assets/styles/MaterialDesignLike.xaml"/>
@@ -20,6 +21,7 @@
                 <ResourceDictionary Source="/Assets/styles/TextBoxFromStyle.xaml" />
                 <ResourceDictionary Source="/Assets/styles/DataGridStyle.xaml" />
                 <ResourceDictionary Source="/Assets/styles/SearchTextBoxStyle.xaml" />
+                <ResourceDictionary Source="/Assets/styles/MenuBtnStyle.xaml"/>
 
                 <!-- Provide By JD's Code Lab "Youtube"-->
                 <ResourceDictionary Source="/Assets/Icons.xaml" />

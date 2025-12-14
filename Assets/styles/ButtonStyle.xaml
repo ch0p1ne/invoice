@@ -3,16 +3,16 @@
 
     <Style x:Key="buttonCustomStyle" TargetType="Button">
         <!-- 1. Valeur par défaut du Background -->
-        <Setter Property="Background" Value="#EDEDED"/>
+        <Setter Property="Background" Value="#D3FFFF"/>
         <Setter Property="Foreground" Value="#555555"/>
-        <Setter Property="FontFamily" Value="{DynamicResource fontBase}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource fontSen}"/>
         <Setter Property="FontWeight" Value="Light"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <!-- 2. Lier le Background du Border au Background du Button -->
-                    <Border CornerRadius="1" Background="{TemplateBinding Background}" Padding="20,10">
+                    <Border CornerRadius="8" Background="{TemplateBinding Background}" Padding="10,10">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                 </ControlTemplate>
@@ -21,9 +21,9 @@
         <Style.Triggers>
             <!-- 3. Survol : changer le Background en rouge -->
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#D4D4D4"/>
+                <Setter Property="Background" Value="{StaticResource SurfaceRed}"/>
                 <Setter Property="FontWeight" Value="Normal" />
-                <Setter Property="Foreground" Value="#DE5454"/>
+                <Setter Property="Foreground" Value="{StaticResource PrimaryRedDark}"/>
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
                 <Setter Property="FontWeight" Value="Normal" />
