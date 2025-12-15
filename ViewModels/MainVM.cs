@@ -69,6 +69,7 @@ namespace invoice.ViewModels
             await LoadAvailablePermissions();
             await LoadUserPermissions();
             MenuItems[0].RequiredPermission = AvailablePermissions?.FirstOrDefault(ap => ap.Permission_name == "CREATE_INVOICES");
+            MenuItems[2].RequiredPermission = AvailablePermissions?.FirstOrDefault(ap => ap.Permission_name == "USERS_ROLES_VIEW");
 
             // Vérifier si l'utilisateur possède la permission requise.
             if (UserPermissions.Any(up => up.Permission_name == MenuItems[0]?.RequiredPermission?.Permission_name))

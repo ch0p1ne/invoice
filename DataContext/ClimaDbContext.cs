@@ -30,11 +30,12 @@ namespace invoice.Context
         public DbSet<RolePermission> RolesPermissions { get; set; }
         private string sourceNameLocal= "pc-thomas";
         private string sourceNameProd= "DESKTOP-RVJHVJS";
+        private string sourceNameProd2= "DESKTOP-HPOEPLL";
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
-                .UseSqlServer($"Data Source={sourceNameLocal}\\sqlexpress;database=CLIMAG;Trusted_Connection=True;TrustServerCertificate=True");
+                .UseSqlServer($"Data Source={sourceNameProd2}\\sqlexpress;database=CLIMAG;Trusted_Connection=True;TrustServerCertificate=True");
         }
 
 

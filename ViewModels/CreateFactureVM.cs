@@ -42,8 +42,8 @@ namespace invoice.ViewModels
         private Patient? _patient = new Patient();
         private FactureExamen? _factureExamen;
         private bool _isInsurance = false;
-        private double? _discountPercent = 0;
-        private double? _discountFlat = null;
+        private double _discountPercent = 0;
+        private double _discountFlat = 0;
         private string _discountType = "Percent";
         private PaymentMethod _paymentMethod = Utilities.PaymentMethod.Especes;
         private bool _generatePDFButtonIsEnable = false;
@@ -112,7 +112,7 @@ namespace invoice.ViewModels
                 SetProperty(ref _amountLeft, value);
             }
         }
-        public double? DiscountPercent
+        public double DiscountPercent
         {
             get => _discountPercent;
             set
@@ -180,8 +180,7 @@ namespace invoice.ViewModels
                 {
                     _selectedDiscountFlat = false;
                     DiscountType = "Percent";
-                    DiscountFlat = null;
-                    DiscountPercent = 0;
+                    DiscountFlat = 0;
                 }
             }
         }
@@ -195,8 +194,7 @@ namespace invoice.ViewModels
                 {
                     _selectedDiscountPercent = false;
                     DiscountType = "Flat";
-                    DiscountFlat = 0;
-                    DiscountPercent = null;
+                    DiscountPercent = 0;
                 }
 
                 }
@@ -331,7 +329,7 @@ namespace invoice.ViewModels
             }
         }
 
-        public double? DiscountFlat 
+        public double DiscountFlat 
         { 
             get => _discountFlat;
             set
@@ -496,7 +494,7 @@ namespace invoice.ViewModels
             InvoiceExams.Clear();
             Facture = nouvelleFacture;
             FacturePdfPath = GenerateFacturePdfPath();
-            DiscountFlat = null;
+            DiscountFlat = 0;
             DiscountPercent = 0;
             ShowAdvanceInvoiceParam = false;
             AmountPaid = 0;
