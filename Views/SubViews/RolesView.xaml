@@ -379,14 +379,21 @@
 
                         <StackPanel Grid.Row="1" HorizontalAlignment="Center"
                                     Orientation="Horizontal"
-                                    Margin="0,0,0,50">
+                                    Margin="0,0,0,10">
                             <Button Content="Supprimer"
+                                    Command="{Binding RemovePermissionCommand}"
                                     Style="{StaticResource CancelOperationBtn}">
                                 
                             </Button>
                             <Button Content="Ajouter"
                                     Margin="50,0,0,0"
                                     Command="{Binding GrantPermissionCommand}"
+                                    Style="{StaticResource GenericOperationBtn}">
+                                
+                            </Button>
+                            <Button Content="Appliquer"
+                                    Margin="50,0,0,0"
+                                    Command="{Binding CreateRolePermissionsEntryCommand}"
                                     Style="{StaticResource GenericOperationBtn}">
                                 
                             </Button>

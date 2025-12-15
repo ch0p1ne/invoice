@@ -382,7 +382,7 @@
                 </TextBox>
             </StackPanel>
             <StackPanel Grid.Row="2" 
-                        Margin="15,5,15,0">
+                        Margin="15,25,15,0">
 
                 <DataGrid RowStyle="{StaticResource DataGridRowStyle1}" 
                           Style="{StaticResource specialDataGrid}" 

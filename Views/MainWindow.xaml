@@ -44,8 +44,8 @@
                            FontFamily="{StaticResource fontSen}"/>
                 <RadioButton Style="{StaticResource ElementMenuBtnStyle}"
                              Command="{Binding ChangeCurrentViewModelCommand}"
-                             CommandParameter="{Binding MenuItems[0].ViewModel}"
-                             IsChecked="True">
+                             CommandParameter="{Binding MenuItems[0]}"
+                             IsChecked="{Binding IsChecked}">
                     <RadioButton.Content>
                         <Grid>
                             <Image Source="{Binding MenuItems[0].Icon}"
@@ -58,7 +58,7 @@
                 <!-- Menu Item 2-->
                 <RadioButton Style="{StaticResource ElementMenuBtnStyle}"
                              Command="{Binding ChangeCurrentViewModelCommand}"
-                             CommandParameter="{Binding MenuItems[1].ViewModel}">
+                             CommandParameter="{Binding MenuItems[1]}">
                     <RadioButton.Content>
                         <Grid>
                             <Image Source="{Binding MenuItems[1].Icon}"
@@ -74,7 +74,7 @@
                            Margin="0,20,0,0"/>
                 <RadioButton Style="{StaticResource ElementMenuBtnStyle}"
                              Command="{Binding ChangeCurrentViewModelCommand}"
-                             CommandParameter="{Binding MenuItems[2].ViewModel}">
+                             CommandParameter="{Binding MenuItems[2]}">
                     <RadioButton.Content>
                         <Grid>
                             <Image Source="{Binding MenuItems[2].Icon}"
@@ -90,7 +90,8 @@
                            Margin="0,20,0,0"/>
                 <RadioButton Style="{StaticResource ElementMenuBtnStyle}"
                              Command="{Binding ChangeCurrentViewModelCommand}"
-                             CommandParameter="{Binding MenuItems[3].ViewModel}">
+                             CommandParameter="{Binding MenuItems[3]}"
+                             >
                     <RadioButton.Content>
                         <Grid>
                             <Image Source="{Binding MenuItems[3].Icon}"
@@ -103,7 +104,7 @@
                 <!-- Menu Item 5-->
                 <RadioButton Style="{StaticResource ElementMenuBtnStyle}"
                              Command="{Binding ChangeCurrentViewModelCommand}"
-                             CommandParameter="{Binding MenuItems[4].ViewModel}">
+                             CommandParameter="{Binding MenuItems[4]}">
                     <RadioButton.Content>
                         <Grid>
                             <Image Source="{Binding MenuItems[4].Icon}"
@@ -116,7 +117,7 @@
                 <!-- Menu Item 6-->
                 <RadioButton Style="{StaticResource ElementMenuBtnStyle}"
                              Command="{Binding ChangeCurrentViewModelCommand}"
-                             CommandParameter="{Binding MenuItems[5].ViewModel}">
+                             CommandParameter="{Binding MenuItems[5]}">
                     <RadioButton.Content>
                         <Grid>
                             <Image Source="{Binding MenuItems[5].Icon}"

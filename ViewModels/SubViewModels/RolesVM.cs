@@ -22,10 +22,12 @@ namespace invoice.ViewModels.SubViewModels
         public RolesVM()
         {
             _ = LoadRolesAsync();
+            _ = LoadGrantedPermissionAsync();
             _ = LoadPermissionAsync();
         }
         
         public ObservableCollection<Permission> AvailablePermissions { get; set; } = new ObservableCollection<Permission>();
+        public ObservableCollection<Permission> AvailableTmpPermissions { get; set; } = new ObservableCollection<Permission>();
         public ObservableCollection<Permission> GrantedPermissions { get; set; } = new ObservableCollection<Permission>();
         private Permission _selectedPermission;
         public Permission SelectedPermission
@@ -41,7 +43,11 @@ namespace invoice.ViewModels.SubViewModels
         public Permission SelectedGrantPermission
         {
             get => _selectedGrantPermission;
-            set => SetProperty(ref _selectedGrantPermission, value);
+            set
+            {
+                SetProperty(ref _selectedGrantPermission, value);
+                RemovePermissionCommand.NotifyCanExecuteChanged();
+            }
         }
         private Role _selectedRole;
         public Role SelectedRole
@@ -50,7 +56,10 @@ namespace invoice.ViewModels.SubViewModels
             set
             {
                 SetProperty(ref _selectedRole, value);
+                RefreshPermissionList();
+                _ = LoadGrantedPermissionAsync();
                 GrantPermissionCommand.NotifyCanExecuteChanged();
+                RemovePermissionCommand.NotifyCanExecuteChanged();
             }
         }
         public ObservableCollection<Role> RolesList { get; set; } = new ObservableCollection<Role>();
@@ -186,6 +195,7 @@ namespace invoice.ViewModels.SubViewModels
                 foreach (var p in permissions)
                 {
                     AvailablePermissions.Add(p);
+                    AvailableTmpPermissions.Add(p);
                 }
             }
             catch (Exception ex)
@@ -200,6 +210,7 @@ namespace invoice.ViewModels.SubViewModels
         {
             await LoadRolesAsync();
         }
+
         [RelayCommand]
         public async Task DeleteRoleAsync()
         {
@@ -240,11 +251,113 @@ namespace invoice.ViewModels.SubViewModels
             GrantedPermissions.Add(SelectedPermission);
             AvailablePermissions.Remove(SelectedPermission);
         }
+        [RelayCommand(CanExecute = nameof(CanRemovePermission))]
+        public async Task RemovePermissionAsync()
+        {
+            AvailablePermissions.Add(SelectedGrantPermission);
+            GrantedPermissions.Remove(SelectedGrantPermission);
+        }
+        [RelayCommand]
+        public async Task CreateRolePermissionsEntryAsync()
+        {
+            using var context = new ClimaDbContext();
+            var messageBox = new ModelOpenner();
+
+            if (SelectedRole == null)
+            {
+                messageBox.Show("Avertissement", "Veuillez sélectionner un rôle avant d'enregistrer les permissions.", MessageBoxButton.OK);
+                return;
+            }
+
+            if (GrantedPermissions == null || GrantedPermissions.Count == 0)
+            {
+                messageBox.Show("Avertissement", "Aucune permission accordée à enregistrer pour ce rôle. Un permission minimum est requise pour appliquer les changement", MessageBoxButton.OK);
+                return;
+            }
+
+            try
+            {
+                // Charger le rôle avec ses permissions actuelles
+                var role = await context.Roles
+                    .Include(r => r.RolePermissions)
+                    .FirstOrDefaultAsync(r => r.RoleId == SelectedRole.RoleId);
+
+                if (role == null)
+                {
+                    messageBox.Show("Erreur", "Le rôle sélectionné est introuvable dans la base de données.", MessageBoxButton.OK);
+                    return;
+                }
+
+                // Synchroniser : supprimer les liaisons existantes puis ajouter celles de GrantedPermissions
+                role.RolePermissions.Clear();
+
+                foreach (var gp in GrantedPermissions)
+                {
+                    // Récupérer l'entité Permission traquée par le contexte
+                    var permission = await context.Permissions.FindAsync(gp.PermissionId);
+                    if (permission != null && !role.RolePermissions.Any(p => p.PermissionId == permission.PermissionId))
+                    {
+                        var rolePermission = new RolePermission
+                        {
+                            RoleId = role.RoleId,
+                            PermissionId = permission.PermissionId
+                        };
+                        role.RolePermissions.Add(rolePermission);
+                    }
+                }
+
+                await context.SaveChangesAsync();
+
+                messageBox.Show("Succès", "Les permissions du rôle ont été enregistrées avec succès.", MessageBoxButton.OK);
+
+            }
+            catch (Exception ex)
+            {
+                messageBox.Show("Erreur", $"Une erreur est survenue lors de l'enregistrement des permissions : {ex.Message}", MessageBoxButton.OK);
+            }
+        }
 
         // Methods for granting and revoking permissions can be added here
         public async Task LoadGrantedPermissionAsync()
         {
             using var context = new ClimaDbContext();
+
+            try
+            {
+                GrantedPermissions.Clear();
+                if (SelectedRole != null)
+                {
+                    var roleWithPermissions = await context.Roles
+                        .Include(r => r.RolePermissions)
+                        .ThenInclude(rp => rp.Permission)
+                        .FirstOrDefaultAsync(r => r.RoleId == SelectedRole.RoleId);
+                    if (roleWithPermissions != null)
+                    {
+                        foreach (var rp in roleWithPermissions.RolePermissions)
+                        {
+                            GrantedPermissions.Add(rp.Permission);
+                            var permitionAlreadyGrant = AvailablePermissions.FirstOrDefault(p => p.Permission_name == rp.Permission.Permission_name);
+                            if (permitionAlreadyGrant != null)
+                                AvailablePermissions.Remove(permitionAlreadyGrant);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var messageBox = new ModelOpenner();
+                messageBox.Show("Erreur", $"Une erreur est survenue lors du chargement des permissions accordées : {ex.Message}", MessageBoxButton.OK);
+                return;
+            }
+        }
+        public void RefreshPermissionList()
+        {
+            foreach (var p in AvailableTmpPermissions)
+            {
+                if (AvailablePermissions.Contains(p))
+                    continue;
+                AvailablePermissions.Add(p);
+            }
         }
 
         // CanExecute methods
@@ -252,6 +365,10 @@ namespace invoice.ViewModels.SubViewModels
         private bool CanGrantPermission()
         {
             return SelectedPermission != null && SelectedRole != null;
+        }
+        private bool CanRemovePermission()
+        {
+            return SelectedGrantPermission != null && SelectedRole != null;
         }
 
         }

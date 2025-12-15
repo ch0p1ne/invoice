@@ -1,24 +1,41 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using invoice.Context;
+using invoice.Models;
 using invoice.Services;
 using invoice.Utilities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using MenuItem = invoice.Utilities.MenuItem;
 
 namespace invoice.ViewModels
 {
     public partial class MainVM : VMBase
     {
+        private bool _isCkecked = false;
+        public bool IsChecked
+        {
+            get => _isCkecked;
+            set
+            {
+                _isCkecked = value;
+                OnPropertyChanged();
+            }
+        }
         private ISessionService _sessionService;
         private readonly INavigationService _navigationService;
         public ObservableCollection<MenuItem> MenuItems { get; }
 
         private readonly DateOnly _dateOnly = DateOnly.FromDateTime(DateTime.Now);
         public DateOnly DateOnly => _dateOnly;
+        public ICollection<Permission> UserPermissions { get; set; } = new List<Permission>();
+        public ICollection<Permission> AvailablePermissions { get; set; } = new List<Permission>();
 
 
 
@@ -31,9 +48,7 @@ namespace invoice.ViewModels
         {
             _navigationService = navigationService;
             _sessionService = sessionService;
-            CurrentViewModel = new CreateFactureVM(sessionService);
-
-            MenuItems = new ObservableCollection<MenuItem>()
+            MenuItems = new ObservableCollection<Utilities.MenuItem>()
             {
 
                 new MenuItem("Nouvelle Facture", null, new CreateFactureVM(sessionService), "/Assets/icons/add.png"),
@@ -49,6 +64,26 @@ namespace invoice.ViewModels
             };
         }
 
+        public async Task InitializeAsync()
+        {
+            await LoadAvailablePermissions();
+            await LoadUserPermissions();
+            MenuItems[0].RequiredPermission = AvailablePermissions?.FirstOrDefault(ap => ap.Permission_name == "CREATE_INVOICES");
+
+            // Vérifier si l'utilisateur possède la permission requise.
+            if (UserPermissions.Any(up => up.Permission_name == MenuItems[0]?.RequiredPermission?.Permission_name))
+            {
+                CurrentViewModel = new CreateFactureVM(_sessionService);
+                IsChecked = true;
+                return;
+            }
+            else
+            {
+                CurrentViewModel = new MissPermissionVM();
+                IsChecked = true;
+            }
+        }
+
         [RelayCommand]
         public void Logout()
         {
@@ -57,9 +92,64 @@ namespace invoice.ViewModels
         }
 
         [RelayCommand]
-        public void ChangeCurrentViewModel(VMBase parameter)
+        public void ChangeCurrentViewModel(MenuItem menuItem)
         {
-            CurrentViewModel = parameter;
+            if (menuItem.RequiredPermission != null)
+            {
+                // Vérifier si l'utilisateur possède la permission requise.
+                if (!UserPermissions.Any(up => up.Permission_name == menuItem.RequiredPermission.Permission_name))
+                {
+                    CurrentViewModel = new MissPermissionVM();
+                    return;
+                }
+            }
+            if (menuItem.ViewModel != null)
+                CurrentViewModel = menuItem.ViewModel;
+        }
+
+        private async Task LoadAvailablePermissions()
+        {
+            using var context = new ClimaDbContext();
+            AvailablePermissions = await context.Permissions.ToArrayAsync();
+        }
+        private async Task LoadUserPermissions()
+        {             
+            using var context = new ClimaDbContext();
+
+            var sessionUser = _sessionService.User;
+            if (sessionUser == null)
+            {
+                // Tentative alternative : si ISessionService expose un UserId (décommentez/adaptez si besoin)
+                // var userIdFromSession = (_sessionService as dynamic)?.UserId;+		ChangeCurrentViewModelCommand	{CommunityToolkit.Mvvm.Input.RelayCommand<invoice.Utilities.MenuItem>}	CommunityToolkit.Mvvm.Input.IRelayCommand<invoice.Utilities.MenuItem> {CommunityToolkit.Mvvm.Input.RelayCommand<invoice.Utilities.MenuItem>}
+
+                // if (userIdFromSession == null) { _userPermissions = new List<Permission>(); return; }
+
+                UserPermissions = new List<Permission>();
+                return;
+            }
+
+            // Récupérer l'Id (utilise reflection/dynamic pour rester compatible avec différentes implémentations)
+            int userId;
+            try
+            {
+                userId = (int)sessionUser.GetType().GetProperty("UserId")!.GetValue(sessionUser)!;
+            }
+            catch
+            {
+                UserPermissions = new List<Permission>();
+                return;
+            }
+
+            // Charger l'utilisateur avec son rôle et les permissions associées
+            var userWithRole = await context.Users
+                .Include(u => u.Role)
+                    .ThenInclude(r => r.RolePermissions)
+                    .ThenInclude(rp => rp.Permission)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+
+            UserPermissions = userWithRole?.Role?.RolePermissions
+                .Select(rp => rp.Permission)
+                .ToList() ?? new List<Permission>();
         }
     }
 }

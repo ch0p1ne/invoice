@@ -1,4 +1,5 @@
-﻿using System;
+﻿using invoice.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -30,13 +31,20 @@ namespace invoice.Utilities
             get => _childrens; 
             set => _childrens = value;
         }
+        private Permission? _requiredPermission;
+        public Permission? RequiredPermission
+        { 
+            get => _requiredPermission;
+            set => SetProperty(ref _requiredPermission, value);
+        }
 
-        public MenuItem(string name, ObservableCollection<MenuItem>? childrens =  null, VMBase? viewModel = null, string icon = "")
+        public MenuItem(string name, ObservableCollection<MenuItem>? childrens =  null, VMBase? viewModel = null, string icon = "", Permission? permissionRequired = null)
         {
             _name = name;
             _childrens = childrens;
             _viewModel = viewModel;
             _icon = icon;
+            _requiredPermission = permissionRequired;
 
         }
 
@@ -47,11 +55,5 @@ namespace invoice.Utilities
             set => _viewModel = value;
         }
 
-        public MenuItem()
-        {
-            _name = string.Empty;
-            _childrens = null;
-            _viewModel = null;
-        }
     }
 }

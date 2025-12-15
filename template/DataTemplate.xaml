@@ -39,6 +39,9 @@
     <DataTemplate DataType="{x:Type viewmodels:FactureViewVM}">
         <view:FactureView />
     </DataTemplate>
+    <DataTemplate DataType="{x:Type viewmodels:MissPermissionVM}">
+        <view:MissPermission />
+    </DataTemplate>
 
     <DataTemplate x:Key="CrudOneTemplate">
         <view:CreateFactureOne  DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=view:CreateFactureView}}"/>

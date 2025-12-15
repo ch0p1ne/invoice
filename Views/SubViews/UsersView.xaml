@@ -271,7 +271,7 @@
                           SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
                           Background="Transparent"
                           Height="325"
-                          Margin="0,5,0,0"
+                          Margin="0,25,0,0"
                           BorderThickness="0,0,0,0"
                           BorderBrush="#F6F6F6" 
                           AutoGenerateColumns="False"

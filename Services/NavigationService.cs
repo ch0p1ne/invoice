@@ -49,6 +49,10 @@ namespace invoice.Services
 
             // creation de l'instance de la viewModel : TViewModel.
             var viewModel = _factories[vmType]();
+            if(viewModel is MainVM mainVM)
+            {
+                _ = mainVM.InitializeAsync();
+            }
 
             // Crée la view correspondante.
             var view = Activator.CreateInstance(viewType) as Window ?? throw new InvalidOperationException($"Erreur lors de l'instanciation de {viewType.Name} associer a la vm : {vmType}");
