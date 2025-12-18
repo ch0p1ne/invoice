@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using invoice.Context;
 
@@ -11,9 +12,11 @@ using invoice.Context;
 namespace invoice.Migrations
 {
     [DbContext(typeof(ClimaDbContext))]
-    partial class ClimaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251218101013_AlterFactures")]
+    partial class AlterFactures
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,7 +145,7 @@ namespace invoice.Migrations
                     b.Property<decimal>("Css")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("decimal(3,2)")
-                        .HasDefaultValue(0m);
+                        .HasDefaultValue(0.1m);
 
                     b.Property<double?>("DiscountFlat")
                         .HasColumnType("float");
@@ -153,7 +156,7 @@ namespace invoice.Migrations
                     b.Property<decimal>("ESCOMPT")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("decimal(3,2)")
-                        .HasDefaultValue(0m);
+                        .HasDefaultValue(0.9m);
 
                     b.Property<decimal?>("InsuranceCoveragePercent")
                         .HasColumnType("decimal(3,2)");

@@ -6,6 +6,7 @@
     <Color x:Key="PrimaryBlueColor">#1976D2</Color>
     <Color x:Key="PrimaryBlueDarkColor">#1565C0</Color>
     <Color x:Key="PrimaryRedDarkColor">#E72300</Color>
+    <Color x:Key="PrimaryGreenColor">#2a9d8f</Color>
     <Color x:Key="SurfaceBlueColor">#CDE9FF</Color>
     <Color x:Key="SurfaceWhiteColor">#FFFFFFFF</Color>
     <Color x:Key="SurfaceRedColor">#F3D2CC</Color>
@@ -20,6 +21,7 @@
     <SolidColorBrush x:Key="PrimaryBlue" Color="{StaticResource PrimaryBlueColor}"/>
     <SolidColorBrush x:Key="PrimaryBlueDark" Color="{StaticResource PrimaryBlueDarkColor}"/>
     <SolidColorBrush x:Key="PrimaryRedDark" Color="{StaticResource PrimaryRedDarkColor}"/>
+    <SolidColorBrush x:Key="PrimaryGreen" Color="{StaticResource PrimaryGreenColor}"/>
     <SolidColorBrush x:Key="SurfaceBlue" Color="{StaticResource SurfaceBlueColor}"/>
     <SolidColorBrush x:Key="SurfaceWhite" Color="{StaticResource SurfaceWhiteColor}"/>
     <SolidColorBrush x:Key="SurfaceRed" Color="{StaticResource SurfaceRedColor}"/>

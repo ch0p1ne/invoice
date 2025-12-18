@@ -133,7 +133,8 @@
                         VerticalAlignment="Top"                              
                         HorizontalAlignment="Center">
                 <Button Style="{StaticResource buttonCustomStyle}"
-                        Command="{Binding LogoutCommand}">
+                        Command="{Binding LogoutCommand}"
+                        Width="175">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <Image Source="/Assets/icons/logout.png" Height="30" Width="30"/>

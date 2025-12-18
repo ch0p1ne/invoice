@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -20,7 +21,6 @@ namespace invoice.Models
         public decimal? TotalAmountHT { get; set; }
         [Column(TypeName = "decimal(3,2)")]
         public decimal Tva { get; set; }
-        public decimal Css { get; set; }
         [Column(TypeName = "decimal(3,2)")]
         public decimal? InsuranceCoveragePercent { get; set; } // prise en charge
         [Column(TypeName = "decimal(3,2)")]
@@ -30,6 +30,10 @@ namespace invoice.Models
         [Column(TypeName = "decimal(3,2)")]
         public decimal? DiscountPercent { get; set; } = 0;
         public double? DiscountFlat { get; set; } = 0;
+        [Column(TypeName = "decimal(3,2)")]
+        public decimal Css { get; set; } = 0.00m;
+        [Column(TypeName = "decimal(3,2)")]
+        public decimal ESCOMPT { get; set; } = 0.00m;
         public StatusType? Status { get; set; } = StatusType.Non_payer; // En attente, Payée, Annulée
         public string? PaymentMethod { get; set; }
         public DateTime Created_at { get; set; } = DateTime.Now;

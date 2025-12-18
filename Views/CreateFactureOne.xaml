@@ -356,7 +356,8 @@
 
             <WrapPanel VerticalAlignment="Center" 
                         HorizontalAlignment="Right">
-                <Button Width="110"
+                <Button Width="150"
+                        Style="{StaticResource GenericOperationBtn}"
                             IsEnabled="{Binding PatientDefined, Converter={StaticResource BoolToInvertValueConverter}}"
                             Command="{Binding CreatePatientCommand}"
                             CommandParameter="CrudCreateTwo"
@@ -366,8 +367,8 @@
                         <TextBlock VerticalAlignment="Center" Text="Ajouter le Patient "/>
                     </StackPanel>
                 </Button>
-                <Button Style="{StaticResource buttonNextStyle}" 
-                        Width="110"
+                <Button Style="{StaticResource GenericOperationBtn}" 
+                        Width="150"
                         Margin="30,0,100,0"
                         IsEnabled="{Binding PatientDefined}"
                         Command="{Binding ChangeCurrentViewCommand}"
@@ -376,7 +377,7 @@
         >
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
                         <TextBlock VerticalAlignment="Center" Text="Suivant "/>
-                        <Image Source="/Assets/icons/arrow-right.png"  Height="24"/>
+                        <Image Source="/Assets/icons/arrow-right.png"  Height="24" Margin="15,0,0,0"/>
                     </StackPanel>
                 </Button>
             </WrapPanel>

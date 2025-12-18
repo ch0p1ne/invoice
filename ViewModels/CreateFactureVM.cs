@@ -25,6 +25,10 @@ namespace invoice.ViewModels
 {
     public partial class CreateFactureVM : VMBase
     {
+        private const decimal ESCOMPT = 0.09m;
+        private const decimal CSS = 0.01m;
+
+
         private readonly string _title = "Facture";
         private bool _facTypeSet = false;
         private string _currentPartOfNewFacture = "crudCreateOne";
@@ -37,7 +41,8 @@ namespace invoice.ViewModels
         private double _totalHTPrice = 0;
         private double _totalTTCPrice = 0;
         private double _taxe = 0; // TVA 20%
-        private decimal _css = 0.10m; // TVA 20%
+        private decimal _css = CSS; // TVA 20%
+        private decimal _escompt = ESCOMPT;
         private bool _patientDefined = false;
         private Patient? _patient = new Patient();
         private FactureExamen? _factureExamen;
@@ -57,6 +62,10 @@ namespace invoice.ViewModels
         private decimal _netApayer = decimal.Zero;
         private decimal _amountLeft = decimal.Zero;
         private bool _showAdvanceInvoiceParam = false;
+        private bool _isCssCheck = false;
+        private bool _isEscomptCheck = false;
+        private double _calculateCss = 0;
+        private double _calculateEscompt = 0;
 
 
 
@@ -65,9 +74,7 @@ namespace invoice.ViewModels
         public CreateFactureVM(ISessionService sessionService)
         {
             SessionService = sessionService;
-            LoadPatientsList().ConfigureAwait(false);
-            LoadAssuranceList().ConfigureAwait(false);
-            _patient.DateOfBirth = DateTime.Now;
+            _ = LoadPatientsList();
         }
 
         //Property
@@ -343,6 +350,19 @@ namespace invoice.ViewModels
             get => _showAdvanceInvoiceParam;
             set => SetProperty(ref _showAdvanceInvoiceParam, value);
         }
+        public decimal Escompt
+        { 
+            get => _escompt;
+            set => SetProperty(ref _escompt, value);
+        }
+        public bool IsCssCheck
+        { get => _isCssCheck; set { SetProperty(ref _isCssCheck, value); CalculAllIndexedPrice(); } }
+        public bool IsEscomptCheck
+        { get => _isEscomptCheck; set { SetProperty(ref _isEscomptCheck, value); CalculAllIndexedPrice(); } }
+        public double CalculateCss
+        { get => _calculateCss; set => SetProperty(ref _calculateCss, value); }
+        public double CalculateEscompt 
+        { get => _calculateEscompt; set => SetProperty(ref _calculateEscompt, value); }
 
 
 
@@ -416,89 +436,99 @@ namespace invoice.ViewModels
         public async Task CreateInvoice()
         {
             var messageBox = new ModelOpenner();
-            if (messageBox.Show("Création de la facture en cours...", "Voulez vous vraiment établir une facture ?", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+            try
             {
-                return; // L'utilisateur a annulé l'opération
-            }
-
-            if (!InvoiceExams.Any())
-            {
-                throw new InvalidOperationException("Impossible de créer une facture sans examens.");
-            }
-
-            // Utilisation d'une transaction pour garantir l'atomicité (si un des SaveAsync échoue)
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-            using var context = new ClimaDbContext();
-
-            // --- 1. CRÉATION DE L'ENTÊTE FACTURE ---
-
-            var nouvelleFacture = new Facture
-            {
-                Reference = await GenerateReference(),
-                Type = InvoiceType.Examen,
-                TotalAmountHT = (decimal?)TotalHTPrice,
-                Tva = (decimal)Taxe,
-                Css = Css,
-                InsuranceCoveragePercent = SelectedAssurance?.CoveragePercent,
-                PatientPercent = SelectedAssurance != null ? (1m - SelectedAssurance.CoveragePercent) : 1m,
-                AmountPaid = (decimal)AmountPaid,
-                DiscountPercent = (decimal?)(DiscountPercent),
-                DiscountFlat = (double?)(DiscountFlat),
-                Status = StatusType.Non_payer,
-                PaymentMethod = ConvertPaymentMethodToString(PaymentMethod),
-
-                // Assurez-vous que les objets Patient et User existent ou que leurs IDs sont définis
-                PatientId = Patient!.PatientId,
-                UserId = SessionService.User!.UserId,
-            };
-
-            context.Factures.Add(nouvelleFacture);
-
-            // --- 2. PREMIER SAVE : Obtention de FactureId ---
-
-            // Ceci enregistre la facture et FACTUREId est généré par la DB et affecté à nouvelleFacture.FactureId
-            await context.SaveChangesAsync();
-
-            // --- 3. CRÉATION ET AJOUT DES LIGNES DE JOINTURE (FactureExamen) ---
-
-            var lignesFactureAAjouter = new List<FactureExamen>();
-
-            foreach (var ligneVM in InvoiceExams)
-            {
-                // a. L'Examen doit être considéré comme existant (Unchanged)
-                // Ceci évite à EF Core d'essayer de l'insérer à nouveau et valide la clé étrangère.
-                context.Entry(ligneVM.Exam).State = EntityState.Unchanged;
-
-                // b. Créer la nouvelle entité de jointure
-                var ligneFactureExamen = new FactureExamen
+                if (messageBox.Show("Création de la facture en cours...", "Voulez vous vraiment établir une facture ?", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                 {
-                    // Les IDs sont maintenant disponibles
-                    FactureId = nouvelleFacture.FactureId,
-                    ExamenId = ligneVM.Exam.ExamenId,
+                    return; // L'utilisateur a annulé l'opération
+                }
 
-                    Qte = ligneVM.Qty,
+                if (!InvoiceExams.Any())
+                {
+                    throw new InvalidOperationException("Impossible de créer une facture sans examens.");
+                }
+
+                // Utilisation d'une transaction pour garantir l'atomicité (si un des SaveAsync échoue)
+                using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                using var context = new ClimaDbContext();
+
+                // --- 1. CRÉATION DE L'ENTÊTE FACTURE ---
+
+                var nouvelleFacture = new Facture
+                {
+                    Reference = await GenerateReference(),
+                    Type = InvoiceType.Examen,
+                    TotalAmountHT = (decimal?)TotalHTPrice,
+                    Tva = (decimal)Taxe,
+                    Css = IsCssCheck == true ? Css : 0.0m,
+                    ESCOMPT = IsEscomptCheck == true ? Escompt : 0.0m,
+                    InsuranceCoveragePercent = SelectedAssurance?.CoveragePercent,
+                    PatientPercent = SelectedAssurance != null ? (1m - SelectedAssurance.CoveragePercent) : 1m,
+                    AmountPaid = (decimal)AmountPaid,
+                    DiscountPercent = (decimal?)(DiscountPercent),
+                    DiscountFlat = (double?)(DiscountFlat),
+                    Status = StatusType.Non_payer,
+                    PaymentMethod = ConvertPaymentMethodToString(PaymentMethod),
+
+                    // Assurez-vous que les objets Patient et User existent ou que leurs IDs sont définis
+                    PatientId = Patient!.PatientId,
+                    UserId = SessionService.User!.UserId,
                 };
 
-                lignesFactureAAjouter.Add(ligneFactureExamen);
+                context.Factures.Add(nouvelleFacture);
+
+                // --- 2. PREMIER SAVE : Obtention de FactureId ---
+
+                // Ceci enregistre la facture et FACTUREId est généré par la DB et affecté à nouvelleFacture.FactureId
+                await context.SaveChangesAsync();
+
+                // --- 3. CRÉATION ET AJOUT DES LIGNES DE JOINTURE (FactureExamen) ---
+
+                var lignesFactureAAjouter = new List<FactureExamen>();
+
+                foreach (var ligneVM in InvoiceExams)
+                {
+                    // a. L'Examen doit être considéré comme existant (Unchanged)
+                    // Ceci évite à EF Core d'essayer de l'insérer à nouveau et valide la clé étrangère.
+                    context.Entry(ligneVM.Exam).State = EntityState.Unchanged;
+
+                    // b. Créer la nouvelle entité de jointure
+                    var ligneFactureExamen = new FactureExamen
+                    {
+                        // Les IDs sont maintenant disponibles
+                        FactureId = nouvelleFacture.FactureId,
+                        ExamenId = ligneVM.Exam.ExamenId,
+
+                        Qte = ligneVM.Qty,
+                    };
+
+                    lignesFactureAAjouter.Add(ligneFactureExamen);
+                }
+
+                // c. Ajout des entités de jointure au contexte
+                context.FacturesExamens.AddRange(lignesFactureAAjouter);
+
+                // --- 4. DEUXIÈME SAVE : Enregistrement des Lignes N:N ---
+
+                await context.SaveChangesAsync();
+
+                // Si toutes les opérations ont réussi, complétez la transaction
+                scope.Complete();
+                InvoiceExams.Clear();
+                Facture = nouvelleFacture;
+                FacturePdfPath = GenerateFacturePdfPath();
+                DiscountFlat = 0;
+                DiscountPercent = 0;
+                ShowAdvanceInvoiceParam = false;
+                AmountPaid = 0;
+                var Messagebox = new ModelOpenner($"Création de la facture {nouvelleFacture.Reference} terminé");
             }
-
-            // c. Ajout des entités de jointure au contexte
-            context.FacturesExamens.AddRange(lignesFactureAAjouter);
-
-            // --- 4. DEUXIÈME SAVE : Enregistrement des Lignes N:N ---
-
-            await context.SaveChangesAsync();
-
-            // Si toutes les opérations ont réussi, complétez la transaction
-            scope.Complete();
-            InvoiceExams.Clear();
-            Facture = nouvelleFacture;
-            FacturePdfPath = GenerateFacturePdfPath();
-            DiscountFlat = 0;
-            DiscountPercent = 0;
-            ShowAdvanceInvoiceParam = false;
-            AmountPaid = 0;
-            var Messagebox = new ModelOpenner($"Création de la facture {nouvelleFacture.Reference} terminé");
+            catch (Exception ex)
+            {
+                messageBox.Show("Erreur", "l'opération ne s'est pas effectuer, recommencer. Si le problème persiste, contacter l'informatitien.", MessageBoxButton.OK);
+                if (ex.InnerException != null)
+                    messageBox.Show("Details",$"{ex.InnerException.Message}", MessageBoxButton.OK);
+            }
         }   
         [RelayCommand(CanExecute = nameof(CanExecuteCreatePatient))]
         public async Task CreatePatient()
@@ -604,7 +634,7 @@ namespace invoice.ViewModels
             }
 
             TotalHTPrice = total;
-            switch(DiscountType)
+            switch (DiscountType)
             {
                 case "Percent":
                     NetAPayer = (decimal)(TotalHTPrice - TotalHTPrice * DiscountPercent);
@@ -613,10 +643,23 @@ namespace invoice.ViewModels
                     NetAPayer = (decimal)(TotalHTPrice - DiscountFlat);
                     break;
             }
-                
-            AmountLeft = NetAPayer - (decimal)AmountPaid;
 
-            TotalTTCPrice = TotalHTPrice + (TotalHTPrice * Taxe); // TVA 20% ?
+            TotalTTCPrice = (double)NetAPayer;
+            if (IsCssCheck)
+            {
+                CalculateCss = (double)(NetAPayer * Css);
+                TotalTTCPrice += CalculateCss;
+            }
+            else
+                CalculateCss = 0;
+            if (IsEscomptCheck)
+            {
+                CalculateEscompt = (double)(NetAPayer * Escompt);
+                TotalTTCPrice += CalculateEscompt;
+            }
+            else
+                CalculateEscompt = 0;
+            AmountLeft = (decimal)TotalTTCPrice - (decimal)AmountPaid;
         }
         public async Task GetExamenList()
         {

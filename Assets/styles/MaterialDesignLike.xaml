@@ -286,10 +286,10 @@ Pseudocode / Plan détaillé :
 
                         <!-- Box -->
                         <Border x:Name="Box"
-                                Width="20" Height="20"
+                                Width="15" Height="15"
                                 CornerRadius="4"
-                                Background="{StaticResource LightGray}"
-                                BorderBrush="{StaticResource LightGray}"
+                                Background="{DynamicResource SurfaceWhite}"
+                                BorderBrush="{DynamicResource LightGray}"
                                 BorderThickness="0"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Left"
@@ -303,7 +303,7 @@ Pseudocode / Plan détaillé :
                         <Path x:Name="CheckMark"
                               Grid.Column="0"
                               Data="M2,8 L6,12 L14,4"
-                              Stroke="White"
+                              Stroke="{StaticResource PrimaryBlue}"
                               StrokeThickness="2"
                               StrokeEndLineCap="Round"
                               StrokeStartLineCap="Round"
@@ -379,7 +379,7 @@ Pseudocode / Plan détaillé :
 
     <!-- Basic Material-like TextBox -->
     <Style x:Key="MaterialTextBox" TargetType="TextBox">
-        <Setter Property="Background" Value="{StaticResource LightGray}"/>
+        <Setter Property="Background" Value="{StaticResource SurfaceBlue}"/>
         <Setter Property="Padding" Value="8,6"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="Height" Value="34"/>
@@ -401,7 +401,7 @@ Pseudocode / Plan détaillé :
                         <Border x:Name="Underline"
 								Height="2"
 								VerticalAlignment="Bottom"
-								Background="{StaticResource LightGray}"
+								Background="{TemplateBinding Background}"
 								CornerRadius="1"
 								Margin="2,0,2,2"/>
                     </Grid>

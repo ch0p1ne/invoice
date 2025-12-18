@@ -7,7 +7,9 @@
              xmlns:paymentmethod="clr-namespace:invoice.Utilities"
              xmlns:local="clr-namespace:invoice.Views"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:viewModels="clr-namespace:invoice.ViewModels"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=viewModels:CreateFactureVM}"
              d:DesignHeight="450" d:DesignWidth="800"
              Language="fr-FR"
              Style="{StaticResource Page_Style}"
@@ -146,6 +148,7 @@
                                       MaxDropDownHeight="150"
                                       BorderThickness="0,0,0,1"
                                       VerticalContentAlignment="Center"
+                                      Background="Transparent"
                                       
                                       >
                                 <ComboBox.ItemTemplate>
@@ -272,13 +275,14 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
+                <!-- Remise-->
                 <StackPanel Grid.Row="0" HorizontalAlignment="Left">
                     <TextBlock Text="Remise" 
                                FontSize="12"
-                               Margin="5,0,0,3"
-                               Foreground="#2a9d8f"
-                               FontWeight="SemiBold"/>
+                               Style="{StaticResource FieldLabel}"
+                               Margin="5,0,0,3"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -321,6 +325,8 @@
                                          >
                                 <TextBlock Text="%" 
                                            FontSize="11" 
+                                           Style="{StaticResource FieldLabel}"
+                                           Margin="0"
                                            Foreground="Black" 
                                            FontWeight="Bold"/>
                             </RadioButton>
@@ -332,20 +338,21 @@
                                          Margin="10,0,0,0">
                                 <TextBlock Text="CFA" 
                                            FontSize="9" 
+                                           Margin="0"
+                                           Style="{StaticResource FieldLabel}"
                                            Foreground="Black" 
                                            FontWeight="Bold"/>
                             </RadioButton>
                         </WrapPanel>
                     </Grid>
                 </StackPanel>
-                
+                <!-- Avance-->
                 <StackPanel Grid.Row="1" HorizontalAlignment="Left" Margin="0,5,0,0" Orientation="Horizontal">
                     <StackPanel>
                         <TextBlock Text="Avance" 
                                    FontSize="12"
                                    Margin="5,0,0,3"
-                                   Foreground="#202020"
-                                   FontWeight="SemiBold"/>
+                                   Style="{StaticResource FieldLabel}"/>
                         <TextBox Style="{StaticResource MaterialTextBox}"
                                  Padding="5,0"
                                  Height="28"
@@ -360,9 +367,8 @@
                     <StackPanel Margin="10,0,0,0">
                         <TextBlock Text="Mode de paiement" 
                                    FontSize="12"
-                                   Foreground="#202020"
                                    Margin="5,0,0,0"
-                                   FontWeight="SemiBold"/>
+                                   Style="{StaticResource FieldLabel}"/>
                         <ComboBox ItemsSource="{Binding Source={StaticResource PrioriteData}}"
                                   SelectedItem="{Binding PaymentMethod}"
                                   DisplayMemberPath="."
@@ -370,13 +376,30 @@
                                   Margin="10,5,10,0"/>
                     </StackPanel>
                 </StackPanel>
-
+                <!-- Taxes-->
+                <StackPanel Orientation="Horizontal" 
+                            Grid.Row="2" 
+                            HorizontalAlignment="Left"
+                            Margin="0,15,0,0"
+                            Focusable="False">
+                    <TextBlock Text="Taxe applicable :"
+                               Style="{StaticResource FieldLabel}"/>
+                    <CheckBox Content="CSS" Style="{StaticResource MaterialCheckBox}"
+                              Margin="15,0,0,0"
+                              IsChecked="{Binding IsCssCheck}"/>
+                    <CheckBox Content="ESCOMPT" Style="{StaticResource MaterialCheckBox}"
+                              Margin="10,0,0,0"
+                              IsChecked="{Binding IsEscomptCheck}"/>
+                </StackPanel>
             </Grid>
             
 
-            <Grid Grid.Column="2" HorizontalAlignment="Right">
+            <Grid Grid.Column="2" HorizontalAlignment="Right"
+                  Width="220">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
@@ -386,65 +409,101 @@
                         <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock  Grid.Column="0" Style="{StaticResource txtLabeled}" Text="Total HT" />
-                    <TextBlock  Grid.Column="1" Style="{StaticResource txtTotal}" 
-                                Text="{Binding TotalHTPrice,  
-                                                StringFormat={}{0:N0} FCFA}"
+                    <TextBlock  Grid.Column="0" Style="{StaticResource FieldLabel}" Text="Total HT"
+                                FontWeight="Normal"/>
+                    <TextBlock  Grid.Column="1" Style="{StaticResource FieldLabel}" 
+                                HorizontalAlignment="Right"
+                                Text="{Binding TotalHTPrice, StringFormat={}{0:N0} FCFA}"
                                 />
                 </Grid>
-                <Grid Grid.Row="1" Margin="0,10,0,0">
+                <Grid Grid.Row="1" Margin="0,4,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
 
                 </Grid>
-                <Grid Grid.Row="1" Margin="0,10,0,0">
+                <Grid Grid.Row="3" Margin="0,4,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock  Grid.Column="0" Style="{StaticResource txtLabeled}" 
-                                Text="Net à payer" />
-                    <TextBlock  Grid.Column="1" Style="{StaticResource txtTotal}" 
-                                Text="{Binding NetAPayer, StringFormat={}{0:N0} FCFA}" />
+                    <TextBlock  Grid.Column="0" Style="{StaticResource FieldLabel}" 
+                                Text="Total TTC"
+                                FontWeight="Normal"/>
+                    <TextBlock  Grid.Column="1" Style="{StaticResource FieldLabel}" 
+                                HorizontalAlignment="Right"
+                                Text="{Binding TotalTTCPrice, StringFormat={}{0:N0} FCFA}" />
                 </Grid>
-                <Grid Grid.Row="2" Margin="0,10,0,0">
+                <Grid Grid.Row="4" Margin="0,4,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock  Grid.Column="0" Style="{StaticResource txtLabeled}" 
+                    <TextBlock  Grid.Column="0" Style="{StaticResource FieldLabel}" 
                                 Text="Reste à payer" 
-                                FontWeight="Normal"
-                                FontSize="14"/>
-                    <TextBlock  Grid.Column="1" Style="{StaticResource txtTotal}" 
+                                FontWeight="Normal"/>
+                    <TextBlock  Grid.Column="1" Style="{StaticResource FieldLabel}" 
+                                HorizontalAlignment="Right"
                                 Text="{Binding AmountLeft, StringFormat={}{0:N0} FCFA}" />
                 </Grid>
+                <Grid Grid.Row="1" Margin="0,6,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock  Grid.Column="0" Style="{StaticResource FieldLabel}" 
+                                Text="Css" 
+                                FontSize="10"
+                                FontWeight="Normal"/>
+                    <TextBlock  Grid.Column="1" Style="{StaticResource FieldLabel}" 
+                                HorizontalAlignment="Right"
+                                FontSize="10"
+                                Text="{Binding CalculateCss, StringFormat={}{0:N0} FCFA}" />
+                </Grid>
+                <Grid Grid.Row="2" Margin="0,6,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock  Grid.Column="0" Style="{StaticResource FieldLabel}" 
+                                Text="Escompt" 
+                                FontSize="10"
+                                FontWeight="Normal"/>
+                    <TextBlock  Grid.Column="1" Style="{StaticResource FieldLabel}" 
+                                HorizontalAlignment="Right"
+                                FontSize="10"
+                                Text="{Binding CalculateEscompt, StringFormat={}{0:N0} FCFA}" />
+                </Grid>
+                
             </Grid>
         </Grid>
 
 
         <Grid Grid.Row="3" 
-                    VerticalAlignment="Top" Margin="105,0,0,0"
-              HorizontalAlignment="Center"
+                    VerticalAlignment="Top" Margin="0,0,105,0"
+              HorizontalAlignment="Right"
                     MinHeight="50">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="2" Style="{StaticResource buttonCrudStyle}"
+            <Button Grid.Column="2" Style="{StaticResource GenericOperationBtn}"
                     Height="42"
+                    Width="150"
                     FontWeight="Bold"
                     Command="{Binding CreateInvoiceCommand}"
                     Content="Enregistrer">
 
             </Button>
             <Button Grid.Column="0"
+                    Style="{StaticResource GenericOperationBtn}"
+                    Background="{StaticResource SurfaceWhite}"
+                    Foreground="Black"
                     Margin="0,0,100,0"
                     Height="42"
-                    Width="200"
+                    Width="150"
                     Command="{Binding PreviewInvoiceCommand}"
                     FontWeight="Bold"
                     Content="Impression">
