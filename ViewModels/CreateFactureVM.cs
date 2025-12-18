@@ -568,7 +568,7 @@ namespace invoice.ViewModels
             }
         }
         [RelayCommand(CanExecute = nameof(CanExecutePreviewFacture))]
-        public void PreviewInvoice()
+        public async Task PreviewInvoiceAsync()
         {
 
             try
@@ -589,8 +589,7 @@ namespace invoice.ViewModels
                 // l'application PDF avant de supprimer le fichier. 
                 // C'est pourquoi il est souvent préférable de ne pas supprimer les fichiers temporaires immédiatement.
 
-                Thread.Sleep(1300); // Attendre 2 secondes (ajustez selon vos besoins)
-                FacturePdfPath = string.Empty; // Réinitialiser le chemin du PDF
+
             }
             catch (Exception ex)
             {
