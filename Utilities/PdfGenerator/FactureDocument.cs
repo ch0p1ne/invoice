@@ -181,7 +181,7 @@ public class FactureDocument : IDocument
         var lines = _facture.FacturesExamens;
         int AvailableContent = 16;
         // Calcul des totaux basiques (assurez-vous que TotalAmountHT est peuplé dans l'entité)
-        decimal totalHT = _facture.TotalAmountHT ?? 0m;
+        decimal totalHT = _facture.TotalAmountHT;
         decimal totalTVA = totalHT * (_facture.Tva);
         double? remisePercent = (double?)(_facture.DiscountPercent);
         double? remiseFlat = (double?)(_facture.DiscountFlat);

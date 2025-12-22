@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using invoice.Context;
 
@@ -11,9 +12,11 @@ using invoice.Context;
 namespace invoice.Migrations
 {
     [DbContext(typeof(ClimaDbContext))]
-    partial class ClimaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251222100526_RenameEscomptToTPSFromFacture")]
+    partial class RenameEscomptToTPSFromFacture
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,10 +177,7 @@ namespace invoice.Migrations
                         .HasColumnType("decimal(3,2)")
                         .HasDefaultValue(0m);
 
-                    b.Property<decimal>("TotalAmountHT")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<decimal>("TotalAmountTTC")
+                    b.Property<decimal?>("TotalAmountHT")
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<decimal>("Tva")

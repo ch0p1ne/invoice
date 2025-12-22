@@ -6,6 +6,8 @@
              xmlns:local="clr-namespace:invoice.Views"
              xmlns:utilities="clr-namespace:invoice.Utilities"
              xmlns:converter="clr-namespace:invoice.Utilities.Converters"
+             xmlns:viewmodel="clr-namespace:invoice.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewmodel:FactureViewVM }"
              xmlns:behevior="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              FontFamily="{StaticResource fontBase}"
@@ -21,197 +23,231 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Border Grid.Row="1"
-            CornerRadius="15"
-                Background="AliceBlue">
-            
-        <Grid>
-            <!-- Header or navigation elements can go here -->
-                <StackPanel Grid.Row="0" 
+            CornerRadius="6"
+                Background="Transparent"
+                BorderBrush="{StaticResource PrimaryBlueDark}"
+                BorderThickness="2"
+                Padding="2,8">
+            <ScrollViewer HorizontalScrollBarVisibility="Visible" 
+                          VerticalScrollBarVisibility="Hidden">
+
+                <Grid>
+                    <!-- Header or navigation elements can go here -->
+                    <StackPanel Grid.Row="0" 
                         Orientation="Horizontal" 
                         HorizontalAlignment="Center" 
                         VerticalAlignment="Center"
                         Visibility="{Binding IsFactureIsSelected, Converter={StaticResource InvertBoolToVisibilityConverter}}"
                         Margin="0,0,15,0"
                         ></StackPanel>
-            
-            <Grid Grid.Row="0" 
+
+                    <Grid Grid.Row="0" 
                         Visibility="{Binding IsFactureIsSelected, Converter={StaticResource BoolToVisConverter}}"
                         VerticalAlignment="Center"
                         Margin="25,0,0,0"
                         >
-                <Grid.Resources>
-                        <Style TargetType="Label">
-                            <Setter Property="FontWeight" Value="SemiBold" />
-                            <Setter Property="Foreground" Value="#333333" />
+                        <Grid.Resources>
+                            <Style TargetType="Label">
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                                <Setter Property="Foreground" Value="#333333" />
 
-                        </Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Padding" Value="6,3" />
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="FontSize" Value="13"/>
-                            <Setter Property="FontWeight" Value="Normal"/>
-                            <Style.Triggers>
-                                <Trigger Property="Text" Value="Non_payer">
-                                    <Setter Property="Foreground" Value="Red" />
-                                    <Setter Property="FontWeight" Value="Bold" />
-                                </Trigger>
-                                <Trigger Property="Text" Value="Payer">
-                                    <Setter Property="Foreground" Value="Green" />
-                                    <Setter Property="FontWeight" Value="Bold" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                        <Style x:Key="StyledTextBorder" TargetType="{x:Type Border}">
-                            <Setter Property="Background" Value="{StaticResource SurfaceBlue}"/>
-                            <Setter Property="BorderBrush" Value="#ADD8E6"/>
-                            <Setter Property="BorderThickness" Value="2"/>
-                            <Setter Property="CornerRadius" Value="5"/>
-                            <Setter Property="SnapsToDevicePixels" Value="True"/>
+                            </Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Padding" Value="6,3" />
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="Non_payer">
+                                        <Setter Property="Foreground" Value="Red" />
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </Trigger>
+                                    <Trigger Property="Text" Value="Payer">
+                                        <Setter Property="Foreground" Value="Green" />
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                            <Style x:Key="StyledTextBorder" TargetType="{x:Type Border}">
+                                <Setter Property="Background" Value="{StaticResource SurfaceBlue}"/>
+                                <Setter Property="BorderBrush" Value="#ADD8E6"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                                <Setter Property="CornerRadius" Value="5"/>
+                                <Setter Property="SnapsToDevicePixels" Value="True"/>
 
-                            <Style.Triggers>
+                                <Style.Triggers>
 
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#F0FFF0"/>
-                                    <Setter Property="BorderBrush" Value="#04AE9C"/>
-                                </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#F0FFF0"/>
+                                        <Setter Property="BorderBrush" Value="#04AE9C"/>
+                                    </Trigger>
 
-                            </Style.Triggers>
-                        </Style>
-                    </Grid.Resources>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="auto"/>
-                </Grid.ColumnDefinitions>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
 
-                <StackPanel
+                        <StackPanel
                     MinWidth="150"
                      Grid.Column="0"
                     >
-                    
-                    <WrapPanel Orientation="Vertical">
-                        <Label Content="Ref." FontFamily="{StaticResource fontSen}"/>
-                            <Border Style="{StaticResource StyledTextBorder}"
+
+                            <WrapPanel Orientation="Vertical">
+                                <Label Content="Ref." FontFamily="{StaticResource fontSen}"/>
+                                <Border Style="{StaticResource StyledTextBorder}"
                                     Width="155"
                                     >
-                                <TextBlock Text="{Binding SelectedFacture.Reference}"  Padding="6,4"/>
-                            </Border>
-                        </WrapPanel>
-                    <WrapPanel Orientation="Vertical">
-                        <Label Content="Type de fac."/>
-                            <Border Style="{StaticResource StyledTextBorder}"
+                                    <TextBlock Text="{Binding SelectedFacture.Reference}"  Padding="6,4"/>
+                                </Border>
+                            </WrapPanel>
+                            <WrapPanel Orientation="Vertical">
+                                <Label Content="Type de fac."/>
+                                <Border Style="{StaticResource StyledTextBorder}"
                                     Width="155">
 
-                                <TextBlock Text="{Binding SelectedFacture.Type}" Padding="6,4" />
-                            </Border>
-                        </WrapPanel>
+                                    <TextBlock Text="{Binding SelectedFacture.Type}" Padding="6,4" />
+                                </Border>
+                            </WrapPanel>
 
-                </StackPanel>
-                <StackPanel
+                        </StackPanel>
+                        <StackPanel
                     Grid.Column="1"
                     Margin="5,0,0,0">
 
-                        <WrapPanel>
+                            <WrapPanel>
 
-                            <WrapPanel Orientation="Vertical"
+                                <WrapPanel Orientation="Vertical"
                                    Margin="20,0,0,0">
-                                <Label Content="Total HT" />
-                                <Border Style="{StaticResource StyledTextBorder}"
-                                        Width="145"
-        >
-                                    <TextBlock Text="{Binding SelectedFacture.TotalAmountHT, ConverterCulture=fr-GA,StringFormat={}{0:C}}" Padding="6,4"/>
-                                </Border>
-                            </WrapPanel>
-                            <WrapPanel Orientation="Vertical"
-                                   Margin="20,0,0,0">
-                                <Label Content="Status"/>
-                                <Border Style="{StaticResource StyledTextBorder}"
+                                    <Label Content="Total HT" />
+                                    <Border Style="{StaticResource StyledTextBorder}"
                                         Width="145">
-                                    
-                                    <TextBlock Text="{Binding SelectedFacture.Status}" Padding="6,4" />
-                                </Border>
+                                        <TextBlock Text="{Binding SelectedFacture.TotalAmountHT, ConverterCulture=fr-GA,StringFormat={}{0:C}}" Padding="6,4"/>
+                                    </Border>
+                                </WrapPanel>
+                                <WrapPanel Orientation="Vertical"
+                                   Margin="20,0,0,0">
+                                    <Label Content="Total TTC" />
+                                    <Border Style="{StaticResource StyledTextBorder}"
+                                        Width="145">
+                                        <TextBlock Text="{Binding SelectedFacture.TotalAmountTTC, ConverterCulture=fr-GA,StringFormat={}{0:C}}" Padding="6,4"/>
+                                    </Border>
+                                </WrapPanel>
+                                <WrapPanel Orientation="Vertical"
+                                        Margin="20,0,0,0">
+                                    <Label Content="Remise (%)" />
+                                    <Border Style="{StaticResource StyledTextBorder}"
+                                        Width="75">
+                                        <TextBlock Text="{Binding SelectedFacture.DiscountPercent, ConverterCulture=fr-GA,StringFormat={}{0:P0}}" Padding="6,4"/>
+                                    </Border>
+                                </WrapPanel>
+                                <WrapPanel Orientation="Vertical"
+                                   Margin="20,0,0,0">
+                                    <Label Content="Status"/>
+                                    <Border Style="{StaticResource StyledTextBorder}"
+                                        Width="105">
+
+                                        <TextBlock Text="{Binding SelectedFacture.Status}" Padding="6,4" />
+                                    </Border>
+                                </WrapPanel>
+
                             </WrapPanel>
 
-                    </WrapPanel>
-
-                    <WrapPanel>
-                            <WrapPanel Orientation="Vertical"
+                            <WrapPanel>
+                                <WrapPanel Orientation="Vertical"
                                    Margin="20,0,0,0">
-                                <Label Content="Avance"/>
-                                <Border Style="{StaticResource StyledTextBorder}"
-                                        Width="145"
-        >
-                                    <TextBlock Text="{Binding SelectedFacture.AmountPaid, ConverterCulture=fr-GA,StringFormat={}{0:C}}"
+                                    <Label Content="Avance"/>
+                                    <Border Style="{StaticResource StyledTextBorder}"
+                                        Width="145">
+                                        <TextBlock Text="{Binding SelectedFacture.AmountPaid, ConverterCulture=fr-GA,StringFormat={}{0:C}}"
                                                Padding="6,4"
                                                />
-                                </Border>
-                            </WrapPanel>
-                            <WrapPanel Orientation="Vertical"
+                                    </Border>
+                                </WrapPanel>
+                                <WrapPanel Orientation="Vertical"
                                    Margin="20,0,0,0">
-                                <Label Content="R. à payer"/>
-                                <Border Style="{StaticResource StyledTextBorder}"
+                                    <Label Content="Remise (CFA)"/>
+                                    <Border Style="{StaticResource StyledTextBorder}"
+                                        Width="145">
+                                        <TextBlock Text="{Binding SelectedFacture.DiscountFlat, ConverterCulture=fr-GA,StringFormat={}{0:C}}"
+                                               Padding="6,4"
+                                               />
+                                    </Border>
+                                </WrapPanel>
+                                <WrapPanel Orientation="Vertical"
+                                   Margin="20,0,0,0">
+                                    <Label Content="R. à payer"/>
+                                    <Border Style="{StaticResource StyledTextBorder}"
                                         Width="145"
         >
-                                    <TextBlock Text="{Binding AmountLeft, ConverterCulture=fr-Ga, StringFormat={}{0:C}}" Padding="6,4" />
-                                </Border>
+                                        <TextBlock Text="{Binding AmountLeft, ConverterCulture=fr-Ga, StringFormat={}{0:C}}" Padding="6,4" />
+                                    </Border>
+                                </WrapPanel>
                             </WrapPanel>
-                        </WrapPanel>
 
-                    
-                </StackPanel>
-                <StackPanel
+
+                        </StackPanel>
+                        <StackPanel
                     Grid.Column="2"
                     Margin="15,0,0,0">
-                    
 
-                        <WrapPanel Orientation="Vertical"
+
+                            <WrapPanel Orientation="Vertical"
                                    >
-                            <Label Content="Methode de paiement"/>
-                            <Border Style="{StaticResource StyledTextBorder}"
+                                <Label Content="Methode de paiement"/>
+                                <Border Style="{StaticResource StyledTextBorder}"
                                     Width="145"
         >
-                                <TextBlock Text="{Binding SelectedFacture.PaymentMethod}" Padding="6,4" />
-                            </Border>
-                        </WrapPanel >
-                    
-                        <WrapPanel Orientation="Vertical"
+                                    <TextBlock Text="{Binding SelectedFacture.PaymentMethod}" Padding="6,4" />
+                                </Border>
+                            </WrapPanel >
+
+                            <WrapPanel Orientation="Vertical"
                                    >
-                            <Label Content="Date d'établissement"/>
-                            <Border Style="{StaticResource StyledTextBorder}"
+                                <Label Content="Date d'établissement"/>
+                                <Border Style="{StaticResource StyledTextBorder}"
                                     Width="145"
         >
-                                <TextBlock Text="{Binding SelectedFacture.Created_at, ConverterCulture=fr-GA, StringFormat={}{0:dd/MM/yyyy HH:mm}}"  Padding="6,4"/>
-                            </Border>
-                        </WrapPanel>
-                </StackPanel>
-                <StackPanel
+                                    <TextBlock Text="{Binding SelectedFacture.Created_at, ConverterCulture=fr-GA, StringFormat={}{0:dd/MM/yyyy HH:mm}}"  Padding="6,4"/>
+                                </Border>
+                            </WrapPanel>
+                        </StackPanel>
+                        <StackPanel
                     Grid.Column="3"
                     Margin="15,0,0,0">
-                    
-                    <WrapPanel
-                        Orientation="Vertical">
 
-                        <WrapPanel Orientation="Vertical">
-                            <Label Content="Nom du patient"/>
-                                <Border Style="{StaticResource StyledTextBorder}"
+                            <WrapPanel
+                                Orientation="Vertical">
+
+                                <WrapPanel Orientation="Vertical">
+                                    <Label Content="Nom du patient"/>
+                                    <Border Style="{StaticResource StyledTextBorder}"
         >
-                                    <TextBlock Text="{Binding SelectedFacture.Patient.LastName}"  Padding="6,4"/>
-                                </Border>
-                            </WrapPanel>
-                        <WrapPanel Orientation="Vertical">
-                            <Label Content="Prénom"/>
-                                <Border Style="{StaticResource StyledTextBorder}"
+                                        <TextBlock Text="{Binding SelectedFacture.Patient.LastName}"
+                                               Padding="6,4"
+                                               MinWidth="175"/>
+                                    </Border>
+                                </WrapPanel>
+                                <WrapPanel Orientation="Vertical"
+                                   >
+                                    <Label Content="Prénom"/>
+                                    <Border Style="{StaticResource StyledTextBorder}"
         >
-                                    <TextBlock Text="{Binding SelectedFacture.Patient.FirstName}" Padding="6,4" />
-                                </Border>
+                                        <TextBlock Text="{Binding SelectedFacture.Patient.FirstName}"
+                                               Padding="6,4"
+                                               MinWidth="175"/>
+                                    </Border>
+                                </WrapPanel>
                             </WrapPanel>
-                    </WrapPanel>
-                </StackPanel>
+                        </StackPanel>
 
-            </Grid>
-
-        </Grid>
+                    </Grid>
+                </Grid>
+            </ScrollViewer>
         </Border>
 
         <Grid Grid.Row="0">
@@ -414,7 +450,7 @@
                         
                         <DataGridTextColumn Header="Reference" 
                                             MinWidth="125" 
-                                            Width="*"
+                                            Width="auto"
                                             Binding="{Binding Reference}" />
                         
                         <DataGridTextColumn Header="Type" 
@@ -426,11 +462,11 @@
                                             Width="*"
                                             Binding="{Binding Patient.LastName}" />
 
-                        <DataGridTextColumn Header="Total HT" 
+                        <DataGridTextColumn Header="Total TTC" 
                                             MinWidth="110" 
-                                            Width="*"
+                                            Width="auto"
                                             CellStyle="{DynamicResource DataGridCell2}"
-                                            Binding="{Binding TotalAmountHT, ConverterCulture=fr-GA , StringFormat={}{0:C}}">
+                                            Binding="{Binding TotalAmountTTC, ConverterCulture=fr-GA , StringFormat={}{0:C}}">
                         </DataGridTextColumn>
                         
                         <DataGridTextColumn Header="Accompte" 
@@ -444,12 +480,12 @@
                                             Binding="{Binding DataContext.AmountLeft, RelativeSource={RelativeSource AncestorType=DataGrid}, ConverterCulture=fr-GA , StringFormat={}{0:C}}" />-->
                         
                         <DataGridTextColumn Header="Status" 
-                                            MinWidth="110" 
+                                            Width="*" 
                                             CellStyle="{DynamicResource DataGridCell2}"
                                             Binding="{Binding Status}" />
                         
-                        <DataGridTextColumn Header="Date de Création" 
-                                            MinWidth="100" 
+                        <DataGridTextColumn Header="Date" 
+                                            Width="auto" 
                                             Binding="{Binding Created_at, StringFormat={}{0:dd/MM/yyyy}}" 
                                             CellStyle="{DynamicResource DataGridCell2}"/>
 

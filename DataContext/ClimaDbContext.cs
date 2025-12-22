@@ -35,7 +35,7 @@ namespace invoice.Context
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
-                .UseSqlServer($"Data Source={sourceNameProd2}\\sqlexpress;database=CLIMAG;Trusted_Connection=True;TrustServerCertificate=True");
+                .UseSqlServer($"Data Source={sourceNameProd}\\sqlexpress;database=CLIMAG;Trusted_Connection=True;TrustServerCertificate=True");
         }
 
 
@@ -73,7 +73,7 @@ namespace invoice.Context
                 .Property(f => f.Css)
                 .HasDefaultValue(0.00);
             modelBuilder.Entity<Facture>()
-                .Property(f => f.ESCOMPT)
+                .Property(f => f.TPS)
                 .HasDefaultValue(0.00);
 
             modelBuilder.Entity<FactureAvoir>()

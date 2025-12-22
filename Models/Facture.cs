@@ -18,7 +18,9 @@ namespace invoice.Models
         public string Reference { get; set; } = string.Empty;
         public InvoiceType Type { get; set; } = InvoiceType.Autre; // Consultation, Examen, Autre
         [Column(TypeName = "decimal(10,2)")]
-        public decimal? TotalAmountHT { get; set; }
+        public decimal TotalAmountHT { get; set; }
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal TotalAmountTTC { get; set; }
         [Column(TypeName = "decimal(3,2)")]
         public decimal Tva { get; set; }
         [Column(TypeName = "decimal(3,2)")]
@@ -33,7 +35,7 @@ namespace invoice.Models
         [Column(TypeName = "decimal(3,2)")]
         public decimal Css { get; set; } = 0.00m;
         [Column(TypeName = "decimal(3,2)")]
-        public decimal ESCOMPT { get; set; } = 0.00m;
+        public decimal TPS { get; set; } = 0.00m;
         public StatusType? Status { get; set; } = StatusType.Non_payer; // En attente, Payée, Annulée
         public string? PaymentMethod { get; set; }
         public DateTime Created_at { get; set; } = DateTime.Now;

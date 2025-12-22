@@ -25,8 +25,8 @@ namespace invoice.ViewModels
 {
     public partial class CreateFactureVM : VMBase
     {
-        private const decimal ESCOMPT = 0.09m;
-        private const decimal CSS = 0.01m;
+        private const decimal CONST_TPS = 0.09m;
+        private const decimal CONST_CSS = 0.01m;
 
 
         private readonly string _title = "Facture";
@@ -41,8 +41,8 @@ namespace invoice.ViewModels
         private double _totalHTPrice = 0;
         private double _totalTTCPrice = 0;
         private double _taxe = 0; // TVA 20%
-        private decimal _css = CSS; // TVA 20%
-        private decimal _escompt = ESCOMPT;
+        private decimal _css = CONST_CSS; // TVA 20%
+        private decimal _tps = CONST_TPS;
         private bool _patientDefined = false;
         private Patient? _patient = new Patient();
         private FactureExamen? _factureExamen;
@@ -62,10 +62,11 @@ namespace invoice.ViewModels
         private decimal _netApayer = decimal.Zero;
         private decimal _amountLeft = decimal.Zero;
         private bool _showAdvanceInvoiceParam = false;
-        private bool _isCssCheck = false;
-        private bool _isEscomptCheck = false;
+        private bool _isCssCheck = true;
+        private bool _isTPSCheck = true;
+        private bool _isShowAmountLeft = false;
         private double _calculateCss = 0;
-        private double _calculateEscompt = 0;
+        private double _calculateTPS = 0;
 
 
 
@@ -109,6 +110,9 @@ namespace invoice.ViewModels
             {
                 SetProperty(ref _amountPaid, value);
                 CalculAllIndexedPrice();
+                if(_amountPaid > 0)
+                    IsShowAmountLeft = true;
+                else IsShowAmountLeft = false;
             }
         }
         public decimal AmountLeft
@@ -350,19 +354,20 @@ namespace invoice.ViewModels
             get => _showAdvanceInvoiceParam;
             set => SetProperty(ref _showAdvanceInvoiceParam, value);
         }
-        public decimal Escompt
+        public decimal TPS
         { 
-            get => _escompt;
-            set => SetProperty(ref _escompt, value);
+            get => _tps;
+            set => SetProperty(ref _tps, value);
         }
         public bool IsCssCheck
         { get => _isCssCheck; set { SetProperty(ref _isCssCheck, value); CalculAllIndexedPrice(); } }
-        public bool IsEscomptCheck
-        { get => _isEscomptCheck; set { SetProperty(ref _isEscomptCheck, value); CalculAllIndexedPrice(); } }
+        public bool IsTPSCheck
+        { get => _isTPSCheck; set { SetProperty(ref _isTPSCheck, value); CalculAllIndexedPrice(); } }
         public double CalculateCss
         { get => _calculateCss; set => SetProperty(ref _calculateCss, value); }
-        public double CalculateEscompt 
-        { get => _calculateEscompt; set => SetProperty(ref _calculateEscompt, value); }
+        public double CalculateTPS 
+        { get => _calculateTPS; set => SetProperty(ref _calculateTPS, value); }
+        public bool IsShowAmountLeft { get => _isShowAmountLeft; set => SetProperty(ref _isShowAmountLeft, value); }
 
 
 
@@ -458,10 +463,11 @@ namespace invoice.ViewModels
                 {
                     Reference = await GenerateReference(),
                     Type = InvoiceType.Examen,
-                    TotalAmountHT = (decimal?)TotalHTPrice,
+                    TotalAmountHT = (decimal)TotalHTPrice,
+                    TotalAmountTTC = (decimal)TotalTTCPrice,
                     Tva = (decimal)Taxe,
                     Css = IsCssCheck == true ? Css : 0.0m,
-                    ESCOMPT = IsEscomptCheck == true ? Escompt : 0.0m,
+                    TPS = IsTPSCheck == true ? TPS : 0.0m,
                     InsuranceCoveragePercent = SelectedAssurance?.CoveragePercent,
                     PatientPercent = SelectedAssurance != null ? (1m - SelectedAssurance.CoveragePercent) : 1m,
                     AmountPaid = (decimal)AmountPaid,
@@ -637,12 +643,12 @@ namespace invoice.ViewModels
             {
                 case "Percent":
                     NetAPayer = (decimal)(TotalHTPrice - TotalHTPrice * DiscountPercent);
+                    TotalHTPrice -= TotalHTPrice * DiscountPercent;
                     break;
                 case "Flat":
                     NetAPayer = (decimal)(TotalHTPrice - DiscountFlat);
                     break;
             }
-
             TotalTTCPrice = (double)NetAPayer;
             if (IsCssCheck)
             {
@@ -651,13 +657,13 @@ namespace invoice.ViewModels
             }
             else
                 CalculateCss = 0;
-            if (IsEscomptCheck)
+            if (IsTPSCheck)
             {
-                CalculateEscompt = (double)(NetAPayer * Escompt);
-                TotalTTCPrice += CalculateEscompt;
+                CalculateTPS = (double)(NetAPayer * TPS);
+                TotalTTCPrice += CalculateTPS;
             }
             else
-                CalculateEscompt = 0;
+                CalculateTPS = 0;
             AmountLeft = (decimal)TotalTTCPrice - (decimal)AmountPaid;
         }
         public async Task GetExamenList()

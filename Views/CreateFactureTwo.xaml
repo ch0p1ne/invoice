@@ -386,10 +386,12 @@
                                Style="{StaticResource FieldLabel}"/>
                     <CheckBox Content="CSS" Style="{StaticResource MaterialCheckBox}"
                               Margin="15,0,0,0"
+                              IsEnabled="False"
                               IsChecked="{Binding IsCssCheck}"/>
-                    <CheckBox Content="ESCOMPT" Style="{StaticResource MaterialCheckBox}"
+                    <CheckBox Content="TPS" Style="{StaticResource MaterialCheckBox}"
                               Margin="10,0,0,0"
-                              IsChecked="{Binding IsEscomptCheck}"/>
+                              IsEnabled="False"
+                              IsChecked="{Binding IsTPSCheck}"/>
                 </StackPanel>
             </Grid>
             
@@ -442,9 +444,11 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock  Grid.Column="0" Style="{StaticResource FieldLabel}" 
                                 Text="Reste à payer" 
-                                FontWeight="Normal"/>
+                                FontWeight="Normal"
+                                Visibility="{Binding IsShowAmountLeft, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <TextBlock  Grid.Column="1" Style="{StaticResource FieldLabel}" 
                                 HorizontalAlignment="Right"
+                                Visibility="{Binding IsShowAmountLeft, Converter={StaticResource BooleanToVisibilityConverter}}"
                                 Text="{Binding AmountLeft, StringFormat={}{0:N0} FCFA}" />
                 </Grid>
                 <Grid Grid.Row="1" Margin="0,6,0,0">
@@ -473,7 +477,7 @@
                     <TextBlock  Grid.Column="1" Style="{StaticResource FieldLabel}" 
                                 HorizontalAlignment="Right"
                                 FontSize="10"
-                                Text="{Binding CalculateEscompt, StringFormat={}{0:N0} FCFA}" />
+                                Text="{Binding CalculateTPS, StringFormat={}{0:N0} FCFA}" />
                 </Grid>
                 
             </Grid>

@@ -54,7 +54,7 @@ namespace invoice.ViewModels
         {
             get => _isFactureIsSelected;
             set
-            { 
+            {
                 SetProperty(ref _isFactureIsSelected, value);
                 PrintInvoiceDirectlyCommand.NotifyCanExecuteChanged();
             }
@@ -88,75 +88,75 @@ namespace invoice.ViewModels
         }
         private void CalculateAmountLeft()
         {
-            if(SelectedFacture != null && SelectedFacture.AmountPaid == 0m)
+            if (SelectedFacture != null && SelectedFacture.AmountPaid == 0m)
             {
                 AmountLeft = 0m;
                 return;
             }
 
-            AmountLeft = (decimal)(SelectedFacture != null ? (SelectedFacture.TotalAmountHT! - SelectedFacture.TotalAmountHT! * SelectedFacture.DiscountPercent! ) - SelectedFacture.AmountPaid! : 0m);
+            AmountLeft = (decimal)(SelectedFacture != null ? (SelectedFacture.TotalAmountHT! - SelectedFacture.TotalAmountHT! * SelectedFacture.DiscountPercent!) - SelectedFacture.AmountPaid! : 0m);
         }
 
         public string GenererFacturePdf()
+        {
+            // --- 1. DÉFINITION DU CHEMIN ET DU NOM DE FICHIER ---
+
+            // 💡 Bonne pratique : Utiliser Path.Combine pour construire le chemin du dossier
+            // Remplacer le chemin absolu codé en dur par une variable si possible (ex: AppDomain.CurrentDomain.BaseDirectory)
+            var folderPath = "c:\\clima-g\\factures"; // Utiliser des doubles anti-slash ou le @ littéral
+
+            // Le nom du fichier
+            // On utilise Path.GetInvalidFileNameChars pour retirer les caractères invalides 
+            // des noms/prénoms (même si c'est rare, c'est une sécurité)
+            string cleanFirstName = string.Join("_", SelectedFacture!.Patient!.FirstName.Split(Path.GetInvalidFileNameChars()));
+            string cleanLastName = string.Join("_", SelectedFacture.Patient!.LastName.Split(Path.GetInvalidFileNameChars()));
+
+            var fileName = $"{SelectedFacture.Reference}_{cleanFirstName}_{cleanLastName}.pdf";
+
+            // Le chemin complet
+            string filePath = Path.Combine(folderPath, fileName);
+
+            // --- 2. VÉRIFICATION DE L'EXISTENCE DU FICHIER ---
+
+            if (File.Exists(filePath))
             {
-                // --- 1. DÉFINITION DU CHEMIN ET DU NOM DE FICHIER ---
-
-                // 💡 Bonne pratique : Utiliser Path.Combine pour construire le chemin du dossier
-                // Remplacer le chemin absolu codé en dur par une variable si possible (ex: AppDomain.CurrentDomain.BaseDirectory)
-                var folderPath = "c:\\clima-g\\factures"; // Utiliser des doubles anti-slash ou le @ littéral
-
-                // Le nom du fichier
-                // On utilise Path.GetInvalidFileNameChars pour retirer les caractères invalides 
-                // des noms/prénoms (même si c'est rare, c'est une sécurité)
-                string cleanFirstName = string.Join("_", SelectedFacture!.Patient!.FirstName.Split(Path.GetInvalidFileNameChars()));
-                string cleanLastName = string.Join("_", SelectedFacture.Patient!.LastName.Split(Path.GetInvalidFileNameChars()));
-
-                var fileName = $"{SelectedFacture.Reference}_{cleanFirstName}_{cleanLastName}.pdf";
-
-                // Le chemin complet
-                string filePath = Path.Combine(folderPath, fileName);
-
-                // --- 2. VÉRIFICATION DE L'EXISTENCE DU FICHIER ---
-
-                if (File.Exists(filePath))
-                {
-                    // Si le fichier existe déjà, on retourne immédiatement le chemin
-                    Console.WriteLine($"Facture déjà générée, chemin retourné : {filePath}");
-                    return filePath;
-                }
-
-                // --- 3. PRÉPARATION DU DOSSIER ET GÉNÉRATION (Si le fichier n'existe PAS) ---
-
-                // Vérifie si le dossier n'existe PAS et le crée si nécessaire.
-                if (!Directory.Exists(folderPath))
-                {
-                    // Crée tous les répertoires et sous-répertoires dans le chemin spécifié.
-                    Directory.CreateDirectory(folderPath);
-                    Console.WriteLine($"Dossier créé : {folderPath}");
-                }
-
-                // Crée le document (Utilisation de l'objet de génération de PDF)
-                var document = new FactureDocument(SelectedFacture, SelectedFacture.Patient, SelectedFacture.User!);
-
-                try
-                {
-                    // Génère le PDF (Assurez-vous que cette méthode ne lève pas d'exception de manière inattendue)
-                    document.GeneratePdf(filePath);
-                    Console.WriteLine($"Facture générée avec succès : {filePath}");
-                }
-                catch (Exception ex)
-                {
-                    // Gestion des erreurs de génération/écriture
-                    Console.WriteLine($"Erreur lors de la génération du PDF : {ex.Message}");
-                    // Si la génération échoue, on peut retourner un chemin vide ou lever l'exception
-                    return string.Empty;
-                }
-
-                // Retourne le chemin (que le fichier ait été trouvé ou généré)
+                // Si le fichier existe déjà, on retourne immédiatement le chemin
+                Console.WriteLine($"Facture déjà générée, chemin retourné : {filePath}");
                 return filePath;
             }
 
-    // Commands
+            // --- 3. PRÉPARATION DU DOSSIER ET GÉNÉRATION (Si le fichier n'existe PAS) ---
+
+            // Vérifie si le dossier n'existe PAS et le crée si nécessaire.
+            if (!Directory.Exists(folderPath))
+            {
+                // Crée tous les répertoires et sous-répertoires dans le chemin spécifié.
+                Directory.CreateDirectory(folderPath);
+                Console.WriteLine($"Dossier créé : {folderPath}");
+            }
+
+            // Crée le document (Utilisation de l'objet de génération de PDF)
+            var document = new FactureDocument(SelectedFacture, SelectedFacture.Patient, SelectedFacture.User!);
+
+            try
+            {
+                // Génère le PDF (Assurez-vous que cette méthode ne lève pas d'exception de manière inattendue)
+                document.GeneratePdf(filePath);
+                Console.WriteLine($"Facture générée avec succès : {filePath}");
+            }
+            catch (Exception ex)
+            {
+                // Gestion des erreurs de génération/écriture
+                Console.WriteLine($"Erreur lors de la génération du PDF : {ex.Message}");
+                // Si la génération échoue, on peut retourner un chemin vide ou lever l'exception
+                return string.Empty;
+            }
+
+            // Retourne le chemin (que le fichier ait été trouvé ou généré)
+            return filePath;
+        }
+
+        // Commands
         [RelayCommand(CanExecute = nameof(CanPreviewFacture))]
         public void PreviewInvoice()
         {
@@ -194,7 +194,9 @@ namespace invoice.ViewModels
         [RelayCommand]
         public async Task RefreshFactures()
         {
-            using (var db = new ClimaDbContext())
+            using var db = new ClimaDbContext();
+            var messageBox = new ModelOpenner();
+            try
             {
                 var factures = await db.Factures
                     .Include(f => f.Patient)
@@ -206,6 +208,10 @@ namespace invoice.ViewModels
                 {
                     Factures.Add(facture);
                 }
+            }
+            catch (Exception ex)
+            {
+                messageBox.Show("Erreur survenue",$"{ex.Message}", MessageBoxButton.OK);
             }
         }
         [RelayCommand(CanExecute = nameof(CanMarquerPayer))]
@@ -226,7 +232,7 @@ namespace invoice.ViewModels
                             SelectedFacture!.Status = StatusType.Payer;
                             await RefreshFactures();
                             var MessageBox = new ModelOpenner("Status de la facture mise à jour");
-                            
+
                         }
                     }
                     break;
