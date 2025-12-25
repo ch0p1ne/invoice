@@ -13,6 +13,7 @@ namespace invoice.Models
         private string? _email;
         private bool _isActive = false;
         private string _phone_number_one = string.Empty;
+        private DateTime? _last_connection;
 
         public int UserId { get => _userId; set => SetProperty(ref _userId, value); }
         [Column(TypeName = "nvarchar(50)")]
@@ -38,6 +39,11 @@ namespace invoice.Models
             set => SetProperty(ref _isActive, value);
         }
         public DateTime Created_at { get; set; } = DateTime.Now;
+        public DateTime? LastConnection 
+        {
+            get => _last_connection;
+            set => SetProperty(ref _last_connection, value);
+        }
 
         public DateTime Updated_at { get; set; } = DateTime.Now;
         public int RoleId { get; set; }

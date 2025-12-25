@@ -401,8 +401,36 @@
                                 BorderBrush="{StaticResource SurfaceBlue}"
                             Background="Transparent">
                         <StackPanel Orientation="Horizontal" Width="Auto">
-                        <Image Source="/Assets/icons/refresh.png" Height="16" />
-                    </StackPanel>
+                            <Image Source="/Assets/icons/refresh.png" Height="16" />
+                        </StackPanel>
+
+                    </Button>
+                    <Button Style="{StaticResource TabButtonStyle2}"
+                                VerticalAlignment="Center"
+                            ToolTip="Rafraichir la liste"
+                            ToolTipService.ShowDuration="1500"
+                            Command="{Binding PreviewInvoiceCommand}"
+                                BorderThickness="2"
+                                Margin="0,0,10,0"
+                                BorderBrush="{StaticResource PrimaryGreen}"
+                            Background="{StaticResource PrimaryGreen}">
+                        <StackPanel Orientation="Horizontal" Width="Auto">
+                            <Image Source="/Assets/icons/view.png" Height="16" />
+                        </StackPanel>
+
+                    </Button>
+                    <Button Style="{StaticResource TabButtonStyle2}"
+                                VerticalAlignment="Center"
+                            ToolTip="Rafraichir la liste"
+                            ToolTipService.ShowDuration="1500"
+                            Command="{Binding DeleteFactureCommand}"
+                                BorderThickness="2"
+                                Margin="0,0,10,0"
+                                BorderBrush="{StaticResource SurfaceOrange}"
+                            Background="{StaticResource SurfaceOrange}">
+                        <StackPanel Orientation="Horizontal" Width="Auto">
+                            <Image Source="/Assets/icons/trash.png" Height="16" />
+                        </StackPanel>
 
                     </Button>
                 <TextBox Width="300"
@@ -424,7 +452,7 @@
                           Style="{StaticResource specialDataGrid}" 
                           ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"
                           VerticalScrollBarVisibility="Hidden"
-                          MaxHeight="435"
+                          MaxHeight="475"
                           BorderThickness="0,0,0,0"
                     x:Name="dtgridView"
                     IsReadOnly="True"
@@ -494,44 +522,6 @@
                                                 HeaderStyle="{DynamicResource DataGridColumnHeaderStyle2}"
                                                 CellStyle="{DynamicResource DataGridCell2}"
                                             >
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
-                                        <Button 
-                                            Background="Transparent"
-                                            BorderThickness="0"
-                                            ToolTip="Supprimer"
-                                            ToolTipService.ShowDuration="1500"
-                                            Margin="0,0,5,0"
-                                            Cursor="Hand"
-                                            Padding="4"
-                                                Command="{Binding DataContext.DeleteFactureCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}">
-                                            <StackPanel Orientation="Horizontal">
-                                                <Image Source="/Assets/icons/trash.png"  
-                                                      Width="16" 
-                                                      Height="16" 
-                                                      VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Button>
-                                        <Button 
-                                            Background="Transparent"
-                                            ToolTip="Apercu"
-                                            BorderThickness="0"
-                                            ToolTipService.ShowDuration="1500"
-                                            Margin="0,0,5,0"
-                                            Cursor="Hand"
-                                            Padding="4"
-                                                Command="{Binding DataContext.PreviewInvoiceCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}">
-                                            <StackPanel Orientation="Horizontal">
-                                                <Image Source="/Assets/icons/viewgreen.png"  
-                                                      Width="16" 
-                                                      Height="16" 
-                                                      VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Button>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
                     </DataGrid.Columns>

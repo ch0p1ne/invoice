@@ -30,8 +30,8 @@ namespace invoice.Models
         [Column(TypeName = "decimal(10,2)")]
         public decimal? AmountPaid { get; set; } //  accompte
         [Column(TypeName = "decimal(3,2)")]
-        public decimal? DiscountPercent { get; set; } = 0;
-        public double? DiscountFlat { get; set; } = 0;
+        public double DiscountPercent { get; set; } = 0;
+        public double DiscountFlat { get; set; } = 0;
         [Column(TypeName = "decimal(3,2)")]
         public decimal Css { get; set; } = 0.00m;
         [Column(TypeName = "decimal(3,2)")]

@@ -75,6 +75,8 @@ namespace invoice.ViewModels
             {
                 var factures = await db.Factures
                     .Include(f => f.Patient)
+                    .Include(f => f.FacturesExamens)
+                        .ThenInclude(fe => fe.Examen)
                     .Include(f => f.User)
                     .Where(f => f.FactureId >= begin && f.FactureId <= end)
                     .OrderByDescending(f => f.Created_at)
@@ -94,7 +96,7 @@ namespace invoice.ViewModels
                 return;
             }
 
-            AmountLeft = (decimal)(SelectedFacture != null ? (SelectedFacture.TotalAmountHT! - SelectedFacture.TotalAmountHT! * SelectedFacture.DiscountPercent!) - SelectedFacture.AmountPaid! : 0m);
+            AmountLeft = (decimal)(SelectedFacture != null ? (SelectedFacture.TotalAmountHT! - SelectedFacture.TotalAmountHT! * (decimal)SelectedFacture.DiscountPercent) - SelectedFacture.AmountPaid! : 0m);
         }
 
         public string GenererFacturePdf()
@@ -158,7 +160,7 @@ namespace invoice.ViewModels
 
         // Commands
         [RelayCommand(CanExecute = nameof(CanPreviewFacture))]
-        public void PreviewInvoice()
+        public async Task PreviewInvoice()
         {
             // 1. Générer et enregistrer le PDF
             // Assurez-vous que cette fonction sauvegarde le fichier PDF sur le disque.
@@ -200,6 +202,8 @@ namespace invoice.ViewModels
             {
                 var factures = await db.Factures
                     .Include(f => f.Patient)
+                    .Include(f => f.FacturesExamens)
+                        .ThenInclude(fe => fe.Examen)
                     .Include(f => f.User)
                     .OrderByDescending(f => f.Created_at)
                     .ToListAsync();

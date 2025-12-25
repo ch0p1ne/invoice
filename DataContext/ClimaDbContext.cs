@@ -28,14 +28,14 @@ namespace invoice.Context
         public DbSet<FactureExamen> FacturesExamens { get; set; }
         public DbSet<FactureConsultation> FacturesConsultations { get; set; }
         public DbSet<RolePermission> RolesPermissions { get; set; }
-        private string sourceNameLocal= "pc-thomas";
+        private string sourceNameLocal= "Thomas";
         private string sourceNameProd= "DESKTOP-RVJHVJS";
         private string sourceNameProd2= "DESKTOP-HPOEPLL";
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
-                .UseSqlServer($"Data Source={sourceNameProd}\\sqlexpress;database=CLIMAG;Trusted_Connection=True;TrustServerCertificate=True");
+                .UseSqlServer($"Data Source={sourceNameLocal}\\sqlexpress01;database=CLIMAG;Trusted_Connection=True;TrustServerCertificate=True");
         }
 
 

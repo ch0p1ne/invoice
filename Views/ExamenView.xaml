@@ -113,7 +113,7 @@
                                                 <WrapPanel Orientation="Vertical"
                                    Margin="40,0,0,0">
                                                     <Label HorizontalAlignment="Center" FontSize="12">Prix à l'unité</Label>
-                                                    <TextBox Style="{StaticResource MaterialTextBox}" Text="{Binding Price, StringFormat={}{0:N0} ,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  MinWidth="75" MaxWidth="130" />
+                                                    <TextBox Style="{StaticResource MaterialTextBox}" Text="{Binding Price, ConverterCulture=fr-GA, StringFormat={}{0:C0} ,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  MinWidth="75" MaxWidth="130" />
                                                 </WrapPanel>
                                             </WrapPanel>
 

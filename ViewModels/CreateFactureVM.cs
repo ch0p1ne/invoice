@@ -450,6 +450,7 @@ namespace invoice.ViewModels
 
                 if (!InvoiceExams.Any())
                 {
+                    messageBox.Show("Erreur critique", "Une erreur critique est survenue, fermeture...", MessageBoxButton.OK);
                     throw new InvalidOperationException("Impossible de créer une facture sans examens.");
                 }
 
@@ -471,8 +472,8 @@ namespace invoice.ViewModels
                     InsuranceCoveragePercent = SelectedAssurance?.CoveragePercent,
                     PatientPercent = SelectedAssurance != null ? (1m - SelectedAssurance.CoveragePercent) : 1m,
                     AmountPaid = (decimal)AmountPaid,
-                    DiscountPercent = (decimal?)(DiscountPercent),
-                    DiscountFlat = (double?)(DiscountFlat),
+                    DiscountPercent = DiscountPercent,
+                    DiscountFlat = DiscountFlat,
                     Status = StatusType.Non_payer,
                     PaymentMethod = ConvertPaymentMethodToString(PaymentMethod),
 
@@ -527,7 +528,7 @@ namespace invoice.ViewModels
                 DiscountPercent = 0;
                 ShowAdvanceInvoiceParam = false;
                 AmountPaid = 0;
-                var Messagebox = new ModelOpenner($"Création de la facture {nouvelleFacture.Reference} terminé");
+                messageBox.Show("Opération réussie",$"Création de la facture {nouvelleFacture.Reference} terminé", MessageBoxButton.OK);
             }
             catch (Exception ex)
             {

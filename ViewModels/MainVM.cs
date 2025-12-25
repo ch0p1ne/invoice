@@ -86,8 +86,24 @@ namespace invoice.ViewModels
         }
 
         [RelayCommand]
-        public void Logout()
+        public async Task Logout()
         {
+            var messageBox = new ModelOpenner();
+
+            if (messageBox.Show("Confirmation", "Voulez vous vraiment fermer la séssion ?", System.Windows.MessageBoxButton.YesNo) != System.Windows.MessageBoxResult.Yes)
+                return;
+            try
+            {
+                using var context = new ClimaDbContext();
+                _sessionService.User!.LastConnection = DateTime.Now;
+                context.Users.Update(_sessionService.User);
+
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                messageBox.Show("Erreur survenue pendant la déconnexion", $"{ex.Message}", System.Windows.MessageBoxButton.OK);
+            }
             _navigationService.NavigateTo<LoginVM>();
             _navigationService.CloseWindow<MainVM>();
         }

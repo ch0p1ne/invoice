@@ -285,7 +285,8 @@
                         <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
                         <DataGridTextColumn Header="Tel. 1" Binding="{Binding Phone_number_one}" Width="*"/>
                         <DataGridTextColumn Header="Rôle" Binding="{Binding Role.Role_name}" Width="*"/>
-                        <DataGridTextColumn Header="Statuss" Binding="{Binding IsActive, Converter={StaticResource BoolToUserStatus}}" Width="*" 
+                        <DataGridTextColumn Header="Dernière. cnx" Binding="{Binding LastConnection}" Width="auto"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding IsActive, Converter={StaticResource BoolToUserStatus}}" Width="*" 
                                             CellStyle="{DynamicResource DataGridCell2}"/>
                     </DataGrid.Columns>
                 </DataGrid>

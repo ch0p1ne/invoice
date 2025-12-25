@@ -9,6 +9,7 @@ using System.Windows.Shapes;
 
 public class FactureDocument : IDocument
 {
+    private const int CONST_AVAILABLE_CONTENT_SIZE = 15;
     private string imagePath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets", "img", "headerPDF.png");
     private readonly Facture _facture;
     private readonly Patient _patient;
@@ -45,7 +46,7 @@ public class FactureDocument : IDocument
             page.DefaultTextStyle(x =>
             x.FontFamily("Times New Roman"));
 
-            page.Header().AlignLeft().Element(ComposeHeader);
+            page.Header().AlignCenter().Element(ComposeHeader);
             page.Content().Element(ComposeContent);
             page.Footer().AlignCenter().Element(ComposeFooter);
         });
@@ -179,21 +180,22 @@ public class FactureDocument : IDocument
     public void ComposeInvoiceTable(IContainer container)
     {
         var lines = _facture.FacturesExamens;
-        int AvailableContent = 16;
+        int AvailableContentSize = CONST_AVAILABLE_CONTENT_SIZE;
         // Calcul des totaux basiques (assurez-vous que TotalAmountHT est peuplé dans l'entité)
         decimal totalHT = _facture.TotalAmountHT;
-        decimal totalTVA = totalHT * (_facture.Tva);
-        double? remisePercent = (double?)(_facture.DiscountPercent);
-        double? remiseFlat = (double?)(_facture.DiscountFlat);
-        double totalTTC = (double)totalHT + (double)totalTVA;
+        double remisePercent =_facture.DiscountPercent;
+        double remiseFlat = _facture.DiscountFlat;
+        double CSS = (double)totalHT * (double)_facture.Css;
+        double TPS = (double)totalHT * (double)_facture.TPS;
+        double totalTTC = (double)totalHT + (_facture.DiscountPercent * (double)totalHT) + _facture.DiscountFlat + CSS + TPS;
         double totalWithRemise;
-        if(remisePercent.HasValue && remisePercent.Value > 0)
+        if( remisePercent > 0)
         {
-            totalWithRemise = totalTTC * (1 -remisePercent.Value);
+            totalWithRemise = totalTTC - (totalTTC * remisePercent);
         }
-        else if(remiseFlat.HasValue && remiseFlat.Value > 0)
+        else if(remiseFlat > 0)
         {
-            totalWithRemise = totalTTC - remiseFlat.Value;
+            totalWithRemise = totalTTC - remiseFlat;
         }
         else
         {
@@ -216,11 +218,11 @@ public class FactureDocument : IDocument
                 // Définition des colonnes (ConstantColumn est très bien ici)
                 table.ColumnsDefinition(column =>
                 {
-                    column.ConstantColumn(45);  // Réf Examen
+                    column.ConstantColumn(42);  // Réf Examen
                     column.RelativeColumn(3);   // Description
-                    column.ConstantColumn(30);  // Qté
-                    column.ConstantColumn(80);  // Px Unitaire (4ème colonne)
-                    column.ConstantColumn(105); // Montant HT (5ème colonne)
+                    column.ConstantColumn(42);  // Qté
+                    column.ConstantColumn(85);  // Px Unitaire (4ème colonne)
+                    column.ConstantColumn(95); // Montant HT (5ème colonne)
                 });
 
                 // 1. Définition des En-têtes (Header)
@@ -241,20 +243,20 @@ public class FactureDocument : IDocument
                 // 2. Corps du tableau (Lignes d'examens)
                 foreach (var line in lines)
                 {
-                    AvailableContent--;
+                    AvailableContentSize--;
                     var examen = line.Examen;
-                    decimal totalHtLigne = examen!.Price * line.Qte;
+                     decimal totalHtLigne = examen!.Price * line.Qte;
 
                     // Lignes de données
-                    table.Cell().Padding(5).Text(examen.Reference.ToString()).FontSize(10);
-                    table.Cell().Padding(5).Text(examen.ExamenName).FontSize(10);
-                    table.Cell().AlignRight().Padding(5).Text(line.Qte.ToString()).FontSize(10);
+                    table.Cell().Padding(5).Text(examen.Reference.ToString()).FontSize(9);
+                    table.Cell().Padding(5).Text(examen.ExamenName).FontSize(11).SemiBold();
+                    table.Cell().AlignRight().Padding(5).Text(line.Qte.ToString()).FontSize(9);
 
                     // 💡 Px Unitaire : Bordure Droite (Verticale)
                     table.Cell().BorderRight(1).BorderColor(Colors.Black)
-                        .Padding(5).AlignRight().Text($"{examen.Price:0 CFA}").FontSize(10);
+                        .Padding(5).AlignRight().Text($"{examen.Price:C}").FontSize(10);
 
-                    table.Cell().Padding(5).AlignRight().Text($"{totalHtLigne:0 CFA}").FontSize(10);
+                    table.Cell().Padding(5).AlignRight().Text($"{totalHtLigne:C}").FontSize(10);
                     
                 }
 
@@ -263,9 +265,9 @@ public class FactureDocument : IDocument
                 // OU appliquer un style à la dernière cellule pour remplir l'espace.
 
                 // Ici, nous ajoutons une seule "cellule" qui couvre 4 colonnes, laissant 
-                while(AvailableContent > 0)
+                while(AvailableContentSize > 0)
                 {
-                    AvailableContent--;
+                    AvailableContentSize--;
                     table.Cell().Padding(5).Text("").FontSize(10); // Ligne vide pour la bordure inférieure;
                     table.Cell().Padding(5).Text("").FontSize(10);
                     table.Cell().Padding(5).Text("").FontSize(10);
@@ -284,25 +286,39 @@ public class FactureDocument : IDocument
                 // Cellule sous Montant HT : Afficher le total
                 table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"{totalHT:C}").Bold().FontSize(12).FontColor(Colors.Blue.Darken4);
 
+                // CSS 
+                table.Cell().ColumnSpan(3).BorderTop(1).Padding(1).Text($"CSS {_facture.Css:P0}").SemiBold().FontSize(9).FontColor(Colors.Black);
+                table.Cell().BorderRight(1).BorderTop(1).BorderColor(Colors.Black).Text("");
+                table.Cell().BorderTop(1).AlignRight().Padding(1).Text($"{CSS:C}").SemiBold().FontSize(9).FontColor(Colors.Black);
+                // TPS
+                table.Cell().ColumnSpan(3).Padding(1).Text($"TPS {_facture.TPS:P0}").SemiBold().FontSize(9).FontColor(Colors.Black);
+                table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("");
+                table.Cell().BorderTop(1).AlignRight().Padding(1).Text($"{TPS:C}").SemiBold().FontSize(9).FontColor(Colors.Black);
+                // Total TTC 
+                table.Cell().ColumnSpan(3).BorderTop(1).Padding(2).Text("Total TTC").Bold().FontSize(11).FontColor(Colors.Blue.Darken4);
+                table.Cell().BorderRight(1).BorderTop(1).BorderColor(Colors.Black).Text("").Bold();
+                table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"{totalTTC:C}").Bold().FontSize(12).FontColor(Colors.Blue.Darken4);
+
                 // Remise
-                if(remiseFlat.HasValue && remiseFlat.Value > 0)
-                {
-                    table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text($"Remise ({_facture.DiscountFlat:N0})").FontSize(12);
-                }
-                else if(remisePercent.HasValue && remisePercent.Value > 0)
-                    table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text($"Remise ({_facture.DiscountPercent:P0})").FontSize(12);
+                if(remiseFlat > 0)
+                    table.Cell().ColumnSpan(3).PaddingRight(9).Padding(1).Text($"Remise ({_facture.DiscountFlat:N0})").FontSize(9);
+                else if(remisePercent > 0)
+                    table.Cell().ColumnSpan(3).PaddingRight(9).Padding(1).Text($"Remise ({_facture.DiscountPercent:P0})").FontSize(9);
+                else
+                    table.Cell().ColumnSpan(3).PaddingRight(9).Padding(1).Text($"Remise (0%)").FontSize(9);
+
                 table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("").Bold();
-                table.Cell().AlignRight().Padding(2).Text($"{totalWithRemise:C}").FontSize(10);
+                table.Cell().AlignRight().Padding(1).Text($"{totalWithRemise:C}").FontSize(9);
 
                 // Net à payer
-                table.Cell().ColumnSpan(3).PaddingRight(-12).BorderLeft(1).Padding(2).Text("Net à payer").Bold().FontSize(12).FontColor(Colors.Green.Darken4);
+                table.Cell().ColumnSpan(3).PaddingRight(-12).BorderLeft(1).Padding(1).Text("Net à payer").Bold().FontSize(12).FontColor(Colors.Green.Darken4);
                 table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("").Bold();
-                table.Cell().AlignRight().Padding(2).Text($"{netAPayer:C}").Bold().FontSize(12).FontColor(Colors.Green.Darken4);
+                table.Cell().AlignRight().Padding(1).Text($"{netAPayer:C}").Bold().FontSize(12).FontColor(Colors.Green.Darken4);
 
                 // Avance
-                table.Cell().ColumnSpan(3).PaddingRight(9).Padding(2).Text("Avance").FontSize(12);
+                table.Cell().ColumnSpan(3).PaddingRight(9).Padding(1).Text("Avance").FontSize(9);
                 table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("").Bold();
-                table.Cell().AlignRight().Padding(2).Text($"{amountPaid:C}").FontSize(10);
+                table.Cell().AlignRight().Padding(1).Text($"{amountPaid:C}").FontSize(9);
 
                 if (amountPaid > 0)
                 {
@@ -318,10 +334,6 @@ public class FactureDocument : IDocument
                     table.Cell().BorderTop(1).BorderRight(1).BorderColor(Colors.Black).Text("");
                     table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"0 FCFA").FontSize(10);
                 }
-                // Mode de paiement
-                table.Cell().ColumnSpan(3).PaddingRight(-17).Padding(2).Text("Mode de paiement").FontSize(12).Bold();
-                table.Cell().BorderBottom(1).BorderRight(1).BorderColor(Colors.Black).Text("");
-                table.Cell().AlignRight().Padding(2).Text($"{_facture.PaymentMethod}").FontSize(12);
             });
     }
     public static int CalculerAge(DateTime dateDeNaissance)
