@@ -9,7 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800"
              xmlns:view="clr-namespace:invoice.Views"
              x:Name="ConsultationControl"
-             FontFamily="{StaticResource fontRoboto}"
+             FontFamily="{StaticResource fontSen}"
              xmlns:behevior="http://schemas.microsoft.com/xaml/behaviors" 
              xmlns:local="clr-namespace:invoice.Utilities.Converters"
              Style="{StaticResource Page_Style}">
@@ -99,28 +99,32 @@
                                             <WrapPanel Orientation="Vertical" 
                                                        Margin="0,0,0,2"
                                                        HorizontalAlignment="Center">
-                                                <Label HorizontalAlignment="Center" FontSize="12" >Nom de l'element</Label>
-                                                <TextBox Style="{StaticResource TextBoxFromStyle}" Text="{Binding  ConsultationName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="210"  />
+                                                <TextBlock Style="{StaticResource FieldLabel}" HorizontalAlignment="Center" FontSize="12" >Nom de l'element</TextBlock>
+                                                <TextBox Style="{StaticResource MaterialTextBox}" 
+                                                         Text="{Binding  ConsultationName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                         Width="260"  />
                                             </WrapPanel>
 
                                             <WrapPanel Margin="0,0,0,15">
                                                 <WrapPanel Orientation="Vertical"
-                                    HorizontalAlignment="Stretch">
-                                                    <Label HorizontalAlignment="Center" FontSize="12">Reférence</Label>
-                                                    <TextBox  Style="{StaticResource TextBoxFromStyle}" Text="{Binding Reference, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="60" />
+                                                            HorizontalAlignment="Stretch">
+                                                    <TextBlock Style="{StaticResource FieldLabel}" HorizontalAlignment="Center" FontSize="12">Reférence</TextBlock>
+                                                    <TextBox  Style="{StaticResource MaterialTextBox}" 
+                                                              Text="{Binding Reference, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                                              Width="75" />
                                                 </WrapPanel>
 
                                                 <WrapPanel Orientation="Vertical"
-                                   Margin="40,0,0,0">
-                                                    <Label HorizontalAlignment="Center" FontSize="12">Prix à l'unité</Label>
-                                                    <TextBox Style="{StaticResource TextBoxFromStyle}" Text="{Binding Price, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  MinWidth="75" MaxWidth="130" />
+                                                            Margin="10,0,0,0">
+                                                    <TextBlock Style="{StaticResource FieldLabel}" HorizontalAlignment="Center" FontSize="12">Prix à l'unité</TextBlock>
+                                                    <TextBox Style="{StaticResource MaterialTextBox}" Text="{Binding Price, UpdateSourceTrigger=PropertyChanged, ConverterCulture=fr-GA, StringFormat={}{0:C}, Mode=TwoWay}"  Width="175" />
                                                 </WrapPanel>
                                             </WrapPanel>
                                             <WrapPanel>
                                                 <Label HorizontalAlignment="Center" 
                                                        FontSize="12"
-                                                       Margin="0,0,10,0">Categorie</Label>
-                                                <ComboBox Width="125"
+                                                       Margin="0,0,35,0">Categorie</Label>
+                                                <ComboBox Width="145"
                                                           HorizontalAlignment="Right"
                                                           VerticalContentAlignment="Center"
                                                           ItemsSource="{Binding DataContext.MedicalConsultationType, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
@@ -131,9 +135,9 @@
 
                                         </StackPanel>
                                         <WrapPanel Grid.Row="1"
-                           Orientation="Horizontal"
-                           VerticalAlignment="Top"
-                           Margin="0,10,0,0">
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Top"
+                                                   Margin="0,10,0,0">
 
                                             <Button Content="Tout Effacer"
                                                     Background="IndianRed"
@@ -156,7 +160,7 @@
                                                     Command="{Binding CreateConsultationCommand}" >
                                                 <Button.Style>
                                                     <Style TargetType="Button">
-                                                        <Setter Property="Margin" Value="70,0,0,0" />
+                                                        <Setter Property="Margin" Value="15,0,0,0" />
                                                         <Setter Property="Width" Value="70" />
                                                         <Setter Property="Background" Value="#E7E7E7" />
                                                     </Style>
@@ -177,30 +181,29 @@
                                     HorizontalAlignment="Left"
                                     Margin="35,0,0,0"
                                     DataContext="{Binding SelectedItem, ElementName=listDataGrid}">
-                            <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
-                                <Label >Nom De l'acte</Label>
-                                <TextBox Style="{StaticResource TextBoxFromStyle}" 
-                                         MaxWidth="290"
-                                         MinWidth="50"
+                            <TextBlock Style="{StaticResource FieldLabel}">Nom De l'acte</TextBlock>
+                                <TextBox Style="{StaticResource MaterialTextBox}" 
+                                         Width="315"
                                          Text="{Binding ConsultationName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                          Padding="7,6" 
-                                         IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToInvertValue}}" HorizontalContentAlignment="Center" />
-                            </WrapPanel>
-                            <WrapPanel Margin="0,0,0,10">
+                                         IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center" 
+                                         />
+                            <WrapPanel Margin="0,0,0,0">
 
                                 <WrapPanel Orientation="Vertical">
-                                    <Label >Reférence</Label>
-                                    <TextBox Style="{StaticResource TextBoxFromStyle}" Width="60" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,4" IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToInvertValue}}" HorizontalContentAlignment="Center"/>
+                                    <TextBlock Style="{StaticResource FieldLabel}" >Reférence</TextBlock>
+                                    <TextBox Style="{StaticResource MaterialTextBox}" Width="95" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,4" IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
                                 </WrapPanel>
 
                                 <WrapPanel Orientation="Vertical" Margin="45,0,0,0">
-                                    <Label >Prix à l'unité</Label>
+                                    <TextBlock Style="{StaticResource FieldLabel}" >Prix à l'unité</TextBlock>
                                     <WrapPanel>
-                                        <TextBox Style="{StaticResource TextBoxFromStyle}" MinWidth="75" MaxWidth="110" 
+                                        <TextBox Style="{StaticResource MaterialTextBox}"
+                                                 Width="175"
                                                  Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}}" Padding="7,4" 
-                                                 IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToInvertValue}}" HorizontalContentAlignment="Center"/>
+                                                 IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalContentAlignment="Center"/>
                                         <TextBlock VerticalAlignment="Center"
-                                                    Margin="5,0,0,0"> FCFA</TextBlock>
+                                                    Margin="5,0,0,0"/>
                                     </WrapPanel>
 
                                 </WrapPanel>
@@ -244,24 +247,26 @@
                             <Button Content="Supprimer"
                                     Background="IndianRed"
                                     Foreground="Black"
-                                    Padding="10"
+                                    Padding="7"
                                     Command="{Binding DeleteConsultationCommand}"
                                     CommandParameter="{Binding SelectedItem, ElementName=listDataGrid}"
                                          >
                                 <Button.Style>
                                     <Style TargetType="Button">
-                                        <Setter Property="Margin" Value="0,0,70,0" />
+                                        <Setter Property="Margin" Value="0,0,15,0" />
                                         <Setter Property="FontWeight" Value="SemiBold" />
 
-                                        <Setter Property="Background" Value="#E7E7E7" />
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="BorderBrush" Value="{StaticResource PrimaryRedDark}"/>
+                                        <Setter Property="BorderThickness" Value="2"/>
                                     </Style>
                                 </Button.Style>
                             </Button>
 
                             <Button Content="Editer"
-                                    Background="LightGreen"
-                                    Foreground="Black"
-                                    Padding="10"
+                                    Background="{StaticResource PrimaryBlue}"
+                                    Foreground="White"
+                                    Padding="7"
                                     Command="{Binding EditableConsultationCommand}"
                                     CommandParameter="{Binding SelectedItem, ElementName=listDataGrid}"
                                          >
@@ -269,10 +274,12 @@
                                     <Style TargetType="Button">
                                         <Setter Property="Margin" Value="0,0,70,0" />
                                         <Setter Property="Width" Value="70" />
+                                        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBlue}" />
+                                        <Setter Property="BorderThickness" Value="2"/>
                                         <Setter Property="FontWeight" Value="SemiBold" />
-                                        <Setter Property="Background" Value="#E7E7E7" />
+                                        <Setter Property="Background" Value="Transparent" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Value="False">
+                                            <DataTrigger Binding="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Value="True">
                                                 <Setter Property="Visibility" Value="Collapsed" />
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -283,7 +290,7 @@
                             <Button Content="Terminer"
                                     Background="YellowGreen"
                                     Foreground="Black"
-                                    Padding="10"
+                                    Padding="7"
                                     Command="{Binding SubmitModifieCommand}"
                                     CommandParameter="{Binding SelectedItem, ElementName=listDataGrid}">
 
@@ -294,7 +301,7 @@
                                         <Setter Property="FontWeight" Value="SemiBold" />
                                         <Setter Property="Background" Value="#E7E7E7" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Value="true">
+                                            <DataTrigger Binding="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Value="false">
                                                 <Setter Property="Visibility" Value="Collapsed" />
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -318,13 +325,15 @@
                         <TextBlock Focusable="False"
                            FontWeight="SemiBold"
                            Foreground="DarkKhaki" 
-                           Text="Actes d'Consultation"
-                           FontSize="20"/>
+                           Text="Actes de Consultations"
+                           FontSize="24"/>
                     </WrapPanel>
                     <DataGrid x:Name="listDataGrid"
                       Grid.Row="1"
                       Background="Transparent"
                       AutoGenerateColumns="False"
+                              Style="{StaticResource specialDataGrid}"
+                              ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"
                       ItemsSource="{Binding Consultations, UpdateSourceTrigger=PropertyChanged}"
                       HorizontalAlignment="Stretch"
                       MinRowHeight="25"
@@ -335,14 +344,6 @@
                       SelectionMode="Single"
                       HeadersVisibility="Column"                     
                       Margin="10">
-                        <DataGrid.Style>
-                            <Style TargetType="DataGrid">
-                                <Setter Property="RowBackground" Value="#F3F3F3"/>
-                                <Setter Property="AlternatingRowBackground" Value="#F0F0F0"/>
-                                <Setter Property="GridLinesVisibility" Value="None"/>
-                                <Setter Property="HorizontalScrollBarVisibility" Value="Visible"/>
-                            </Style>
-                        </DataGrid.Style>
 
                         <!-- Style pour centrer verticalement le contenu des TextBlock dans les cellules -->
                         <DataGrid.Resources>
@@ -371,29 +372,13 @@
                             </Style>
                         </DataGrid.RowStyle>
 
-                        <!-- CellStyle pour centrer verticalement le contenu de chaque cellule -->
-                        <DataGrid.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                <Setter Property="HorizontalAlignment" Value="Left"/>
-                                <Setter Property="FontSize" Value="14"/>
-                                <Setter Property="FontWeight" Value="Normal"/>
-                                <Setter Property="BorderThickness" Value="0"/>
-                                <Setter Property="Margin" Value="5,0,10,0"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="#9ECCA9" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataGrid.CellStyle>
 
                         <DataGrid.Columns>
 
-                            <DataGridTextColumn Width="4*" Header="Categorie" Binding="{Binding Categorie}" ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="SemiBold" />
-                            <DataGridTextColumn Width="4*" Header="Consultation" Binding="{Binding ConsultationName}" ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="SemiBold" />
+                            <DataGridTextColumn Width="2*" Header="Categorie" Binding="{Binding Categorie}" ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="SemiBold" />
+                            <DataGridTextColumn Width="3*" Header="Consultation" Binding="{Binding ConsultationName}" ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="SemiBold" />
                             <DataGridTextColumn Width="1*" Header="Reference" Binding="{Binding Reference}" ElementStyle="{StaticResource CenteredTextBlock}" />
-                            <DataGridTextColumn Width="2*" 
+                            <DataGridTextColumn Width="120" 
                                         Header="Prix" 
                                         Binding="{Binding Price, ConverterCulture=fr-GA,StringFormat={}{0:C}}"
                                         ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="SemiBold"  />

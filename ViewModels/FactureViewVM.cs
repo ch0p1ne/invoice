@@ -76,7 +76,7 @@ namespace invoice.ViewModels
                 var factures = await db.Factures
                     .Include(f => f.Patient)
                     .Include(f => f.FacturesExamens)
-                        .ThenInclude(fe => fe.Examen)
+                        .ThenInclude(fe => fe.Examen) 
                     .Include(f => f.User)
                     .Where(f => f.FactureId >= begin && f.FactureId <= end)
                     .OrderByDescending(f => f.Created_at)

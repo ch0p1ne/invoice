@@ -47,7 +47,7 @@ namespace invoice.ViewModels
         }
 
         //pour modificer une ligne du tableau
-        private bool _isEditable = true;
+        private bool _isEditable = false;
         public bool IsEditable
         {
             get => _isEditable;
@@ -135,11 +135,20 @@ namespace invoice.ViewModels
         [RelayCommand(CanExecute = nameof(CanExecuteSubmitModifie))]
         public async Task SubmitModifie(Consultation consultation)
         {
-            using var context = new ClimaDbContext();
-            context.Consultations.Update(consultation);
+            var messageBox = new ModelOpenner();
+            try
+            {
+                using var context = new ClimaDbContext();
+                context.Consultations.Update(consultation);
 
-            await context.SaveChangesAsync();
-            var MessageBoxService = new ModelOpenner("Modification correctement accomplie");
+                await context.SaveChangesAsync();
+                var MessageBoxService = new ModelOpenner("Modification correctement accomplie");
+                IsEditable = !IsEditable;
+            }
+            catch(Exception ex)
+            {
+                messageBox.Show("Erreur Survenue", $"{ex.Message}", System.Windows.MessageBoxButton.OK);
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanExecuteEditableExam))]

@@ -491,7 +491,7 @@
                                             Binding="{Binding Patient.LastName}" />
 
                         <DataGridTextColumn Header="Total TTC" 
-                                            MinWidth="110" 
+                                            MinWidth="145" 
                                             Width="auto"
                                             CellStyle="{DynamicResource DataGridCell2}"
                                             Binding="{Binding TotalAmountTTC, ConverterCulture=fr-GA , StringFormat={}{0:C}}">
@@ -508,21 +508,16 @@
                                             Binding="{Binding DataContext.AmountLeft, RelativeSource={RelativeSource AncestorType=DataGrid}, ConverterCulture=fr-GA , StringFormat={}{0:C}}" />-->
                         
                         <DataGridTextColumn Header="Status" 
-                                            Width="*" 
+                                            Width="auto" 
+                                            MinWidth="110"
                                             CellStyle="{DynamicResource DataGridCell2}"
                                             Binding="{Binding Status}" />
-                        
+
                         <DataGridTextColumn Header="Date" 
                                             Width="auto" 
+                                            MinWidth="130"
                                             Binding="{Binding Created_at, StringFormat={}{0:dd/MM/yyyy}}" 
                                             CellStyle="{DynamicResource DataGridCell2}"/>
-
-                        <DataGridTemplateColumn Header="Action" 
-                                                MinWidth="110" 
-                                                HeaderStyle="{DynamicResource DataGridColumnHeaderStyle2}"
-                                                CellStyle="{DynamicResource DataGridCell2}"
-                                            >
-                        </DataGridTemplateColumn>
 
                     </DataGrid.Columns>
                 </DataGrid>

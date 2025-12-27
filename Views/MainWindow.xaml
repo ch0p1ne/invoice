@@ -115,7 +115,7 @@
                     </RadioButton.Content>
                 </RadioButton>
                 <!-- Menu Item 6-->
-                <RadioButton Style="{StaticResource ElementMenuBtnStyle}"
+                <!--<RadioButton Style="{StaticResource ElementMenuBtnStyle}"
                              Command="{Binding ChangeCurrentViewModelCommand}"
                              CommandParameter="{Binding MenuItems[5]}">
                     <RadioButton.Content>
@@ -126,7 +126,7 @@
                                        Style="{StaticResource Text_style}"/>
                         </Grid>
                     </RadioButton.Content>
-                </RadioButton>
+                </RadioButton>-->
             </StackPanel>
             
             <StackPanel Margin="0,10,0,0" Grid.Row="2" 

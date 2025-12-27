@@ -9,7 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800"
              xmlns:view="clr-namespace:invoice.Views"
              x:Name="ExamenControl"
-             FontFamily="{StaticResource fontBase}"
+             FontFamily="{StaticResource fontSen}"
              xmlns:behevior="http://schemas.microsoft.com/xaml/behaviors" 
              xmlns:local="clr-namespace:invoice.Utilities.Converters"
              Style="{StaticResource Page_Style}">
@@ -86,7 +86,7 @@
                                     CornerRadius="5">
 
                                 <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                                    <Grid Margin="12">
+                                    <Grid Margin="10">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="2*" />
                                             <RowDefinition Height="*" />
@@ -97,54 +97,55 @@
                                                     HorizontalAlignment="Center">
 
                                             <WrapPanel Orientation="Vertical" 
-                               Margin="0,0,0,2"
-                               HorizontalAlignment="Center">
-                                                <Label HorizontalAlignment="Center" FontSize="12" >Nom de l'element</Label>
-                                                <TextBox Style="{StaticResource MaterialTextBox}" Text="{Binding  ExamenName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="210"  />
+                                                       Margin="0,0,0,0"
+                                                       HorizontalAlignment="Center">
+                                                <TextBlock Style="{StaticResource FieldLabel}" HorizontalAlignment="Center" FontSize="12" >Nom de l'element</TextBlock>
+                                                <TextBox Style="{StaticResource MaterialTextBox}" Text="{Binding  ExamenName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="260"  />
                                             </WrapPanel>
 
                                             <WrapPanel Margin="0,0,0,15">
                                                 <WrapPanel Orientation="Vertical"
-                                    HorizontalAlignment="Stretch">
-                                                    <Label HorizontalAlignment="Center" FontSize="12">Reférence</Label>
-                                                    <TextBox  Style="{StaticResource MaterialTextBox}" Text="{Binding Reference, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="60" />
+                                                            HorizontalAlignment="Stretch">
+                                                    <TextBlock Style="{StaticResource FieldLabel}" HorizontalAlignment="Center" FontSize="12">Reférence</TextBlock>
+                                                    <TextBox  Style="{StaticResource MaterialTextBox}" Text="{Binding Reference, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="75" />
                                                 </WrapPanel>
 
                                                 <WrapPanel Orientation="Vertical"
-                                   Margin="40,0,0,0">
-                                                    <Label HorizontalAlignment="Center" FontSize="12">Prix à l'unité</Label>
-                                                    <TextBox Style="{StaticResource MaterialTextBox}" Text="{Binding Price, ConverterCulture=fr-GA, StringFormat={}{0:C0} ,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  MinWidth="75" MaxWidth="130" />
+                                                             Margin="10,0,0,0">
+                                                    <TextBlock Style="{StaticResource FieldLabel}" HorizontalAlignment="Center" FontSize="12">Prix à l'unité</TextBlock>
+                                                    <TextBox Style="{StaticResource MaterialTextBox}"
+                                                             Text="{Binding Price, ConverterCulture=fr-GA, StringFormat={}{0:C0} ,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  Width="175" />
                                                 </WrapPanel>
                                             </WrapPanel>
 
                                         </StackPanel>
                                         <WrapPanel Grid.Row="1"
-                           Orientation="Horizontal"
-                           VerticalAlignment="Top"
-                           Margin="0,10,0,0">
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Top"
+                                                   Margin="0,10,0,0">
 
                                             <Button Content="Tout Effacer"
                                                     Background="IndianRed"
                                                     Foreground="White"
-                                                    Padding="4"
+                                                    Padding="7"
                                                     Command="{Binding ClearExamenCommand}">
                                                 <Button.Style>
                                                     <Style TargetType="Button">
                                                         <Setter Property="Margin" Value="0,0,0,0" />
-                                                        <Setter Property="MinWidth" Value="70" />
+                                                        <Setter Property="Width" Value="100" />
                                                         <Setter Property="Background" Value="#E7E7E7" />
                                                     </Style>
                                                 </Button.Style>
                                             </Button>
 
                                             <Button Content="Ajouter"
-                            Background="#008A38"
-                            Foreground="White"
-                            Padding="4"
-                            Command="{Binding CreateExamenCommand}" >
+                                                    Background="#008A38"
+                                                    Foreground="White"
+                                                    Padding="7"
+                                                    Command="{Binding CreateExamenCommand}" >
                                                 <Button.Style>
                                                     <Style TargetType="Button">
-                                                        <Setter Property="Margin" Value="70,0,0,0" />
+                                                        <Setter Property="Margin" Value="15,0,0,0" />
                                                         <Setter Property="Width" Value="70" />
                                                         <Setter Property="Background" Value="#E7E7E7" />
                                                     </Style>
@@ -165,29 +166,29 @@
                                     HorizontalAlignment="Left"
                                     Margin="35,0,0,0"
                                     DataContext="{Binding SelectedItem, ElementName=listDataGrid}">
-                            <WrapPanel Orientation="Vertical" Margin="0,0,0,20">
-                                <Label >Nom De l'acte</Label>
+                            <WrapPanel Orientation="Vertical" Margin="0,0,0,0">
+                                <TextBlock Style="{StaticResource FieldLabel}" >Nom De l'acte</TextBlock>
                                 <TextBox Style="{StaticResource MaterialTextBox}" 
-                                         Width="295"
+                                         Width="315"
                                          Text="{Binding ExamenName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                          Padding="7,6" 
                                          IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToInvertValue}}" HorizontalContentAlignment="Center" />
                             </WrapPanel>
-                            <WrapPanel Margin="0,0,0,10">
+                            <WrapPanel Margin="0,0,0,0">
 
                                 <WrapPanel Orientation="Vertical">
-                                    <Label >Reférence</Label>
+                                    <TextBlock Style="{StaticResource FieldLabel}" >Reférence</TextBlock>
                                     <TextBox Style="{StaticResource MaterialTextBox}" Width="95" Text="{Binding Reference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="7,4" IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToInvertValue}}" HorizontalContentAlignment="Center"/>
                                 </WrapPanel>
 
                                 <WrapPanel Orientation="Vertical" Margin="45,0,0,0">
-                                    <Label >Prix à l'unité</Label>
+                                    <TextBlock Style="{StaticResource FieldLabel}" >Prix à l'unité</TextBlock>
                                     <WrapPanel>
-                                        <TextBox Style="{StaticResource MaterialTextBox}" MinWidth="75" MaxWidth="195" 
-                                                 Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:N0}}" Padding="7,4" 
+                                        <TextBox Style="{StaticResource MaterialTextBox}" Width="175"
+                                                 Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterCulture=fr-GA,StringFormat={}{0:C}}" Padding="7,4" 
                                                  IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToInvertValue}}" HorizontalContentAlignment="Center"/>
                                         <TextBlock VerticalAlignment="Center"
-                                                    Margin="5,0,0,0"> FCFA</TextBlock>
+                                                   />
                                     </WrapPanel>
 
                                 </WrapPanel>
@@ -225,19 +226,19 @@
 
                         </StackPanel>
                         <WrapPanel VerticalAlignment="Bottom" 
-            HorizontalAlignment="Right"
-           Margin="0,0,0,55"
-            >
+                                    HorizontalAlignment="Right"
+                                   Margin="0,0,0,55"
+                                    >
                             <Button Content="Supprimer"
                                     Background="{StaticResource SurfaceRed}"
                                     Foreground="Black"
-                                    Padding="10"
+                                    Padding="7"
                                     Command="{Binding DeleteExamCommand}"
                                     CommandParameter="{Binding SelectedItem, ElementName=listDataGrid}"
                                          >
                                 <Button.Style>
                                     <Style TargetType="Button">
-                                        <Setter Property="Margin" Value="0,0,70,0" />
+                                        <Setter Property="Margin" Value="0,0,15,0" />
                                         <Setter Property="FontWeight" Value="SemiBold" />
                                         
                                         <Setter Property="Background" Value="Transparent" />
@@ -250,7 +251,7 @@
                             <Button Content="Editer"
                                     Background="{StaticResource PrimaryBlue}"
                                     Foreground="White"
-                                    Padding="10"
+                                    Padding="7"
                                     Command="{Binding EditableExamCommand}"
                                     CommandParameter="{Binding SelectedItem, ElementName=listDataGrid}"
                                          >
@@ -274,7 +275,7 @@
                             <Button Content="Terminer"
                                     Background="YellowGreen"
                                     Foreground="Black"
-                                    Padding="10"
+                                    Padding="7"
                                     Command="{Binding SubmitModifieCommand}"
                                     CommandParameter="{Binding SelectedItem, ElementName=listDataGrid}"
                                     >
@@ -311,10 +312,12 @@
                            FontWeight="SemiBold"
                            Foreground="DarkKhaki" 
                            Text="Actes d'examen"
-                           FontSize="20"/>
+                           FontSize="24"/>
                     </WrapPanel>
                     <DataGrid x:Name="listDataGrid"
                       Grid.Row="1"
+                              Style="{StaticResource specialDataGrid}"
+                              ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"
                       Background="Transparent"
                       AutoGenerateColumns="False"
                       ItemsSource="{Binding Examens, UpdateSourceTrigger=PropertyChanged}"
@@ -327,14 +330,6 @@
                       SelectionMode="Single"
                       HeadersVisibility="Column" 
                       Margin="10">
-                        <DataGrid.Style>
-                            <Style TargetType="DataGrid">
-                                <Setter Property="RowBackground" Value="{StaticResource SurfaceBlue}"/>
-                                <Setter Property="AlternatingRowBackground" Value="#F0F0F0"/>
-                                <Setter Property="GridLinesVisibility" Value="None"/>
-                                <Setter Property="HorizontalScrollBarVisibility" Value="Visible"/>
-                            </Style>
-                        </DataGrid.Style>
 
                         <!-- Style pour centrer verticalement le contenu des TextBlock dans les cellules -->
                         <DataGrid.Resources>
@@ -363,28 +358,12 @@
                             </Style>
                         </DataGrid.RowStyle>
 
-                        <!-- CellStyle pour centrer verticalement le contenu de chaque cellule -->
-                        <DataGrid.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                <Setter Property="HorizontalAlignment" Value="Left"/>
-                                <Setter Property="FontSize" Value="14"/>
-                                <Setter Property="FontWeight" Value="Normal"/>
-                                <Setter Property="BorderThickness" Value="0"/>
-                                <Setter Property="Margin" Value="5,0,10,0"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="#9ECCA9" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataGrid.CellStyle>
 
                         <DataGrid.Columns>
 
                             <DataGridTextColumn Width="4*" Header="Acte d'examen" Binding="{Binding ExamenName}" ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="SemiBold" />
                             <DataGridTextColumn Width="1*" Header="Reference" Binding="{Binding Reference}" ElementStyle="{StaticResource CenteredTextBlock}" />
-                            <DataGridTextColumn Width="2*" 
+                            <DataGridTextColumn Width="1*" 
                                         Header="Prix" 
                                         Binding="{Binding Price, ConverterCulture=fr-GA,StringFormat={}{0:C}}"
                                         ElementStyle="{StaticResource CenteredTextBlock}" FontWeight="SemiBold"  />
