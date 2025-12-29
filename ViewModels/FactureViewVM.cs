@@ -106,7 +106,7 @@ namespace invoice.ViewModels
                 return;
             }
 
-            AmountLeft = (decimal)(SelectedFacture != null ? (SelectedFacture.TotalAmountHT! - SelectedFacture.TotalAmountHT! * (decimal)SelectedFacture.DiscountPercent) - SelectedFacture.AmountPaid! : 0m);
+            AmountLeft = SelectedFacture != null ? (decimal)(SelectedFacture.TotalAmountTTC - SelectedFacture.AmountPaid!) : 0m ;
         }
 
         public string GenererFacturePdf()
