@@ -76,17 +76,17 @@ namespace invoice.Utilities
                 char c = cleanedInput[i];
                 formatted.Append(c);
 
-                //// Règle 1 : Ajouter un espace après le 3ème caractère
-                //if (i == 2)
-                //{
-                //    formatted.Append(' ');
-                //    continue; // Passer au caractère suivant après l'espace
-                //}
+                // Règle 1 : Ajouter un espace après le 3ème caractère
+                if (i == 2)
+                {
+                    formatted.Append(' ');
+                    continue; // Passer au caractère suivant après l'espace
+                }
 
                 // Règle 2 : Ajouter un espace tous les 2 caractères APRÈS les 3 premiers
                 // (i >= 3) && (i - 2) % 2 == 0
                 // Cela signifie : si l'indice est 4, 6, 8, etc.
-                if ((i + 1) % 2 == 0)
+                if ( (i >= 3) && (i + 1) % 2 != 0)
                 {
                     // Vérifiez que nous ne sommes pas à la fin de la chaîne pour éviter un espace final
                     if (i < cleanedInput.Length - 1)

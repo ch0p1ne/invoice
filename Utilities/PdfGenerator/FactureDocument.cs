@@ -10,10 +10,12 @@ using System.Windows.Shapes;
 public class FactureDocument : IDocument
 {
     private const int CONST_AVAILABLE_CONTENT_SIZE = 15;
+    private const int CONST_AVAILABLE_CONTENT_CONSULTATION_SIZE = 13;
     private string imagePath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets", "img", "headerPDF.png");
     private readonly Facture _facture;
     private readonly Patient _patient;
     private readonly User _user;
+    private readonly Medecin? _medecin;
     private int netAPayer;
 
 
@@ -23,10 +25,15 @@ public class FactureDocument : IDocument
     {
 
         _facture = facture ?? throw new ArgumentNullException(nameof(facture));
-
         _patient = patient ?? throw new ArgumentNullException(nameof(patient));
-
         _user = user ?? throw new ArgumentNullException(nameof(user));
+    }
+    public FactureDocument(Facture facture, Patient patient, Medecin medecin, User user)
+    {
+        _facture = facture ?? throw new ArgumentNullException(nameof(facture));
+        _patient = patient ?? throw new ArgumentNullException(nameof(patient));
+        _user = user ?? throw new ArgumentNullException(nameof(user));
+        _medecin = medecin ?? throw new ArgumentNullException(nameof(medecin));
     }
 
     // ----------------------------------------------------
@@ -69,13 +76,13 @@ public class FactureDocument : IDocument
                 {
                     row.RelativeItem(3).AlignLeft().AlignBottom().Column(column =>
                     {
-                        column.Item().Text("Facture").FontSize(20).SemiBold();
-                        column.Item().Text($"Réf.  : {_facture.Reference}").FontSize(11);
+                        column.Item().Text("Facture").FontSize(16).SemiBold();
+                        column.Item().Text($"Réf.  : {_facture.Reference}").FontSize(8).Light();
                     });
 
                     row.RelativeItem(2).AlignMiddle().AlignRight().Column(column =>
                     {
-                        column.Item().Text($"Date : {_facture.Created_at:dd/MM/yyyy}").FontSize(11).SemiBold();
+                        column.Item().Text($"Date : {_facture.Created_at:dd/MM/yyyy}").FontSize(10).SemiBold();
                     });
                 });
 
@@ -150,37 +157,65 @@ public class FactureDocument : IDocument
         {
             column.Item().Row(row =>
             {
-                row.ConstantItem(55).PaddingTop(15).Text("Patient :").SemiBold().FontSize(14);
-                row.Spacing(15);
-                row.RelativeItem(3).AlignBottom().Text($"{_patient.LastName ?? "N/A"} {_patient.FirstName ?? "N/A"}").FontSize(12).NormalWeight();
+                row.ConstantItem(55).PaddingTop(15).Text("Patient :").SemiBold().FontSize(12);
+                row.Spacing(5);
+                row.RelativeItem(3).AlignBottom().Text($"{_patient.LastName ?? "N/A"} {_patient.FirstName ?? "N/A"}").FontSize(10).NormalWeight();
             });
             column.Spacing(2);
             column.Item().Row(row =>
             {
-                row.ConstantItem(120).PaddingTop(3).Text("Date de naissance :").SemiBold().FontSize(14);
-                row.Spacing(10);
-                row.ConstantItem(100).AlignBottom().Text($"{_patient.DateOfBirth:dd/MM/yyyy}").FontSize(12).NormalWeight();
-                row.ConstantItem(32).AlignBottom().Text("Age :").SemiBold().FontSize(14);
-                row.ConstantItem(70).AlignBottom().PaddingLeft(5).Text($"{age} ans").NormalWeight().FontSize(12);
+                row.ConstantItem(115).PaddingTop(3).Text("Date de naissance :").SemiBold().FontSize(12);
+                row.Spacing(5);
+                row.ConstantItem(105).AlignBottom().Text($"{_patient.DateOfBirth:dd/MM/yyyy}").FontSize(10).NormalWeight();
+                row.ConstantItem(45).AlignBottom().PaddingLeft(13).Text("Age :").SemiBold().FontSize(12);
+                row.ConstantItem(70).AlignBottom().PaddingLeft(5).Text($"{age} ans").NormalWeight().FontSize(10);
             });
 
             column.Item().Row(row =>
             {
-
-
-                row.ConstantItem(50).PaddingTop(3).Text("Nº Tél :").SemiBold().FontSize(14);
-                row.Spacing(10);
-                row.ConstantItem(170).AlignBottom().Text($"{_patient.PhoneNumber} / {_patient.PhoneNumber2}").NormalWeight().FontSize(12);
-                row.ConstantItem(60).PaddingTop(3).Text("Adresse :").SemiBold().FontSize(14);
-                row.RelativeItem(170).AlignBottom().Text($"{_patient.Address}").NormalWeight().FontSize(12);
+                row.ConstantItem(50).PaddingTop(3).Text("Nº Tél :").SemiBold().FontSize(12);
+                row.Spacing(5);
+                row.ConstantItem(175).AlignBottom().Text($"{_patient.PhoneNumber}  /  {_patient.PhoneNumber2}").NormalWeight().FontSize(10);
+                row.ConstantItem(60).PaddingTop(3).PaddingLeft(8).Text("Adresse :").SemiBold().FontSize(12);
+                row.RelativeItem(200).AlignBottom().Text($"{_patient.Address}").NormalWeight().FontSize(10);
             });
+            if (_facture.Type == invoice.Utilities.InvoiceType.Consultation && _medecin != null)
+            {
+                column.Item().PaddingTop(8).Row(row =>
+                {
+                    row.ConstantItem(105).PaddingTop(3).Text("Médécin traitant :").SemiBold().FontSize(12);
+                    row.Spacing(5);
+                    row.RelativeItem(3).AlignBottom().Text($"{_medecin.MedecinLastName} {_medecin.MedecinFirstName}").FontSize(10);
+                });
+                column.Item().Row(row =>
+                {
+                    row.ConstantItem(50).PaddingTop(3).Text("Nº Tél :").SemiBold().FontSize(12);
+                    row.Spacing(5);
+                    row.ConstantItem(175).AlignBottom().Text($"{_medecin.PhoneNumberOne}  /  {_medecin.PhoneNumberTwo}").FontSize(10);
+                    row.ConstantItem(130).AlignBottom().PaddingLeft(7).Text("Domaine / Spécialité  :").SemiBold().FontSize(12);
+                    row.RelativeItem(3).AlignBottom().Text($"{_medecin.Speciality}").FontSize(10);
+                });
+            }
         });
     }
 
     public void ComposeInvoiceTable(IContainer container)
     {
-        var lines = _facture.FacturesExamens;
-        int AvailableContentSize = CONST_AVAILABLE_CONTENT_SIZE;
+        ICollection<FactureExamen> lines = [];
+        ICollection<FactureConsultation> linesConsultation = [];
+        int AvailableContentSize = 0;
+       
+        switch (_facture.Type)
+        {
+            case invoice.Utilities.InvoiceType.Consultation:
+                AvailableContentSize = CONST_AVAILABLE_CONTENT_CONSULTATION_SIZE;
+                linesConsultation = _facture.FacturesConsultations;
+                break;
+            case invoice.Utilities.InvoiceType.Examen:
+                AvailableContentSize = CONST_AVAILABLE_CONTENT_SIZE;
+                lines = _facture.FacturesExamens;
+                break;
+        }
         // Calcul des totaux basiques (assurez-vous que TotalAmountHT est peuplé dans l'entité)
         decimal totalHT = _facture.TotalAmountHT;
         double remisePercent =_facture.DiscountPercent;
@@ -241,23 +276,50 @@ public class FactureDocument : IDocument
                 });
 
                 // 2. Corps du tableau (Lignes d'examens)
-                foreach (var line in lines)
+                switch (_facture.Type)
                 {
-                    AvailableContentSize--;
-                    var examen = line.Examen;
-                     decimal totalHtLigne = examen!.Price * line.Qte;
+                    case invoice.Utilities.InvoiceType.Consultation:
+                        foreach (var line in linesConsultation)
+                        {
+                            AvailableContentSize--;
+                            var consultation = line.Consultation;
+                            decimal totalHtLigne = consultation!.Price * line.Qte;
 
-                    // Lignes de données
-                    table.Cell().Padding(5).Text(examen.Reference.ToString()).FontSize(9);
-                    table.Cell().Padding(5).Text(examen.ExamenName).FontSize(11).SemiBold();
-                    table.Cell().AlignRight().Padding(5).Text(line.Qte.ToString()).FontSize(9);
+                            // Lignes de données
+                            table.Cell().Padding(5).Text(consultation.Reference.ToString()).FontSize(9);
+                            table.Cell().Padding(5).Text(consultation.ConsultationName).FontSize(11).SemiBold();
+                            table.Cell().AlignRight().Padding(5).Text(line.Qte.ToString()).FontSize(9);
 
-                    // 💡 Px Unitaire : Bordure Droite (Verticale)
-                    table.Cell().BorderRight(1).BorderColor(Colors.Black)
-                        .Padding(5).AlignRight().Text($"{examen.Price:C}").FontSize(10);
+                            // 💡 Px Unitaire : Bordure Droite (Verticale)
+                            table.Cell().BorderRight(1).BorderColor(Colors.Black)
+                                .Padding(5).AlignRight().Text($"{consultation.Price:C}").FontSize(10);
 
-                    table.Cell().Padding(5).AlignRight().Text($"{totalHtLigne:C}").FontSize(10);
-                    
+                            table.Cell().Padding(5).AlignRight().Text($"{totalHtLigne:C}").FontSize(10);
+
+                        }
+                        break;
+                    case invoice.Utilities.InvoiceType.Examen:
+                        foreach (var line in lines)
+                        {
+                            AvailableContentSize--;
+                            var examen = line.Examen;
+                            decimal totalHtLigne = examen!.Price * line.Qte;
+
+                            // Lignes de données
+                            table.Cell().Padding(5).Text(examen.Reference.ToString()).FontSize(9);
+                            table.Cell().Padding(5).Text(examen.ExamenName).FontSize(11).SemiBold();
+                            table.Cell().AlignRight().Padding(5).Text(line.Qte.ToString()).FontSize(9);
+
+                            // 💡 Px Unitaire : Bordure Droite (Verticale)
+                            table.Cell().BorderRight(1).BorderColor(Colors.Black)
+                                .Padding(5).AlignRight().Text($"{examen.Price:C}").FontSize(10);
+
+                            table.Cell().Padding(5).AlignRight().Text($"{totalHtLigne:C}").FontSize(10);
+
+                        }
+                        break;
+                    default:
+                        break;
                 }
 
                 // 💡 Ajouter une ligne vide pour étendre la bordure (si le tableau est court)
@@ -278,13 +340,13 @@ public class FactureDocument : IDocument
                 }
 
                 // Cellules de la première ligne du Footer (Ex: Total HT)
-                table.Cell().ColumnSpan(3).BorderTop(1).Padding(2).Text("Total HT").Bold().FontSize(11).FontColor(Colors.Blue.Darken4);
+                table.Cell().ColumnSpan(3).BorderTop(1).Padding(2).Text("Total HT").Bold().FontSize(11).FontColor(Colors.Black);
 
                 // 💡 Cellule sous Px Unitaire : Garder la bordure droite
                 table.Cell().BorderRight(1).BorderTop(1).BorderColor(Colors.Black).Text("").Bold();
 
                 // Cellule sous Montant HT : Afficher le total
-                table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"{totalHT:C}").Bold().FontSize(12).FontColor(Colors.Blue.Darken4);
+                table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"{totalHT:C}").Bold().FontSize(9).FontColor(Colors.Black);
 
                 // CSS 
                 table.Cell().ColumnSpan(3).BorderTop(1).Padding(1).Text($"CSS {_facture.Css:P0}").SemiBold().FontSize(9).FontColor(Colors.Black);

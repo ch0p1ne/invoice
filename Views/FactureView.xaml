@@ -477,12 +477,12 @@
                         </DataGridTemplateColumn>
                         
                         <DataGridTextColumn Header="Reference" 
-                                            MinWidth="125" 
+                                            MinWidth="135" 
                                             Width="auto"
                                             Binding="{Binding Reference}" />
                         
                         <DataGridTextColumn Header="Type" 
-                                            MinWidth="75" 
+                                            Width="115" 
                                             Binding="{Binding Type}" />
                         
                         <DataGridTextColumn Header="Nom(s) du patient" 
@@ -491,14 +491,14 @@
                                             Binding="{Binding Patient.LastName}" />
 
                         <DataGridTextColumn Header="Total TTC" 
-                                            MinWidth="145" 
+                                            MinWidth="155" 
                                             Width="auto"
                                             CellStyle="{DynamicResource DataGridCell2}"
                                             Binding="{Binding TotalAmountTTC, ConverterCulture=fr-GA , StringFormat={}{0:C}}">
                         </DataGridTextColumn>
                         
                         <DataGridTextColumn Header="Accompte" 
-                                            MinWidth="110" 
+                                            MinWidth="125" 
                                             CellStyle="{DynamicResource DataGridCell2}"
                                             Binding="{Binding AmountPaid, ConverterCulture=fr-GA , StringFormat={}{0:C}}" />
                         
@@ -509,7 +509,7 @@
                         
                         <DataGridTextColumn Header="Status" 
                                             Width="auto" 
-                                            MinWidth="110"
+                                            MinWidth="115"
                                             CellStyle="{DynamicResource DataGridCell2}"
                                             Binding="{Binding Status}" />
 

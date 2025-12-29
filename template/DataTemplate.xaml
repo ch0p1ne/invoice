@@ -24,6 +24,9 @@
         <DataTemplate DataType="{x:Type subviewmodels:RolesVM}">
             <subView:RolesView />
         </DataTemplate>
+    <DataTemplate DataType="{x:Type viewmodels:MedecinVM}">
+        <view:MedecinView/>
+    </DataTemplate>
 
     <DataTemplate DataType="{x:Type viewmodels:ConsultationVM}">
         <view:ConsultationView/>
@@ -43,13 +46,17 @@
         <view:MissPermission />
     </DataTemplate>
 
-    <DataTemplate x:Key="CrudOneTemplate">
+    <DataTemplate x:Key="DefinePatientTemplate">
         <view:CreateFactureOne  DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=view:CreateFactureView}}"/>
     </DataTemplate>
-    <DataTemplate x:Key="CrudTwoTemplate">
+    <DataTemplate x:Key="CreateExamenTemplate">
         <view:CreateFactureTwo  DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=view:CreateFactureView}}"/>
     </DataTemplate>
+    <DataTemplate x:Key="CreateConsultationTemplate">
+        <subView:CreateConsultationView  DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=view:CreateFactureView}}"/>
+    </DataTemplate>
     <custom:TemplateSelectorFacture x:Key="StringTemplateFactureSelector"
-                                   CrudOneTemplate="{StaticResource CrudOneTemplate}"
-                                   CrudTwoTemplate="{StaticResource CrudTwoTemplate}" />
+                                   DefinePatientTemplate="{StaticResource DefinePatientTemplate}"
+                                   CreateExamenTemplate="{StaticResource CreateExamenTemplate}" 
+                                    CreateConsultationTemplate="{StaticResource CreateConsultationTemplate}"/>
 </ResourceDictionary>

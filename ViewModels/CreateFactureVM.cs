@@ -67,6 +67,8 @@ namespace invoice.ViewModels
         private bool _isShowAmountLeft = false;
         private double _calculateCss = 0;
         private double _calculateTPS = 0;
+        private Consultation? _selectedAvailableConsultation;
+        private Medecin? _selectedMedecin = null;
 
 
 
@@ -80,7 +82,7 @@ namespace invoice.ViewModels
 
         //Property
         private string FacturePdfPath
-        { 
+        {
             get => _facturePdfPath;
             set
             {
@@ -90,10 +92,10 @@ namespace invoice.ViewModels
         }
         public ISessionService SessionService { get; set; }
         public Facture Facture { get; set; }
-        public bool GeneratePDFButtonIsEnable 
+        public bool GeneratePDFButtonIsEnable
         {
             get => _generatePDFButtonIsEnable;
-            set =>SetProperty(ref _generatePDFButtonIsEnable, value);
+            set => SetProperty(ref _generatePDFButtonIsEnable, value);
         }
         public decimal NetAPayer
         {
@@ -110,7 +112,7 @@ namespace invoice.ViewModels
             {
                 SetProperty(ref _amountPaid, value);
                 CalculAllIndexedPrice();
-                if(_amountPaid > 0)
+                if (_amountPaid > 0)
                     IsShowAmountLeft = true;
                 else IsShowAmountLeft = false;
             }
@@ -161,14 +163,14 @@ namespace invoice.ViewModels
                 OnPropertyChanged();
             }
         }
-        public Patient? Patient 
+        public Patient? Patient
         {
             get => _patient;
             set => SetProperty(ref _patient, value);
         }
         public FactureExamen FactureExamen
         {
-            get =>  _factureExamen;
+            get => _factureExamen;
             set => SetProperty(ref _factureExamen, value);
         }
         public double Taxe
@@ -187,7 +189,7 @@ namespace invoice.ViewModels
             set
             {
                 SetProperty(ref _selectedDiscountPercent, value);
-                if((bool)value)
+                if ((bool)value)
                 {
                     _selectedDiscountFlat = false;
                     DiscountType = "Percent";
@@ -198,9 +200,9 @@ namespace invoice.ViewModels
         public bool SelectedDiscountFlat
         {
             get => _selectedDiscountFlat;
-            set 
-            { 
-                SetProperty(ref _selectedDiscountFlat, value); 
+            set
+            {
+                SetProperty(ref _selectedDiscountFlat, value);
                 if ((bool)value)
                 {
                     _selectedDiscountPercent = false;
@@ -208,7 +210,7 @@ namespace invoice.ViewModels
                     DiscountPercent = 0;
                 }
 
-                }
+            }
         }
 
         public FactureExamen FactureExam { get; set; }
@@ -234,8 +236,8 @@ namespace invoice.ViewModels
                     {
                         PatientDefined = true;
                         Patient = value;
-                        IsInsurance =  Patient.AssuranceNumber is not null ?  true :  false;
-                        foreach(var assurance in Assurances)
+                        IsInsurance = Patient.AssuranceNumber is not null ? true : false;
+                        foreach (var assurance in Assurances)
                         {
                             if (assurance.AssuranceId == Patient.AssuranceId)
                                 SelectedAssurance = assurance;
@@ -254,7 +256,7 @@ namespace invoice.ViewModels
         public bool PatientDefined
         {
             get => _patientDefined;
-            set => SetProperty(ref _patientDefined, value); 
+            set => SetProperty(ref _patientDefined, value);
         }
         public double TotalHTPrice
         {
@@ -266,14 +268,17 @@ namespace invoice.ViewModels
             get => _totalTTCPrice;
             set => SetProperty(ref _totalTTCPrice, value);
         }
-        public decimal Css 
-        { 
+        public decimal Css
+        {
             get => _css;
             set => SetProperty(ref _css, value);
         }
-        public ObservableCollection<Examen> AvailableExamens { get; set; } = new ObservableCollection<Examen>();
+        public ObservableCollection<Examen> AvailableExamens { get; set; } = [];
+        public ObservableCollection<Consultation> AvailableConsultations { get; set; } = [];
+        public ObservableCollection<Medecin> Medecins { get; set; } = [];
         public Examen? SelectedAvailableExam
-        { get => _selectedAvailableExam;
+        {
+            get => _selectedAvailableExam;
             set
             {
                 if (_selectedAvailableExam != value)
@@ -284,18 +289,37 @@ namespace invoice.ViewModels
                 }
             }
         }
+        public Consultation? SelectedAvailableConsultation
+        {
+            get => _selectedAvailableConsultation;
+            set
+            {
+                if (_selectedAvailableConsultation != value)
+                {
+                    _selectedAvailableConsultation = value;
+                    OnPropertyChanged(nameof(SelectedAvailableConsultation));
+                    AddInvoiceConsultationCommand.NotifyCanExecuteChanged();
+                }
+            }
+        }
         public ObservableCollection<int> QtyAvailable { get; set; } = new ObservableCollection<int>(Enumerable.Range(1, 10));
-        public int SelectedQty 
+        public int SelectedQty
+        {
+            get => _selectedQty;
+            set => SetProperty(ref _selectedQty, value);
+        }
+        public int SelectedQtyConsultation
         {
             get => _selectedQty;
             set => SetProperty(ref _selectedQty, value);
         }
         // Objet principal pour faire des facture
-        public ObservableCollection<InvoiceExam> InvoiceExams { get; set; } =  [];
+        public ObservableCollection<InvoiceExam> InvoiceExams { get; set; } = [];
+        public ObservableCollection<InvoiceConsultation> InvoiceConsultations { get; set; } = [];
         public ObservableCollection<Patient> Patients { get; set; } = [];
         public ObservableCollection<Assurance> Assurances { get; set; } = [];
         public string LastName
-        { 
+        {
             get => _lastName;
             set
             {
@@ -303,8 +327,8 @@ namespace invoice.ViewModels
                 CreatePatientCommand.NotifyCanExecuteChanged();
             }
         }
-        public string FirstName 
-        { 
+        public string FirstName
+        {
             get => _firstName;
             set
             {
@@ -313,7 +337,7 @@ namespace invoice.ViewModels
             }
         }
         public string PhoneNumber1
-        { 
+        {
             get => _phoneNumber;
             set
             {
@@ -322,7 +346,7 @@ namespace invoice.ViewModels
             }
         }
         public string PhoneNumber2
-        { 
+        {
             get => _phoneNumber2;
             set
             {
@@ -331,7 +355,7 @@ namespace invoice.ViewModels
             }
         }
         public DateTime? DateOfBirth
-        { 
+        {
             get => _dateOfBirth;
             set
             {
@@ -340,8 +364,8 @@ namespace invoice.ViewModels
             }
         }
 
-        public double DiscountFlat 
-        { 
+        public double DiscountFlat
+        {
             get => _discountFlat;
             set
             {
@@ -350,12 +374,12 @@ namespace invoice.ViewModels
             }
         }
         public bool ShowAdvanceInvoiceParam
-        {            
+        {
             get => _showAdvanceInvoiceParam;
             set => SetProperty(ref _showAdvanceInvoiceParam, value);
         }
         public decimal TPS
-        { 
+        {
             get => _tps;
             set => SetProperty(ref _tps, value);
         }
@@ -365,10 +389,11 @@ namespace invoice.ViewModels
         { get => _isTPSCheck; set { SetProperty(ref _isTPSCheck, value); CalculAllIndexedPrice(); } }
         public double CalculateCss
         { get => _calculateCss; set => SetProperty(ref _calculateCss, value); }
-        public double CalculateTPS 
+        public double CalculateTPS
         { get => _calculateTPS; set => SetProperty(ref _calculateTPS, value); }
         public bool IsShowAmountLeft { get => _isShowAmountLeft; set => SetProperty(ref _isShowAmountLeft, value); }
-
+        private string CurrentInvoiceType { get; set; } = "";
+        public Medecin? SelectedMedecin { get => _selectedMedecin; set { SetProperty(ref _selectedMedecin, value); CreateInvoiceConsultationCommand.NotifyCanExecuteChanged(); } }
 
 
         // Command
@@ -379,18 +404,31 @@ namespace invoice.ViewModels
             DiscountPercent = 0;
             DiscountFlat = 0;
             AmountPaid = 0;
-            if(viewName == "crudCreateOne")
+            if (viewName == "definePatient")
             {
                 PatientDefined = false;
                 Patient = new Patient();
+                CurrentInvoiceType = "definePatient";
+                SelectedMedecin = null;
 
             }
             ShowAdvanceInvoiceParam = false;
             InvoiceExams.Clear();
+            InvoiceConsultations.Clear();
 
             // TO DO : Load data if needed
-            if(viewName == "CrudCreateTwo")
+            if (viewName == "createExamen")
+            {
                 _ = GetExamenList();
+                CurrentInvoiceType = "createExamen";
+            }
+
+            if (viewName == "createConsultation")
+            {
+                _ = GetConsultationList();
+                _ = LoadMedecinList();
+                CurrentInvoiceType = "createConsultation";
+            }
         }
         [RelayCommand(CanExecute = nameof(CanExecuteAddInvoiceExam))]
         public void AddInvoiceExam()
@@ -398,11 +436,11 @@ namespace invoice.ViewModels
             if (SelectedAvailableExam != null)
             {
 
-                    //if(InvoiceExams.Contains(new InvoiceExam { Exam = SelectedAvailableExam, Qty = SelectedQty }))
+                //if(InvoiceExams.Contains(new InvoiceExam { Exam = SelectedAvailableExam, Qty = SelectedQty }))
 
-                foreach(var item in InvoiceExams)
+                foreach (var item in InvoiceExams)
                 {
-                    if(item.Exam == SelectedAvailableExam)
+                    if (item.Exam == SelectedAvailableExam)
                     {
                         item.Qty += SelectedQty;
                         SelectedAvailableExam = null;
@@ -411,13 +449,40 @@ namespace invoice.ViewModels
                     }
                 }
 
-                InvoiceExams.Add( new InvoiceExam { Exam = SelectedAvailableExam, Qty = SelectedQty });
+                InvoiceExams.Add(new InvoiceExam { Exam = SelectedAvailableExam, Qty = SelectedQty });
 
                 SelectedAvailableExam = null;
                 CalculAllIndexedPrice();
                 ShowAdvanceInvoiceParam = true;
             }
-            CreateInvoiceCommand.NotifyCanExecuteChanged();
+            CreateInvoiceExamenCommand.NotifyCanExecuteChanged();
+        }
+        [RelayCommand(CanExecute = nameof(CanExecuteAddInvoiceConsultation))]
+        public void AddInvoiceConsultation()
+        {
+            if (SelectedAvailableConsultation != null)
+            {
+
+                //if(InvoiceExams.Contains(new InvoiceExam { Exam = SelectedAvailableExam, Qty = SelectedQty }))
+
+                foreach (var item in InvoiceConsultations)
+                {
+                    if (item.Consultation == SelectedAvailableConsultation)
+                    {
+                        item.Qty += SelectedQtyConsultation;
+                        SelectedAvailableConsultation = null;
+                        CalculAllIndexedPrice();
+                        return;
+                    }
+                }
+
+                InvoiceConsultations.Add(new InvoiceConsultation { Consultation = SelectedAvailableConsultation, Qty = SelectedQtyConsultation });
+
+                SelectedAvailableConsultation = null;
+                CalculAllIndexedPrice();
+                ShowAdvanceInvoiceParam = true;
+            }
+            CreateInvoiceConsultationCommand.NotifyCanExecuteChanged();
         }
         [RelayCommand]
         public void removeInvoiceExam(object parameter)
@@ -427,18 +492,32 @@ namespace invoice.ViewModels
                 InvoiceExams.Remove(invoiceExamnsToRemove);
                 CalculAllIndexedPrice();
             }
-            CreateInvoiceCommand.NotifyCanExecuteChanged();
-            if(InvoiceExams.Count == 0)
+            CreateInvoiceExamenCommand.NotifyCanExecuteChanged();
+            if (InvoiceExams.Count == 0)
             {
                 ShowAdvanceInvoiceParam = false;
             }
         }
-        
-        
+        [RelayCommand]
+        public void removeInvoiceConsultation(object parameter)
+        {
+            if (parameter is InvoiceConsultation invoiceConsultationToRemove)
+            {
+                InvoiceConsultations.Remove(invoiceConsultationToRemove);
+                CalculAllIndexedPrice();
+            }
+            CreateInvoiceConsultationCommand.NotifyCanExecuteChanged();
+            if (InvoiceConsultations.Count == 0)
+            {
+                ShowAdvanceInvoiceParam = false;
+            }
+        }
+
+
         //  H A R D - H A R D
         // Fonction à comprendre absolument
-        [RelayCommand(CanExecute = nameof(CanExecuteCreateFact))]
-        public async Task CreateInvoice()
+        [RelayCommand(CanExecute = nameof(CanExecuteCreateInvoiceExamen))]
+        public async Task CreateInvoiceExamen()
         {
             var messageBox = new ModelOpenner();
             try
@@ -528,15 +607,116 @@ namespace invoice.ViewModels
                 DiscountPercent = 0;
                 ShowAdvanceInvoiceParam = false;
                 AmountPaid = 0;
-                messageBox.Show("Opération réussie",$"Création de la facture {nouvelleFacture.Reference} terminé", MessageBoxButton.OK);
+                messageBox.Show("Opération réussie", $"Création de la facture {nouvelleFacture.Reference} terminé", MessageBoxButton.OK);
             }
             catch (Exception ex)
             {
                 messageBox.Show("Erreur", "l'opération ne s'est pas effectuer, recommencer. Si le problème persiste, contacter l'informatitien.", MessageBoxButton.OK);
                 if (ex.InnerException != null)
-                    messageBox.Show("Details",$"{ex.InnerException.Message}", MessageBoxButton.OK);
+                    messageBox.Show("Details", $"{ex.InnerException.Message}", MessageBoxButton.OK);
             }
-        }   
+        }
+        [RelayCommand(CanExecute = nameof(CanExecuteCreateInvoiceConsultation))]
+        public async Task CreateInvoiceConsultation()
+        {
+            var messageBox = new ModelOpenner();
+            try
+            {
+                if (messageBox.Show("Création de la facture en cours...", "Voulez vous vraiment établir une facture ?", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                {
+                    return; // L'utilisateur a annulé l'opération
+                }
+
+                if (!InvoiceConsultations.Any())
+                {
+                    messageBox.Show("Erreur critique", "Une erreur critique est survenue, fermeture...", MessageBoxButton.OK);
+                    throw new InvalidOperationException("Impossible de créer une facture sans examens.");
+                }
+
+                // Utilisation d'une transaction pour garantir l'atomicité (si un des SaveAsync échoue)
+                using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                using var context = new ClimaDbContext();
+
+                // --- 1. CRÉATION DE L'ENTÊTE FACTURE ---
+
+                var nouvelleFacture = new Facture
+                {
+                    Reference = await GenerateReference(),
+                    Type = InvoiceType.Consultation,
+                    TotalAmountHT = (decimal)TotalHTPrice,
+                    TotalAmountTTC = (decimal)TotalTTCPrice,
+                    Tva = (decimal)Taxe,
+                    Css = IsCssCheck == true ? Css : 0.0m,
+                    TPS = IsTPSCheck == true ? TPS : 0.0m,
+                    InsuranceCoveragePercent = SelectedAssurance?.CoveragePercent,
+                    PatientPercent = SelectedAssurance != null ? (1m - SelectedAssurance.CoveragePercent) : 1m,
+                    AmountPaid = (decimal)AmountPaid,
+                    DiscountPercent = DiscountPercent,
+                    DiscountFlat = DiscountFlat,
+                    Status = StatusType.Non_payer,
+                    PaymentMethod = ConvertPaymentMethodToString(PaymentMethod),
+
+                    // Assurez-vous que les objets Patient et User existent ou que leurs IDs sont définis
+                    PatientId = Patient!.PatientId,
+                    UserId = SessionService.User!.UserId,
+                };
+
+                context.Factures.Add(nouvelleFacture);
+
+                // --- 2. PREMIER SAVE : Obtention de FactureId ---
+
+                // Ceci enregistre la facture et FACTUREId est généré par la DB et affecté à nouvelleFacture.FactureId
+                await context.SaveChangesAsync();
+
+                // --- 3. CRÉATION ET AJOUT DES LIGNES DE JOINTURE (FactureExamen) ---
+
+                var lignesFactureAAjouter = new List<FactureConsultation>();
+
+                foreach (var ligneVM in InvoiceConsultations)
+                {
+                    // a. La Consultation doit être considéré comme existant (Unchanged)
+                    // Ceci évite à EF Core d'essayer de l'insérer à nouveau et valide la clé étrangère.
+                    context.Entry(ligneVM.Consultation).State = EntityState.Unchanged;
+
+                    // b. Créer la nouvelle entité de jointure
+                    var ligneFactureConsultation = new FactureConsultation
+                    {
+                        // Les IDs sont maintenant disponibles
+                        FactureId = nouvelleFacture.FactureId,
+                        ConsultationId = ligneVM.Consultation.ConsultationId,
+                        MedecinId = SelectedMedecin!.MedecinId, // A modifier plus tard pour prendre le medecin selectionner
+                        Qte = ligneVM.Qty,
+                    }; 
+
+                    lignesFactureAAjouter.Add(ligneFactureConsultation);
+                }
+
+                // c. Ajout des entités de jointure au contexte
+                context.FacturesConsultations.AddRange(lignesFactureAAjouter);
+
+                // --- 4. DEUXIÈME SAVE : Enregistrement des Lignes N:N ---
+
+                await context.SaveChangesAsync();
+
+                // Si toutes les opérations ont réussi, complétez la transaction
+                scope.Complete();
+                InvoiceConsultations.Clear();
+                Facture = nouvelleFacture;
+                FacturePdfPath = GenerateFacturePdfPath();
+                SelectedMedecin = null;
+                DiscountFlat = 0;
+                DiscountPercent = 0;
+                ShowAdvanceInvoiceParam = false;
+                AmountPaid = 0;
+                messageBox.Show("Opération réussie", $"Création de la facture {nouvelleFacture.Reference} terminé", MessageBoxButton.OK);
+            }
+            catch (Exception ex)
+            {
+                messageBox.Show("Erreur", "l'opération ne s'est pas effectuer, recommencer. Si le problème persiste, contacter l'informatitien.", MessageBoxButton.OK);
+                if (ex.InnerException != null)
+                    messageBox.Show("Details", $"{ex.InnerException.Message}", MessageBoxButton.OK);
+            }
+        }
         [RelayCommand(CanExecute = nameof(CanExecuteCreatePatient))]
         public async Task CreatePatient()
         {
@@ -556,9 +736,9 @@ namespace invoice.ViewModels
                 using var context = new ClimaDbContext();
                 if (IsInsurance)
                 {
-                    if(SelectedAssurance != null)
-                        if( Patient != null )
-                            if(Patient.AssuranceNumber is not null)
+                    if (SelectedAssurance != null)
+                        if (Patient != null)
+                            if (Patient.AssuranceNumber is not null)
                                 Patient.AssuranceId = SelectedAssurance.AssuranceId;
                 }
 
@@ -604,11 +784,10 @@ namespace invoice.ViewModels
             }
         }
 
-
         // Method
         public async Task<string> GenerateReference()
         {
-            string reference;
+            string reference = string.Empty;
             int currentDay = DateTime.Now.Day;
             int currentMonth = DateTime.Now.Month;
             int currentYear = DateTime.Now.Year;
@@ -621,7 +800,17 @@ namespace invoice.ViewModels
                 // Dans le cas ou il ya un immense nombre de facture, on va prendre la
                 // reference de la derniere et l'icrementer
                 var factureCount = await context.Factures.CountAsync() + 1;
-                reference = "FAC-" + factureCount +  currentDay + currentMonth + currentYear;
+                
+                switch (CurrentInvoiceType)
+                {
+                    case "createExamen":
+                        reference = "FAC-E" + factureCount + currentDay + currentMonth + currentYear;
+                        break;
+                    case "createConsultation":
+                        reference = "FAC-C" + factureCount + currentDay + currentMonth + currentYear;
+                        break;
+                }
+                
 
                 return reference;
             }
@@ -634,9 +823,20 @@ namespace invoice.ViewModels
         {
             // Calcul du total HT
             double total = 0;
-            foreach (var item in InvoiceExams)
+            switch (CurrentInvoiceType)
             {
-                total += (double)(item.Exam.Price * item.Qty);
+                case "createExamen":
+                    foreach (var item in InvoiceExams)
+                    {
+                        total += (double)(item.Exam.Price * item.Qty);
+                    }
+                    break;
+                case "createConsultation":
+                    foreach (var item in InvoiceConsultations)
+                    {
+                        total += (double)(item.Consultation.Price * item.Qty);
+                    }
+                    break;
             }
 
             TotalHTPrice = total;
@@ -681,7 +881,25 @@ namespace invoice.ViewModels
             {
 
                 messageBox.Show("Erreur lors du chargement des examens", $"Erreur {ex.Message}", MessageBoxButton.OK);
-                if(ex.InnerException != null)
+                if (ex.InnerException != null)
+                    MessageBox.Show("Détails de l'erreur interne", $"Erreur {ex.InnerException.Message}", MessageBoxButton.OK);
+            }
+        }
+        public async Task GetConsultationList()
+        {
+            var messageBox = new ModelOpenner();
+            try
+            {
+                using var context = new ClimaDbContext();
+                var consultationList = await context.Consultations.ToListAsync();
+                AvailableConsultations.Clear();
+                foreach (var e in consultationList) AvailableConsultations.Add(e);
+            }
+            catch (Exception ex)
+            {
+
+                messageBox.Show("Erreur lors du chargement des consultations", $"Erreur {ex.Message}", MessageBoxButton.OK);
+                if (ex.InnerException != null)
                     MessageBox.Show("Détails de l'erreur interne", $"Erreur {ex.InnerException.Message}", MessageBoxButton.OK);
             }
         }
@@ -737,6 +955,33 @@ namespace invoice.ViewModels
                 throw new System.InvalidOperationException("Erreur lors du chargement des assurances", ex);
             }
         }
+        public async Task LoadMedecinList()
+        {
+            try
+            {
+                using var context = new ClimaDbContext();
+                var medecinList = await context.Medecins.ToListAsync();
+                // Mettre à jour la collection existante pour que les bindings voient les changements
+                var dispatcher = System.Windows.Application.Current?.Dispatcher;
+                if (dispatcher != null && !dispatcher.CheckAccess())
+                {
+                    dispatcher.Invoke(() =>
+                    {
+                        Medecins.Clear();
+                        foreach (var e in medecinList) Medecins.Add(e);
+                    });
+                }
+                else
+                {
+                    Medecins.Clear();
+                    foreach (var e in medecinList) Medecins.Add(e);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new System.InvalidOperationException("Erreur lors du chargement des medecins", ex);
+            }
+        }
         public void GenererFacturePdf()
         {
             var folderPath = "c:/clima-g/factures/";
@@ -751,11 +996,46 @@ namespace invoice.ViewModels
                 Console.WriteLine($"Dossier créé : {folderPath}");
             }
 
-            // Crée le document
-            var document = new FactureDocument(Facture, Patient, SessionService.User!);
+            switch (CurrentInvoiceType)
+            {
+                case "createExamen":
+                    // Crée le document
+                    var document = new FactureDocument(Facture, Patient!, SessionService.User!);
+                    // Génère le PDF et l'ouvre
+                    document.GeneratePdf(FacturePdfPath);
+                    break;
+                case "createConsultation":
+                    // On initialise medecin à null puis on tente de le charger depuis la base
+                    Medecin? medecin = null;
+                    using (var context = new ClimaDbContext())
+                    {
+                        var factureId = Facture?.FactureId ?? 0;
+                        if (factureId != 0)
+                        {
+                            // Récupère le premier MedecinId associé aux lignes de consultation de la facture
+                            var medecinId = context.FacturesConsultations
+                                .Where(fc => fc.FactureId == factureId)
+                                .Select(fc => fc.MedecinId)
+                                .FirstOrDefault();
 
-            // Génère le PDF et l'ouvre
-            document.GeneratePdf(FacturePdfPath);
+                            if (medecinId != 0)
+                            {
+                                medecin = context.Medecins.Find(medecinId);
+                            }
+                        }
+                    }
+
+                    // Si aucun medecin trouvé, on passe une instance vide (ou gérer autrement selon vos besoins)
+                    if (medecin == null)
+                        medecin = new Medecin();
+
+                    document = new FactureDocument(Facture, Patient!, medecin, SessionService.User!);
+                    document.GeneratePdf(FacturePdfPath);
+                    break;
+                default:
+                    break;  
+            }
+
         }
         public string GenerateFacturePdfPath()
         {
@@ -774,9 +1054,17 @@ namespace invoice.ViewModels
             // Le bouton est actif SEULEMENT si un examen est sélectionné dans le ComboBox
             return SelectedAvailableExam != null;
         }
-        private bool CanExecuteCreateFact()
+        private bool CanExecuteAddInvoiceConsultation()
+        {
+            return SelectedAvailableConsultation != null;
+        }
+        private bool CanExecuteCreateInvoiceExamen()
         {
             return InvoiceExams.Count > 0;
+        }
+        private bool CanExecuteCreateInvoiceConsultation()
+        {
+            return InvoiceConsultations.Count > 0 && SelectedMedecin != null;
         }
         private bool CanExecutePreviewFacture()
         {
@@ -812,12 +1100,12 @@ namespace invoice.ViewModels
 
 
 
-    // Facture intermédiaire classe
+    // Facture Examen intermédiaire classe
     public class InvoiceExam : ObservableObject
     {
         private Examen _exam;
         private int _qty;
-        public Examen Exam 
+        public Examen Exam
         {
             get => _exam;
             set => SetProperty(ref _exam, value);
@@ -825,7 +1113,24 @@ namespace invoice.ViewModels
 
 
         public int Qty
-        { 
+        {
+            get => _qty;
+            set => SetProperty(ref _qty, value);
+        }
+    }
+
+    // Facture Consultation intermédiaire classe
+    public class InvoiceConsultation : ObservableObject
+    {
+        private Consultation _consultation;
+        private int _qty;
+        public Consultation Consultation
+        {
+            get => _consultation;
+            set => SetProperty(ref _consultation, value);
+        }
+        public int Qty
+        {
             get => _qty;
             set => SetProperty(ref _qty, value);
         }

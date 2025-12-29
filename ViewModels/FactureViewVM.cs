@@ -64,28 +64,37 @@ namespace invoice.ViewModels
         // Constructor
         public FactureViewVM()
         {
-            LoadLastFacture(1, 50).ConfigureAwait(false);
+            _ = LoadLastFacture(1, 50);
         }
-
-
-        // Methods
         private async Task LoadLastFacture(int begin, int end)
         {
-            using (var db = new ClimaDbContext())
+            using var db = new ClimaDbContext();
+
+            // Construire la requête optimisée
+            var query = db.Factures
+                .AsNoTracking()      // Pas de suivi -> moins d'overhead mémoire
+                .AsSplitQuery()      // Évite les joins massifs / explosion cartésienne
+                .Include(f => f.Patient)
+                .Include(f => f.FacturesExamens)
+                    .ThenInclude(fe => fe.Examen)
+                // Inclure les deux navigations de FacturesConsultations si nécessaire.
+                // Les appels séparés à Include + ThenInclude sont acceptables et
+                // restent efficaces avec AsSplitQuery.
+                .Include(f => f.FacturesConsultations)
+                    .ThenInclude(fc => fc.Consultation)
+                .Include(f => f.FacturesConsultations)
+                    .ThenInclude(fc => fc.Medecin)
+                .Include(f => f.User)
+                .Where(f => f.FactureId >= begin && f.FactureId <= end)
+                .OrderByDescending(f => f.Created_at);
+
+            // Exécuter la requête de façon asynchrone
+            var factures = await query.ToListAsync().ConfigureAwait(false);
+
+            Factures.Clear();
+            foreach (var facture in factures)
             {
-                var factures = await db.Factures
-                    .Include(f => f.Patient)
-                    .Include(f => f.FacturesExamens)
-                        .ThenInclude(fe => fe.Examen) 
-                    .Include(f => f.User)
-                    .Where(f => f.FactureId >= begin && f.FactureId <= end)
-                    .OrderByDescending(f => f.Created_at)
-                    .ToListAsync();
-                Factures.Clear();
-                foreach (var facture in factures)
-                {
-                    Factures.Add(facture);
-                }
+                Factures.Add(facture);
             }
         }
         private void CalculateAmountLeft()
@@ -135,15 +144,47 @@ namespace invoice.ViewModels
                 // Crée tous les répertoires et sous-répertoires dans le chemin spécifié.
                 Directory.CreateDirectory(folderPath);
                 Console.WriteLine($"Dossier créé : {folderPath}");
-            }
-
-            // Crée le document (Utilisation de l'objet de génération de PDF)
-            var document = new FactureDocument(SelectedFacture, SelectedFacture.Patient, SelectedFacture.User!);
+            }          
 
             try
             {
-                // Génère le PDF (Assurez-vous que cette méthode ne lève pas d'exception de manière inattendue)
-                document.GeneratePdf(filePath);
+                // Crée le document (Utilisation de l'objet de génération de PDF)
+                switch (SelectedFacture.Type)
+                {
+                    case InvoiceType.Examen:
+                        var document = new FactureDocument(SelectedFacture, SelectedFacture.Patient, SelectedFacture.User!);
+                        document.GeneratePdf(filePath);
+                        break;
+                    case InvoiceType.Consultation:
+                        Medecin? medecin = null;
+                        using (var context = new ClimaDbContext())
+                        {
+                            var factureId = SelectedFacture?.FactureId ?? 0;
+                            if (factureId != 0)
+                            {
+                                // Récupère le premier MedecinId associé aux lignes de consultation de la facture
+                                var medecinId = context.FacturesConsultations
+                                    .Where(fc => fc.FactureId == factureId)
+                                    .Select(fc => fc.MedecinId)
+                                    .FirstOrDefault();
+
+                                if (medecinId != 0)
+                                {
+                                    medecin = context.Medecins.Find(medecinId);
+                                }
+                            }
+                        }
+
+                        // Si aucun medecin trouvé, on passe une instance vide (ou gérer autrement selon vos besoins)
+                        if (medecin == null)
+                            medecin = new Medecin();
+
+                        document = new FactureDocument(SelectedFacture!, SelectedFacture!.Patient, medecin, SelectedFacture.User!);
+                        document.GeneratePdf(filePath);
+                        break;
+                    default:
+                        break;
+                }
                 Console.WriteLine($"Facture générée avec succès : {filePath}");
             }
             catch (Exception ex)

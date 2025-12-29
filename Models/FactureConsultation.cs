@@ -15,6 +15,7 @@ namespace invoice.Models
         public int Qte { get; set; } = 1;
 
         public int MedecinId { get; set; }
-        public required Medecin Medecin { get; set; }
+        public Medecin? Medecin { get; set; }
+        public Consultation? Consultation { get; set; }
     }
 }

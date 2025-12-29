@@ -12,5 +12,97 @@
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="FontSize" Value="14" />
     </Style>
+    <Style  x:Key="txtIsBinder" TargetType="TextBox">
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Background" Value="{StaticResource LightGray}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Padding" Value="8,6" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Grid>
+                        <Border x:Name="PART_Border"
+						            Background="{TemplateBinding Background}"
+						            CornerRadius="2"
+						            BorderThickness="2"
+						            BorderBrush="LightBlue"
+						            SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="4,0"/>
+                        </Border>
+
+                        <!-- underline -->
+                        <Border x:Name="Underline"
+						            Height="1"
+						            VerticalAlignment="Bottom"
+						            Background="{StaticResource LightGray}"
+						            CornerRadius="1"
+						            Margin="2,0,2,2"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Underline" Property="Background" Value="{StaticResource PrimaryBlue}"/>
+                            <Setter TargetName="Underline" Property="Height" Value="1"/>
+                            <Setter TargetName="PART_Border" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect Color="#22000000" BlurRadius="8" ShadowDepth="0"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.6"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding PatientDefined }" Value="true">
+                <Setter Property="BorderBrush" Value="#9ECCA9" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="IsEnabled" Value="False" />
+                <Setter Property="IsReadOnly" Value="True" />
+                <Setter Property="Background" Value="#F0F3EE" />
+                <Setter Property="Foreground" Value="#000000" />
+                <Setter Property="FontSize" Value="14" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style  x:Key="datePickerIsBinder" TargetType="DatePicker">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding PatientDefined }" Value="true">
+                <Setter Property="BorderBrush" Value="#9ECCA9" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="IsEnabled" Value="False" />
+                <Setter Property="Background" Value="#F0F3EE" />
+                <Setter Property="Foreground" Value="#000000" />
+                <Setter Property="FontSize" Value="15" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style  x:Key="cbxIsBinder" TargetType="ComboBox">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding PatientDefined }" Value="true">
+                <Setter Property="BorderThickness" Value="4" />
+                <Setter Property="IsEnabled" Value="False" />
+                <Setter Property="FontSize" Value="15" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style  x:Key="checkBoxIsBinder" TargetType="CheckBox">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding PatientDefined }" Value="true">
+                <Setter Property="BorderThickness" Value="3" />
+                <Setter Property="BorderBrush" Value="#9ECCA9" />
+                <Setter Property="IsEnabled" Value="False" />
+                <Setter Property="Background" Value="#F0F3EE" />
+                <Setter Property="Foreground" Value="#000000" />
+                <Setter Property="FontSize" Value="15" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
 
 </ResourceDictionary>

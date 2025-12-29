@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using invoice.Context;
 
@@ -11,9 +12,11 @@ using invoice.Context;
 namespace invoice.Migrations
 {
     [DbContext(typeof(ClimaDbContext))]
-    partial class ClimaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251228185528_alterMedecin")]
+    partial class alterMedecin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -640,7 +643,7 @@ namespace invoice.Migrations
 
             modelBuilder.Entity("invoice.Models.FactureConsultation", b =>
                 {
-                    b.HasOne("invoice.Models.Consultation", "Consultation")
+                    b.HasOne("invoice.Models.Consultation", null)
                         .WithMany("FacturesConsultations")
                         .HasForeignKey("ConsultationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -657,8 +660,6 @@ namespace invoice.Migrations
                         .HasForeignKey("MedecinId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Consultation");
 
                     b.Navigation("Medecin");
                 });

@@ -55,7 +55,7 @@ namespace invoice.ViewModels
                 new MenuItem("Vue des Factures", null, new FactureViewVM(), "/Assets/icons/list.png"),
 
                 new MenuItem("Utilisateurs et Rôles", null, new UserAndRoleVM(), "/Assets/icons/users.png"),
-                     //new MenuItem("Médecins", null, new MedecinVM(), "/Assets/icons/doctor.png"),
+                new MenuItem("Médecins", null, new MedecinVM(), "/Assets/icons/online-appointment.png"),
                      //new MenuItem("Assurances", null, new AssuranceVM(), "/Assets/icons/insurance.png"),
 
                 new MenuItem("Consultation", null, new ConsultationVM(), "/Assets/icons/answer.png"),
@@ -69,7 +69,9 @@ namespace invoice.ViewModels
             await LoadAvailablePermissions();
             await LoadUserPermissions();
             MenuItems[0].RequiredPermission = AvailablePermissions?.FirstOrDefault(ap => ap.Permission_name == "CREATE_INVOICES");
+            MenuItems[1].RequiredPermission = AvailablePermissions?.FirstOrDefault(ap => ap.Permission_name == "INVOICES_VIEW");
             MenuItems[2].RequiredPermission = AvailablePermissions?.FirstOrDefault(ap => ap.Permission_name == "USERS_ROLES_VIEW");
+            MenuItems[3].RequiredPermission = AvailablePermissions?.FirstOrDefault(ap => ap.Permission_name == "MEDECINS_VIEW");
 
             // Vérifier si l'utilisateur possède la permission requise.
             if (UserPermissions.Any(up => up.Permission_name == MenuItems[0]?.RequiredPermission?.Permission_name))
