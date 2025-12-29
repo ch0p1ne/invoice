@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Process = System.Diagnostics.Process;
 
 namespace invoice.ViewModels
@@ -88,8 +89,7 @@ namespace invoice.ViewModels
                 .Where(f => f.FactureId >= begin && f.FactureId <= end)
                 .OrderByDescending(f => f.Created_at);
 
-            // Exécuter la requête de façon asynchrone
-            var factures = await query.ToListAsync().ConfigureAwait(false);
+            var factures = await query.ToListAsync();
 
             Factures.Clear();
             foreach (var facture in factures)
@@ -97,6 +97,7 @@ namespace invoice.ViewModels
                 Factures.Add(facture);
             }
         }
+
         private void CalculateAmountLeft()
         {
             if (SelectedFacture != null && SelectedFacture.AmountPaid == 0m)
@@ -159,7 +160,7 @@ namespace invoice.ViewModels
                         Medecin? medecin = null;
                         using (var context = new ClimaDbContext())
                         {
-                            var factureId = SelectedFacture?.FactureId ?? 0;
+                            var factureId = SelectedFacture.FactureId;
                             if (factureId != 0)
                             {
                                 // Récupère le premier MedecinId associé aux lignes de consultation de la facture
@@ -176,13 +177,10 @@ namespace invoice.ViewModels
                         }
 
                         // Si aucun medecin trouvé, on passe une instance vide (ou gérer autrement selon vos besoins)
-                        if (medecin == null)
-                            medecin = new Medecin();
+                        medecin ??= new Medecin();
 
-                        document = new FactureDocument(SelectedFacture!, SelectedFacture!.Patient, medecin, SelectedFacture.User!);
-                        document.GeneratePdf(filePath);
-                        break;
-                    default:
+                        var document2 = new FactureDocument(SelectedFacture, SelectedFacture.Patient, medecin, SelectedFacture.User!);
+                        document2.GeneratePdf(filePath);
                         break;
                 }
                 Console.WriteLine($"Facture générée avec succès : {filePath}");
@@ -241,13 +239,24 @@ namespace invoice.ViewModels
             var messageBox = new ModelOpenner();
             try
             {
-                var factures = await db.Factures
-                    .Include(f => f.Patient)
-                    .Include(f => f.FacturesExamens)
-                        .ThenInclude(fe => fe.Examen)
-                    .Include(f => f.User)
-                    .OrderByDescending(f => f.Created_at)
-                    .ToListAsync();
+                var query = db.Factures
+                .AsNoTracking()      // Pas de suivi -> moins d'overhead mémoire
+                .AsSplitQuery()      // Évite les joins massifs / explosion cartésienne
+                .Include(f => f.Patient)
+                .Include(f => f.FacturesExamens)
+                    .ThenInclude(fe => fe.Examen)
+                // Inclure les deux navigations de FacturesConsultations si nécessaire.
+                // Les appels séparés à Include + ThenInclude sont acceptables et
+                // restent efficaces avec AsSplitQuery.
+                .Include(f => f.FacturesConsultations)
+                    .ThenInclude(fc => fc.Consultation)
+                .Include(f => f.FacturesConsultations)
+                    .ThenInclude(fc => fc.Medecin)
+                .Include(f => f.User)
+                .OrderByDescending(f => f.Created_at);
+
+                var factures = await query.ToListAsync();
+
                 Factures.Clear();
                 foreach (var facture in factures)
                 {
@@ -392,12 +401,24 @@ namespace invoice.ViewModels
             if (args.Key != Key.Enter) return;
             using (var db = new ClimaDbContext())
             {
-                var factures = await db.Factures
-                    .Include(f => f.Patient)
-                    .Include(f => f.User)
-                    .Where(f => f.Patient!.LastName.Contains(SearchTerm) || f.Patient!.FirstName.Contains(SearchTerm) || f.Reference.Contains(SearchTerm))
-                    .OrderByDescending(f => f.Created_at)
-                    .ToListAsync();
+                var query = db.Factures
+                .AsNoTracking()      // Pas de suivi -> moins d'overhead mémoire
+                .AsSplitQuery()      // Évite les joins massifs / explosion cartésienne
+                .Include(f => f.Patient)
+                .Include(f => f.FacturesExamens)
+                    .ThenInclude(fe => fe.Examen)
+                // Inclure les deux navigations de FacturesConsultations si nécessaire.
+                // Les appels séparés à Include + ThenInclude sont acceptables et
+                // restent efficaces avec AsSplitQuery.
+                .Include(f => f.FacturesConsultations)
+                    .ThenInclude(fc => fc.Consultation)
+                .Include(f => f.FacturesConsultations)
+                    .ThenInclude(fc => fc.Medecin)
+                .Include(f => f.User)
+                .Where(f => f.Patient!.LastName.Contains(SearchTerm) || f.Patient!.FirstName.Contains(SearchTerm) || f.Reference.Contains(SearchTerm))
+                .OrderByDescending(f => f.Created_at);
+
+                var factures = await query.ToListAsync();
                 Factures.Clear();
                 foreach (var facture in factures)
                 {
@@ -412,12 +433,24 @@ namespace invoice.ViewModels
         {
             using (var db = new ClimaDbContext())
             {
-                var factures = await db.Factures
-                    .Include(f => f.Patient)
-                    .Include(f => f.User)
-                    .Where(f => f.Status == status)
-                    .OrderByDescending(f => f.Created_at)
-                    .ToListAsync();
+                var query = db.Factures
+                .AsNoTracking()      // Pas de suivi -> moins d'overhead mémoire
+                .AsSplitQuery()      // Évite les joins massifs / explosion cartésienne
+                .Include(f => f.Patient)
+                .Include(f => f.FacturesExamens)
+                    .ThenInclude(fe => fe.Examen)
+                // Inclure les deux navigations de FacturesConsultations si nécessaire.
+                // Les appels séparés à Include + ThenInclude sont acceptables et
+                // restent efficaces avec AsSplitQuery.
+                .Include(f => f.FacturesConsultations)
+                    .ThenInclude(fc => fc.Consultation)
+                .Include(f => f.FacturesConsultations)
+                    .ThenInclude(fc => fc.Medecin)
+                .Include(f => f.User)
+                .Where(f => f.Status == status)
+                .OrderByDescending(f => f.Created_at);
+
+                var factures = await query.ToListAsync();
                 Factures.Clear();
                 foreach (var facture in factures)
                 {
