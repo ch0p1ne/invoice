@@ -65,7 +65,7 @@ namespace invoice.ViewModels
         // Constructor
         public FactureViewVM()
         {
-            _ = LoadLastFacture(1, 50);
+            LoadLastFacture(1, 50).ConfigureAwait(false);
         }
         private async Task LoadLastFacture(int begin, int end)
         {

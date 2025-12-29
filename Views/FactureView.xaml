@@ -184,7 +184,7 @@
                                     <Border Style="{StaticResource StyledTextBorder}"
                                         Width="145"
         >
-                                        <TextBlock Text="{Binding AmountLeft, ConverterCulture=fr-Ga, StringFormat={}{0:C}}" Padding="6,4" />
+                                        <TextBlock Text="{Binding AmountLeft , ConverterCulture=fr-Ga, StringFormat={}{0:C}}" Padding="6,4" />
                                     </Border>
                                 </WrapPanel>
                             </WrapPanel>

@@ -4,13 +4,14 @@ using invoice.ViewModels;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Windows.Shapes;
 
 public class FactureDocument : IDocument
 {
-    private const int CONST_AVAILABLE_CONTENT_SIZE = 15;
-    private const int CONST_AVAILABLE_CONTENT_CONSULTATION_SIZE = 13;
+    private const int CONST_AVAILABLE_CONTENT_SIZE = 16;
+    private const int CONST_AVAILABLE_CONTENT_CONSULTATION_SIZE = 14;
     private string imagePath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets", "img", "headerPDF.png");
     private readonly Facture _facture;
     private readonly Patient _patient;
@@ -222,20 +223,8 @@ public class FactureDocument : IDocument
         double remiseFlat = _facture.DiscountFlat;
         double CSS = (double)totalHT * (double)_facture.Css;
         double TPS = (double)totalHT * (double)_facture.TPS;
-        double totalTTC = (double)totalHT + (_facture.DiscountPercent * (double)totalHT) + _facture.DiscountFlat + CSS + TPS;
-        double totalWithRemise;
-        if( remisePercent > 0)
-        {
-            totalWithRemise = totalTTC - (totalTTC * remisePercent);
-        }
-        else if(remiseFlat > 0)
-        {
-            totalWithRemise = totalTTC - remiseFlat;
-        }
-        else
-        {
-            totalWithRemise = totalTTC;
-        }
+        double totalTTC = (double)totalHT + CSS + TPS;
+        double totalWithRemise = totalTTC;
         double netAPayer = totalWithRemise;  
         double patientShare = netAPayer * (double)_facture.PatientPercent;
         decimal amountPaid = _facture.AmountPaid ?? 0m;
@@ -339,62 +328,58 @@ public class FactureDocument : IDocument
                     table.Cell().Padding(5).AlignRight().Text("").FontSize(10);
                 }
 
-                // Cellules de la première ligne du Footer (Ex: Total HT)
-                table.Cell().ColumnSpan(3).BorderTop(1).Padding(2).Text("Total HT").Bold().FontSize(11).FontColor(Colors.Black);
-
-                // 💡 Cellule sous Px Unitaire : Garder la bordure droite
-                table.Cell().BorderRight(1).BorderTop(1).BorderColor(Colors.Black).Text("").Bold();
-
-                // Cellule sous Montant HT : Afficher le total
-                table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"{totalHT:C}").Bold().FontSize(9).FontColor(Colors.Black);
-
-                // CSS 
-                table.Cell().ColumnSpan(3).BorderTop(1).Padding(1).Text($"CSS {_facture.Css:P0}").SemiBold().FontSize(9).FontColor(Colors.Black);
-                table.Cell().BorderRight(1).BorderTop(1).BorderColor(Colors.Black).Text("");
-                table.Cell().BorderTop(1).AlignRight().Padding(1).Text($"{CSS:C}").SemiBold().FontSize(9).FontColor(Colors.Black);
-                // TPS
-                table.Cell().ColumnSpan(3).Padding(1).Text($"TPS {_facture.TPS:P0}").SemiBold().FontSize(9).FontColor(Colors.Black);
-                table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("");
-                table.Cell().BorderTop(1).AlignRight().Padding(1).Text($"{TPS:C}").SemiBold().FontSize(9).FontColor(Colors.Black);
-                // Total TTC 
-                table.Cell().ColumnSpan(3).BorderTop(1).Padding(2).Text("Total TTC").Bold().FontSize(11).FontColor(Colors.Blue.Darken4);
-                table.Cell().BorderRight(1).BorderTop(1).BorderColor(Colors.Black).Text("").Bold();
-                table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"{totalTTC:C}").Bold().FontSize(12).FontColor(Colors.Blue.Darken4);
 
                 // Remise
-                if(remiseFlat > 0)
-                    table.Cell().ColumnSpan(3).PaddingRight(9).Padding(1).Text($"Remise ({_facture.DiscountFlat:N0})").FontSize(9);
-                else if(remisePercent > 0)
-                    table.Cell().ColumnSpan(3).PaddingRight(9).Padding(1).Text($"Remise ({_facture.DiscountPercent:P0})").FontSize(9);
+                if (remiseFlat > 0)
+                    table.Cell().ColumnSpan(3).BorderTop(1).Padding(1).PaddingLeft(5).Text($"Remise (- {_facture.DiscountFlat:C})").FontSize(9);
+                else if (remisePercent > 0)
+                    table.Cell().ColumnSpan(3).BorderTop(1).Padding(1).PaddingLeft(5).Text($"Remise (- {_facture.DiscountPercent:P0})").FontSize(9);
                 else
-                    table.Cell().ColumnSpan(3).PaddingRight(9).Padding(1).Text($"Remise (0%)").FontSize(9);
+                    table.Cell().ColumnSpan(3).BorderTop(1).Padding(1).PaddingLeft(5).Text($"Remise (0%)").FontSize(9);
 
-                table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("").Bold();
-                table.Cell().AlignRight().Padding(1).Text($"{totalWithRemise:C}").FontSize(9);
+                table.Cell().BorderTop(1).BorderRight(1).Padding(1).BorderColor(Colors.Black).Text("").Bold();
+                table.Cell().AlignRight().Padding(1).Text($"").FontSize(9);
 
-                // Net à payer
-                table.Cell().ColumnSpan(3).PaddingRight(-12).BorderLeft(1).Padding(1).Text("Net à payer").Bold().FontSize(12).FontColor(Colors.Green.Darken4);
-                table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("").Bold();
-                table.Cell().AlignRight().Padding(1).Text($"{netAPayer:C}").Bold().FontSize(12).FontColor(Colors.Green.Darken4);
+                // Cellules de la première ligne du Footer (Ex: Total HT)
+                table.Cell().ColumnSpan(3).BorderTop(1).Padding(2).PaddingLeft(5).Text("Total HT").Bold().FontSize(11).FontColor(Colors.Black);
+
+                // 💡 Cellule sous Px Unitaire : Garder la bordure droite
+                table.Cell().BorderTop(1).BorderRight(1).BorderColor(Colors.Black).Text("").NormalWeight();
+
+                // Cellule sous Montant HT : Afficher le total
+                table.Cell().BorderTop(1).AlignRight().Padding(2).PaddingRight(5).Text($"{totalHT:C}").NormalWeight().FontSize(9).FontColor(Colors.Black);
+
+                // CSS 
+                table.Cell().ColumnSpan(3).BorderTop(1).Padding(1).PaddingLeft(5).Text($"CSS {_facture.Css:P0}").SemiBold().FontSize(9).FontColor(Colors.Black);
+                table.Cell().BorderRight(1).BorderTop(1).BorderColor(Colors.Black).Text("");
+                table.Cell().BorderTop(1).AlignRight().Padding(1).PaddingRight(5).Text($"{CSS:C}").NormalWeight().FontSize(9).FontColor(Colors.Black);
+                // TPS
+                table.Cell().ColumnSpan(3).Padding(1).PaddingLeft(5).Text($"TPS {_facture.TPS:P0}").SemiBold().FontSize(9).FontColor(Colors.Black);
+                table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("");
+                table.Cell().BorderTop(1).AlignRight().Padding(1).PaddingRight(5).Text($"{TPS:C}").NormalWeight().FontSize(9).FontColor(Colors.Black);
+                // Total TTC 
+                table.Cell().ColumnSpan(3).BorderTop(1).Padding(2).PaddingLeft(5).Text("Total TTC").Bold().FontSize(11).FontColor(Colors.Blue.Darken4);
+                table.Cell().BorderRight(1).BorderTop(1).BorderColor(Colors.Black).Text("").Bold();
+                table.Cell().BorderTop(1).AlignRight().Padding(2).PaddingRight(5).Text($"{totalTTC:C}").SemiBold().FontSize(11).FontColor(Colors.Blue.Darken4);
 
                 // Avance
-                table.Cell().ColumnSpan(3).PaddingRight(9).Padding(1).Text("Avance").FontSize(9);
+                table.Cell().ColumnSpan(3).PaddingRight(9).Padding(1).PaddingLeft(5).Text("Avance").FontSize(9);
                 table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("").Bold();
-                table.Cell().AlignRight().Padding(1).Text($"{amountPaid:C}").FontSize(9);
+                table.Cell().AlignRight().Padding(1).PaddingRight(5).Text($"{amountPaid:C}").FontSize(9);
 
                 if (amountPaid > 0)
                 {
                     // Reste à payer
-                    table.Cell().ColumnSpan(3).BorderTop(1).PaddingRight(-17).Padding(2).Text("Reste à payer").FontSize(12).Bold();
+                    table.Cell().ColumnSpan(3).BorderTop(1).PaddingRight(-17).Padding(2).PaddingLeft(5).Text("Reste à payer").FontSize(12).Bold();
                     table.Cell().BorderTop(1).BorderRight(1).BorderColor(Colors.Black).Text("");
-                    table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"{amountDue:C}").FontSize(10);
+                    table.Cell().BorderTop(1).AlignRight().Padding(2).PaddingRight(5).Text($"{amountDue:C}").FontSize(10);
                 }
                 else
                 {
                     // Reste à payer
-                    table.Cell().ColumnSpan(3).BorderTop(1).PaddingRight(-17).Padding(2).Text("Reste à payer").FontSize(12);
+                    table.Cell().ColumnSpan(3).BorderTop(1).PaddingRight(-17).Padding(2).PaddingLeft(5).Text("Reste à payer").FontSize(12);
                     table.Cell().BorderTop(1).BorderRight(1).BorderColor(Colors.Black).Text("");
-                    table.Cell().BorderTop(1).AlignRight().Padding(2).Text($"0 FCFA").FontSize(10);
+                    table.Cell().BorderTop(1).AlignRight().Padding(2).PaddingRight(5).Text($"0 FCFA").FontSize(10);
                 }
             });
     }

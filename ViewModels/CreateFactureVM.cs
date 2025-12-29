@@ -25,8 +25,8 @@ namespace invoice.ViewModels
 {
     public partial class CreateFactureVM : VMBase
     {
-        private const decimal CONST_TPS = 0.09m;
-        private const decimal CONST_CSS = 0.01m;
+        private const decimal CONST_TPS = 0.095m;
+        private const decimal CONST_CSS = 0.010m;
 
 
         private readonly string _title = "Facture";
@@ -848,6 +848,7 @@ namespace invoice.ViewModels
                     break;
                 case "Flat":
                     NetAPayer = (decimal)(TotalHTPrice - DiscountFlat);
+                    TotalHTPrice -= DiscountFlat;
                     break;
             }
             TotalTTCPrice = (double)NetAPayer;
