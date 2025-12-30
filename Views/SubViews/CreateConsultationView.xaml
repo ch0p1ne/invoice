@@ -478,7 +478,7 @@
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
                     <TextBlock  Grid.Column="0" Style="{StaticResource FieldLabel}" 
-                                Text="Css" 
+                                Text="CSS" 
                                 FontSize="10"
                                 FontWeight="Normal"/>
                     <TextBlock  Grid.Column="1" Style="{StaticResource FieldLabel}" 
@@ -492,7 +492,7 @@
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
                     <TextBlock  Grid.Column="0" Style="{StaticResource FieldLabel}" 
-                                Text="Escompt" 
+                                Text="TPS" 
                                 FontSize="10"
                                 FontWeight="Normal"/>
                     <TextBlock  Grid.Column="1" Style="{StaticResource FieldLabel}" 

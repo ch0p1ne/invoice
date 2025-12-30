@@ -331,11 +331,11 @@ public class FactureDocument : IDocument
 
                 // Remise
                 if (remiseFlat > 0)
-                    table.Cell().ColumnSpan(3).BorderTop(1).Padding(1).PaddingLeft(5).Text($"Remise (- {_facture.DiscountFlat:C})").FontSize(9);
+                    table.Cell().ColumnSpan(3).BorderTop(1).Padding(2).PaddingLeft(5).Text($"Remise (- {_facture.DiscountFlat:C})").FontSize(9);
                 else if (remisePercent > 0)
-                    table.Cell().ColumnSpan(3).BorderTop(1).Padding(1).PaddingLeft(5).Text($"Remise (- {_facture.DiscountPercent:P0})").FontSize(9);
+                    table.Cell().ColumnSpan(3).BorderTop(1).Padding(2).PaddingLeft(5).Text($"Remise (- {_facture.DiscountPercent:P0})").FontSize(9);
                 else
-                    table.Cell().ColumnSpan(3).BorderTop(1).Padding(1).PaddingLeft(5).Text($"Remise (0%)").FontSize(9);
+                    table.Cell().ColumnSpan(3).BorderTop(1).Padding(2).PaddingLeft(5).Text($"Remise (0%)").FontSize(9);
 
                 table.Cell().BorderTop(1).BorderRight(1).Padding(1).BorderColor(Colors.Black).Text("").Bold();
                 table.Cell().AlignRight().Padding(1).Text($"").FontSize(9);
@@ -354,7 +354,7 @@ public class FactureDocument : IDocument
                 table.Cell().BorderRight(1).BorderTop(1).BorderColor(Colors.Black).Text("");
                 table.Cell().BorderTop(1).AlignRight().Padding(1).PaddingRight(5).Text($"{CSS:C}").NormalWeight().FontSize(9).FontColor(Colors.Black);
                 // TPS
-                table.Cell().ColumnSpan(3).Padding(1).PaddingLeft(5).Text($"TPS {_facture.TPS:P0}").SemiBold().FontSize(9).FontColor(Colors.Black);
+                table.Cell().ColumnSpan(3).Padding(1).PaddingLeft(5).Text($"TPS {_facture.TPS:P1}").SemiBold().FontSize(9).FontColor(Colors.Black);
                 table.Cell().BorderRight(1).BorderColor(Colors.Black).Text("");
                 table.Cell().BorderTop(1).AlignRight().Padding(1).PaddingRight(5).Text($"{TPS:C}").NormalWeight().FontSize(9).FontColor(Colors.Black);
                 // Total TTC 

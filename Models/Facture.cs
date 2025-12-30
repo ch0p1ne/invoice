@@ -32,10 +32,10 @@ namespace invoice.Models
         [Column(TypeName = "decimal(3,2)")]
         public double DiscountPercent { get; set; } = 0;
         public double DiscountFlat { get; set; } = 0;
-        [Column(TypeName = "decimal(3,2)")]
-        public decimal Css { get; set; } = 0.00m;
-        [Column(TypeName = "decimal(3,2)")]
-        public decimal TPS { get; set; } = 0.00m;
+        [Column(TypeName = "decimal(4,3)")]
+        public decimal Css { get; set; }
+        [Column(TypeName = "decimal(4,3)")]
+        public decimal TPS { get; set; }
         public StatusType? Status { get; set; } = StatusType.Non_payer; // En attente, Payée, Annulée
         public string? PaymentMethod { get; set; }
         public DateTime Created_at { get; set; } = DateTime.Now;

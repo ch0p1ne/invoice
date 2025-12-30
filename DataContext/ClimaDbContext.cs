@@ -71,10 +71,10 @@ namespace invoice.Context
                 .UsingEntity<FactureConsultation>();
             modelBuilder.Entity<Facture>()
                 .Property(f => f.Css)
-                .HasDefaultValue(0.00);
+                .HasDefaultValue(0.010);
             modelBuilder.Entity<Facture>()
                 .Property(f => f.TPS)
-                .HasDefaultValue(0.00);
+                .HasDefaultValue(0.095);
 
             modelBuilder.Entity<FactureAvoir>()
                 .HasIndex(fa => fa.Reference)
