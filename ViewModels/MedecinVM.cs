@@ -14,6 +14,8 @@ namespace invoice.ViewModels
 {
     public partial class MedecinVM : VMBase
     {
+
+        public string CONST_TITLE {get;} = "Medecins";
         private int _medecinId;
         public int MedecinId
         {

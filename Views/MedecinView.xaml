@@ -8,74 +8,89 @@
              d:DataContext="{d:DesignInstance viewModel:MedecinVM}"
              mc:Ignorable="d" 
              FontFamily="{StaticResource fontSen}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="800" d:DesignWidth="1400">
     
     <UserControl.Resources>
 
     </UserControl.Resources>
-    
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
 
-        <!-- Left Side: Crud of Medecins -->
-        <Grid Grid.Column="0"
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <StackPanel VerticalAlignment="Top" Grid.Row="0">
+            <TextBlock Text="{Binding CONST_TITLE}"
+                       FontSize="24" 
+                           Foreground="{StaticResource PrimaryBlueDark}"
+                       Margin="100,0,0,0"
+                       FontFamily="{StaticResource fontSen}" 
+                       FontWeight="SemiBold"/>
+        </StackPanel>
+
+        <Grid Margin="0,0,25,0" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Side: Crud of Medecins -->
+            <Grid Grid.Column="0"
               Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <!-- Form -->
-            <StackPanel Grid.Row="0"
-                        Margin="125,135,0,0">
-                <WrapPanel Orientation="Vertical">
-                    <TextBlock Text="Nom :"  
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <!-- Form -->
+                <StackPanel Grid.Row="0"
+                        Margin="125,100,0,0">
+                    <WrapPanel Orientation="Vertical">
+                        <TextBlock Text="Nom :"  
                                Style="{StaticResource FieldLabel}"/>
-                                        <TextBox Name="txtNom" Width="250"
+                        <TextBox Name="txtNom" Width="250"
                                  Background="#fdfffc" 
                                  Text="{Binding MedecinLastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  VerticalAlignment="Center"
                                  HorizontalContentAlignment="Left" 
                                  Style="{StaticResource txtIsBinder}"/>
 
-                </WrapPanel>
-                <WrapPanel Margin="0,0,0,15" Orientation="Vertical">
-                    <TextBlock Text="Prenom :"  
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,0,15" Orientation="Vertical">
+                        <TextBlock Text="Prenom :"  
                                Style="{StaticResource FieldLabel}"/>
-                    <TextBox Name="txtPrenom" Width="250"
+                        <TextBox Name="txtPrenom" Width="250"
                              Background="#fdfffc" 
                              Text="{Binding MedecinFirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              VerticalAlignment="Center"
                              Style="{StaticResource txtIsBinder}"
                              HorizontalContentAlignment="Left" />
-                </WrapPanel>
-                <WrapPanel Margin="0,0,0,15" Orientation="Vertical">
-                    <TextBlock Text="Spécialité / Domaine :"  
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,0,15" Orientation="Vertical">
+                        <TextBlock Text="Spécialité / Domaine :"  
                                Style="{StaticResource FieldLabel}"/>
-                    <TextBox Name="txtSpec" Width="250"
+                        <TextBox Name="txtSpec" Width="250"
                              Background="#fdfffc" 
                              Text="{Binding Speciality, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              VerticalAlignment="Center"
                              Style="{StaticResource txtIsBinder}"
                              HorizontalContentAlignment="Left" />
-                </WrapPanel>
-                <WrapPanel Margin="0,0,0,0">
-                    <WrapPanel Orientation="Vertical">
-                        <TextBlock Text="Téléphone Principale :"  Style="{StaticResource FieldLabel}"/>
-                        <TextBox Name="txtPhone" Width="185" 
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,0,0">
+                        <WrapPanel Orientation="Vertical">
+                            <TextBlock Text="Téléphone Principale :"  Style="{StaticResource FieldLabel}"/>
+                            <TextBox Name="txtPhone" Width="185" 
                              Background="#fdfffc" 
                              VerticalAlignment="Center"
                              Text="{Binding PhoneNumberOne, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              HorizontalContentAlignment="Left" 
                              Style="{StaticResource txtIsBinder}"
                              FontWeight="Normal"/>
-                    </WrapPanel>
+                        </WrapPanel>
 
-                    <WrapPanel Margin="75,0,0,0" Orientation="Vertical">
-                        <TextBlock Text="Téléphone Secondaire :"  Style="{StaticResource FieldLabel}"/>
-                        <TextBox Name="txtPhone2" Width="185" 
+                        <WrapPanel Margin="75,0,0,0" Orientation="Vertical">
+                            <TextBlock Text="Téléphone Secondaire :"  Style="{StaticResource FieldLabel}"/>
+                            <TextBox Name="txtPhone2" Width="185" 
                              Background="#fdfffc" 
                              VerticalAlignment="Center"
                              Text="{Binding PhoneNumberTwo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -83,12 +98,12 @@
                              Style="{StaticResource txtIsBinder}"
  
                              FontWeight="Normal"/>
+                        </WrapPanel>
                     </WrapPanel>
-                </WrapPanel>
-                <WrapPanel Margin="0,0,0,0">
-                    <WrapPanel Margin="0,0,0,15" Orientation="Vertical">
-                        <TextBlock Text="Date de début de travail:" Style="{StaticResource FieldLabel}"/>
-                        <DatePicker DisplayDateStart="1901-01-01" 
+                    <WrapPanel Margin="0,0,0,0">
+                        <WrapPanel Margin="0,0,0,15" Orientation="Vertical">
+                            <TextBlock Text="Date de début de travail:" Style="{StaticResource FieldLabel}"/>
+                            <DatePicker DisplayDateStart="1901-01-01" 
                                 DisplayDateEnd="2099-12-31"
                                 Width="185"
                                 IsTodayHighlighted="True"
@@ -99,11 +114,11 @@
                                 Padding="8,6"
                                 FontSize="12"
                                 FontWeight="SemiBold"/>
-                    </WrapPanel>
-                    <TextBlock Text="/" Margin="35,0,35,0"/>
-                    <WrapPanel Margin="0,0,0,15" Orientation="Vertical">
-                        <TextBlock Text="Date de fin de travail :" Style="{StaticResource FieldLabel}"/>
-                        <DatePicker DisplayDateStart="1901-01-01" 
+                        </WrapPanel>
+                        <TextBlock Text="/" Margin="35,0,35,0"/>
+                        <WrapPanel Margin="0,0,0,15" Orientation="Vertical">
+                            <TextBlock Text="Date de fin de travail :" Style="{StaticResource FieldLabel}"/>
+                            <DatePicker DisplayDateStart="1901-01-01" 
                                 DisplayDateEnd="2099-12-31"
                                 Width="185"
                                 IsTodayHighlighted="True"
@@ -114,63 +129,64 @@
                                 Padding="8,6"
                                 FontSize="12"
                                 FontWeight="SemiBold"/>
+                        </WrapPanel>
                     </WrapPanel>
-                </WrapPanel>
 
-                <WrapPanel>
-                    <WrapPanel Orientation="Vertical">
-                        <TextBlock Text="Email :" Style="{StaticResource FieldLabel}"/>
-                        <TextBox Name="txtEmail" Width="185"
+                    <WrapPanel>
+                        <WrapPanel Orientation="Vertical">
+                            <TextBlock Text="Email :" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Name="txtEmail" Width="185"
                              Background="#fdfffc" 
                              Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              VerticalAlignment="Center"
                              HorizontalContentAlignment="Left" 
                              Style="{StaticResource txtIsBinder}"
                                  FontWeight="Normal"/>
-                    </WrapPanel>
+                        </WrapPanel>
 
-                    <WrapPanel Orientation="Vertical" Margin="75,0,0,0">
-                        <TextBlock Text="Adresse :"  Style="{StaticResource FieldLabel}" />
-                        <TextBox Name="txtAdress" Width="185"
+                        <WrapPanel Orientation="Vertical" Margin="75,0,0,0">
+                            <TextBlock Text="Adresse :"  Style="{StaticResource FieldLabel}" />
+                            <TextBox Name="txtAdress" Width="185"
                              Background="#fdfffc" 
                              VerticalAlignment="Center"
                              Text="{Binding Address, Mode=TwoWay}"
                                 Style="{StaticResource txtIsBinder}"
                              HorizontalContentAlignment="Left" 
                              FontWeight="Normal"/>
+                        </WrapPanel>
                     </WrapPanel>
-                </WrapPanel>
-            </StackPanel>
-            <!-- Buttons -->
-            <WrapPanel Grid.Row="1"
+                </StackPanel>
+                <!-- Buttons -->
+                <WrapPanel Grid.Row="1"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Top"
-                       Margin="0,55,0,0"
+                       Margin="50,55,0,0"
                        >
-                <Button Content="Enregistrer"
+                    <Button Content="Enregistrer"
                         Width="120"
                         Height="35"
                         Margin="10,0,10,0"
                         Command="{Binding CreateNewMedecinCommand}"
                         Style="{StaticResource GenericOperationBtn}"/>
-                <Button Content="Modifier"
+                    <Button Content="Modifier"
                         Width="120"
                         Height="35"
                         Margin="10,0,10,0"
                         Command="{Binding UpdateMedecinCommand}"
                         Style="{StaticResource GenericOperationBtn}"/>
-                <Button Content="Supprimer"
+                    <Button Content="Supprimer"
                         Width="120"
                         Height="35"
                         Margin="10,0,10,0"
                         Command="{Binding DeleteMedecinCommand}"
                         Style="{StaticResource GenericOperationBtn}"/>
-            </WrapPanel>
-        </Grid>
-        <!-- Right Side: List of Medecins -->
-        <DataGrid Grid.Column="1"
-                  Height="300"
-                  Margin="0,0,25,0"
+                </WrapPanel>
+            </Grid>
+            <!-- Right Side: List of Medecins -->
+            <DataGrid Grid.Column="1"
+                      VerticalAlignment="Top"
+                  Height="475"
+                  Margin="0,100,25,0"
                   BorderThickness="0"
                   ItemsSource="{Binding Medecins}"
                   AutoGenerateColumns="False"
@@ -179,13 +195,14 @@
                   CanUserAddRows="False"
                   IsReadOnly="True"
                   SelectedItem="{Binding SelectedMedecin, Mode=TwoWay}">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Nom" Binding="{Binding MedecinLastName}" Width="*"/>
-                <DataGridTextColumn Header="Prénom" Binding="{Binding MedecinFirstName}" Width="*"/>
-                <DataGridTextColumn Header="Spécialité" Binding="{Binding Speciality}" Width="*"/>
-                <DataGridTextColumn Header="Tél." Binding="{Binding PhoneNumberOne}" Width="100"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Nom" Binding="{Binding MedecinLastName}" Width="*"/>
+                    <DataGridTextColumn Header="Prénom" Binding="{Binding MedecinFirstName}" Width="*"/>
+                    <DataGridTextColumn Header="Spécialité" Binding="{Binding Speciality}" Width="*"/>
+                    <DataGridTextColumn Header="Tél." Binding="{Binding PhoneNumberOne}" Width="100"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
     </Grid>
-    
+
 </UserControl>

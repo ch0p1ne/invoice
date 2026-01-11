@@ -20,7 +20,7 @@
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
     </UserControl.Resources>
 
-    <Grid >
+    <Grid Margin="0,0,25,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -179,7 +179,7 @@
                     <Grid Grid.Row="1" >
                         <StackPanel VerticalAlignment="Top" 
                                     HorizontalAlignment="Left"
-                                    Margin="35,0,0,0"
+                                    Margin="100,0,0,0"
                                     DataContext="{Binding SelectedItem, ElementName=listDataGrid}">
                             <TextBlock Style="{StaticResource FieldLabel}">Nom De l'acte</TextBlock>
                                 <TextBox Style="{StaticResource MaterialTextBox}" 
@@ -241,9 +241,9 @@
 
                         </StackPanel>
                         <WrapPanel VerticalAlignment="Bottom" 
-            HorizontalAlignment="Right"
-           Margin="0,0,0,55"
-            >
+                                    HorizontalAlignment="Right"
+                                   Margin="0,0,0,55"
+                                    >
                             <Button Content="Supprimer"
                                     Background="IndianRed"
                                     Foreground="Black"

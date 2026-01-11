@@ -11,13 +11,14 @@
              xmlns:behevior="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              FontFamily="{StaticResource fontBase}"
-             d:DesignHeight="450" d:DesignWidth="800"
+             d:DesignHeight="850" d:DesignWidth="1450"
              Style="{StaticResource Page_Style}">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
         <converter:InvertBoolToVisibilityConverter x:Key="InvertBoolToVisibilityConverter"/>
     </UserControl.Resources>
-    <Grid>
+    
+    <Grid Margin="100,0,25,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
@@ -302,13 +303,26 @@
                     </Setter>
                 </Style>
             </Grid.Resources>
-            
-                <Border Grid.Row="0" 
+
+            <Border Grid.Row="0" 
                         BorderBrush="LightGray"
                         BorderThickness="0,0,0,1"
                         Margin="15,5,15,5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
                     
+                    <TextBlock Text="Liste des factures" 
+                                FontSize="20" 
+                               Grid.Column="0"
+                                FontWeight="SemiBold" 
+                                VerticalAlignment="Center"
+                                Foreground="{StaticResource PrimaryBlueDark}"
+                                />
                     <StackPanel 
+                        Grid.Column="1"
                             Orientation="Horizontal" 
                             HorizontalAlignment="Right" 
                             >
@@ -341,7 +355,8 @@
                                 >
                         </RadioButton>
                     </StackPanel>
-                </Border>
+                </Grid>
+            </Border>
 
                 <StackPanel Grid.Row="1" 
                             Margin="15,0,15,0"
@@ -446,13 +461,22 @@
                 </TextBox>
             </StackPanel>
             <StackPanel Grid.Row="2" 
-                        Margin="15,25,15,0">
-
+                        Margin="0,30,0,0">
+                <WrapPanel>
+                    
+                    <TextBlock Text="Total"
+                               FontSize="13"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Factures.Count, StringFormat={}{0:N0}}" 
+                               VerticalAlignment="Center"
+                               FontSize="11"
+                               Margin="15,0,0,0"/>
+                </WrapPanel>
                 <DataGrid RowStyle="{StaticResource DataGridRowStyle1}" 
                           Style="{StaticResource specialDataGrid}" 
                           ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"
                           VerticalScrollBarVisibility="Hidden"
-                          MaxHeight="475"
+                          Height="475"
                           BorderThickness="0,0,0,0"
                     x:Name="dtgridView"
                     IsReadOnly="True"
@@ -461,7 +485,7 @@
                           SelectionMode="Single"
                     AutoGenerateColumns="False"
                     ItemsSource="{Binding Factures, UpdateSourceTrigger=PropertyChanged}"
-                    Margin="0">
+                    Margin="0,5,0,0">
                     
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="" 

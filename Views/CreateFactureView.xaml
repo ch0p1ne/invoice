@@ -23,6 +23,7 @@
         <StackPanel VerticalAlignment="Top" Grid.Row="0">
             <TextBlock Text="{Binding Title}"
                    FontSize="24" 
+                       Foreground="{StaticResource PrimaryBlueDark}"
                    Margin="100,0,0,0"
                    FontFamily="{StaticResource fontSen}" 
                    FontWeight="SemiBold"/>

@@ -197,7 +197,7 @@
     </UserControl.Resources>
 
     <!-- RootGrid nommé pour être utilisé dans les animations -->
-    <Grid x:Name="RootGrid">
+    <Grid x:Name="RootGrid" Margin="100,0,25,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
             <RowDefinition Height="*"/>
