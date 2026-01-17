@@ -24,9 +24,5 @@ namespace invoice.Views
             InitializeComponent();
         }
 
-        private void btnTryConnexion_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }

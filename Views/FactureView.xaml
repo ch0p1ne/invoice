@@ -8,7 +8,8 @@
              xmlns:converter="clr-namespace:invoice.Utilities.Converters"
              xmlns:viewmodel="clr-namespace:invoice.ViewModels"
              d:DataContext="{d:DesignInstance Type=viewmodel:FactureViewVM }"
-             xmlns:behevior="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behavior="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:hpctrl="clr-namespace:HelperPagination;assembly=HelperPagination"
              mc:Ignorable="d" 
              FontFamily="{StaticResource fontBase}"
              d:DesignHeight="850" d:DesignWidth="1450"
@@ -28,24 +29,43 @@
                 Background="Transparent"
                 BorderBrush="{StaticResource PrimaryBlueDark}"
                 BorderThickness="2"
-                Padding="2,8">
-            <ScrollViewer HorizontalScrollBarVisibility="Visible" 
+                Margin="0,0,0,50"
+                Padding="4,4">
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" 
                           VerticalScrollBarVisibility="Hidden">
 
                 <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
                     <!-- Header or navigation elements can go here -->
                     <StackPanel Grid.Row="0" 
+                                Focusable="False"
                         Orientation="Horizontal" 
-                        HorizontalAlignment="Center" 
-                        VerticalAlignment="Center"
-                        Visibility="{Binding IsFactureIsSelected, Converter={StaticResource InvertBoolToVisibilityConverter}}"
-                        Margin="0,0,15,0"
-                        ></StackPanel>
+                        HorizontalAlignment="Right" 
+                        VerticalAlignment="Top"
+                        Margin="0,0,25,0"
+                        >
+                        <TextBlock Text="Détails"  Margin="15,0" VerticalAlignment="Center"
+                                   Style="{StaticResource Text_style}"
+                                   Foreground="{StaticResource PrimaryBlue}"/>
+                        <Button Style="{StaticResource GenericOperationBtn}"
+                                Command="{Binding ToogleDetailInvoiceCommand}"
+                                VerticalAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Focusable="False"
+                                FontSize="12"
+                                Height="21"
+                                Content="{Binding ShowDetailButtonText}"
+                                Width="32" />
+                    </StackPanel>
 
-                    <Grid Grid.Row="0" 
-                        Visibility="{Binding IsFactureIsSelected, Converter={StaticResource BoolToVisConverter}}"
+                    <Grid Grid.Row="1" 
+                          Focusable="False"
+                        Visibility="{Binding ShowDetailInvoice, Converter={StaticResource BoolToVisConverter}}"
                         VerticalAlignment="Center"
-                        Margin="25,0,0,0"
+                        Margin="25,15,0,15"
                         >
                         <Grid.Resources>
                             <Style TargetType="Label">
@@ -94,9 +114,10 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel
-                    MinWidth="150"
-                     Grid.Column="0"
-                    >
+                            Focusable="False"
+                                MinWidth="150"
+                                 Grid.Column="0"
+                                >
 
                             <WrapPanel Orientation="Vertical">
                                 <Label Content="Ref." FontFamily="{StaticResource fontSen}"/>
@@ -114,11 +135,20 @@
                                     <TextBlock Text="{Binding SelectedFacture.Type}" Padding="6,4" />
                                 </Border>
                             </WrapPanel>
+                            <WrapPanel Orientation="Vertical"
+                                       Margin="0,10,0,0">
+                                <TextBlock Text="Nom du médecin traitant" Style="{StaticResource FieldLabel}"/>
+                                <Border Style="{StaticResource StyledTextBorder}"
+                                    MinWidth="155">
+
+                                    <TextBlock Text="{Binding SelectedFacture.FacturesConsultations[0].Medecin.MedecinLastName}" Padding="6,4" />
+                                </Border>
+                            </WrapPanel>
 
                         </StackPanel>
                         <StackPanel
-                    Grid.Column="1"
-                    Margin="5,0,0,0">
+                                    Grid.Column="1"
+                                    Margin="5,0,0,0">
 
                             <WrapPanel>
 
@@ -189,7 +219,28 @@
                                     </Border>
                                 </WrapPanel>
                             </WrapPanel>
-
+                            <WrapPanel>
+                                <WrapPanel Orientation="Vertical"
+                                   Margin="20,10,0,0">
+                                    <TextBlock Text="Prénom du médecin" Style="{StaticResource FieldLabel}"/>
+                                    <Border Style="{StaticResource StyledTextBorder}"
+                                        MinWidth="145">
+                                        <TextBlock Text="{Binding SelectedFacture.FacturesConsultations[0].Medecin.MedecinFirstName, ConverterCulture=fr-GA,StringFormat={}{0:C}}"
+                                               Padding="6,4"
+                                               />
+                                    </Border>
+                                </WrapPanel>
+                                <WrapPanel Orientation="Vertical"
+                                   Margin="20,10,0,0">
+                                    <TextBlock Text="Domaine/spéc" Style="{StaticResource FieldLabel}"/>
+                                    <Border Style="{StaticResource StyledTextBorder}"
+                                        MinWidth="310">
+                                        <TextBlock Text="{Binding SelectedFacture.FacturesConsultations[0].Medecin.Speciality, ConverterCulture=fr-GA,StringFormat={}{0:C}}"
+                                               Padding="6,4"
+                                               />
+                                    </Border>
+                                </WrapPanel>
+                            </WrapPanel>
 
                         </StackPanel>
                         <StackPanel
@@ -328,12 +379,13 @@
                             >
 
                         <RadioButton Content="Toutes" 
+                                     x:Name="AllStatusBtn"
                                     GroupName="StatusGroup"
                                 Padding="10,5" 
                                     Style="{StaticResource TabButtonStyle}"
                                 Margin="0,0,0,0"
                                      IsChecked="True"
-                                Command="{Binding RefreshFacturesCommand}"
+                                Command="{Binding LoadLastFactureCommand}"
                                 >
                         </RadioButton>
                         <RadioButton Content="Payer" 
@@ -452,26 +504,18 @@
                          Style="{StaticResource SearchTextBoxStyle}"
                          Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"
                          >
-                    <behevior:Interaction.Triggers>
-                        <behevior:EventTrigger EventName="KeyDown">
-                            <behevior:InvokeCommandAction Command="{Binding SearchFacturesCommand}"
+                    <behavior:Interaction.Triggers>
+                        <behavior:EventTrigger EventName="KeyDown">
+                            <behavior:InvokeCommandAction Command="{Binding SearchFacturesCommand}"
                                    PassEventArgsToCommand="True"/>
-                        </behevior:EventTrigger>
-                    </behevior:Interaction.Triggers>
+                        </behavior:EventTrigger>
+                    </behavior:Interaction.Triggers>
                 </TextBox>
             </StackPanel>
             <StackPanel Grid.Row="2" 
                         Margin="0,30,0,0">
-                <WrapPanel>
-                    
-                    <TextBlock Text="Total"
-                               FontSize="13"
-                               FontWeight="SemiBold"/>
-                    <TextBlock Text="{Binding Factures.Count, StringFormat={}{0:N0}}" 
-                               VerticalAlignment="Center"
-                               FontSize="11"
-                               Margin="15,0,0,0"/>
-                </WrapPanel>
+                <hpctrl:uc_pagination DataContext="{Binding PaginationVM}" />
+                
                 <DataGrid RowStyle="{StaticResource DataGridRowStyle1}" 
                           Style="{StaticResource specialDataGrid}" 
                           ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"

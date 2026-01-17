@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using HelperPagination.ViewModels;
 using invoice.Context;
 using invoice.Models;
 using invoice.Services;
@@ -11,20 +12,37 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Process = System.Diagnostics.Process;
 
 namespace invoice.ViewModels
 {
     public partial class FactureViewVM : VMBase
     {
+        private const int CONST_ITEMS_PER_PAGE = 35;
         // Fields
         private string _searchTerm = string.Empty;
         private Facture? _selectedFacture;
         private bool _isFactureIsSelected = false;
         private decimal _amountLeft = decimal.Zero;
 
-
+        private bool estChargement = false;
+        private bool estRechercher = false;
+        private bool _showdetailInvoice = false;
+        private string _showdetailButtonText = "O";
+        private StatusType _estChargementStatus;
+        public PaginationVM PaginationVM { get; set; } = new PaginationVM(CONST_ITEMS_PER_PAGE, 0);
+        public StatusType EstChargementStatus
+        {
+            get => _estChargementStatus;
+            set
+            {
+                if (_estChargementStatus != value)
+                {
+                    _estChargementStatus = value;
+                    PaginationVM.UpdateCurrentPage(1);
+                }
+            }
+        }
         // Properties
         public decimal AmountLeft
         {
@@ -35,6 +53,16 @@ namespace invoice.ViewModels
         {
             get => _searchTerm;
             set => SetProperty(ref _searchTerm, value);
+        }
+        public bool ShowDetailInvoice
+        {
+            get => _showdetailInvoice;
+            set => SetProperty(ref _showdetailInvoice, value);
+        }
+        public string ShowDetailButtonText
+        {
+            get => _showdetailButtonText;
+            set => SetProperty(ref _showdetailButtonText, value);
         }
         public Facture? SelectedFacture
         {
@@ -65,39 +93,99 @@ namespace invoice.ViewModels
         // Constructor
         public FactureViewVM()
         {
-            LoadLastFacture(1, 50).ConfigureAwait(false);
+            PaginationVM.PageChanged += OnPageChanged;
+            RetrieveInvoiceTotalItems();
+            PaginationVM.UpdateTotalPages();
+            PaginationVM.UpdateCurrentPage(1);
+            LoadLastFacture().ConfigureAwait(false);
         }
-        private async Task LoadLastFacture(int begin, int end)
+
+        // Methods
+        [RelayCommand]
+        public async Task LoadLastFacture()
         {
-            using var db = new ClimaDbContext();
-
-            // Construire la requête optimisée
-            var query = db.Factures
-                .AsNoTracking()      // Pas de suivi -> moins d'overhead mémoire
-                .AsSplitQuery()      // Évite les joins massifs / explosion cartésienne
-                .Include(f => f.Patient)
-                .Include(f => f.FacturesExamens)
-                    .ThenInclude(fe => fe.Examen)
-                // Inclure les deux navigations de FacturesConsultations si nécessaire.
-                // Les appels séparés à Include + ThenInclude sont acceptables et
-                // restent efficaces avec AsSplitQuery.
-                .Include(f => f.FacturesConsultations)
-                    .ThenInclude(fc => fc.Consultation)
-                .Include(f => f.FacturesConsultations)
-                    .ThenInclude(fc => fc.Medecin)
-                .Include(f => f.User)
-                .Where(f => f.FactureId >= begin && f.FactureId <= end)
-                .OrderByDescending(f => f.Created_at);
-
-            var factures = await query.ToListAsync();
-
-            Factures.Clear();
-            foreach (var facture in factures)
+            try
             {
-                Factures.Add(facture);
+
+                estChargement = false;
+                estRechercher = false;
+                RetrieveInvoiceTotalItems();
+                PaginationVM.UpdateTotalPages();
+                using var db = new ClimaDbContext();
+
+                // Construire la requête optimisée
+                var query = db.Factures
+                    .AsNoTracking()      // Pas de suivi -> moins d'overhead mémoire
+                    .AsSplitQuery()      // Évite les joins massifs / explosion cartésienne
+                    .Include(f => f.Patient)
+                    .Include(f => f.FacturesExamens)
+                        .ThenInclude(fe => fe.Examen)
+                    // Inclure les deux navigations de FacturesConsultations si nécessaire.
+                    // Les appels séparés à Include + ThenInclude sont acceptables et
+                    // restent efficaces avec AsSplitQuery.
+                    .Include(f => f.FacturesConsultations)
+                        .ThenInclude(fc => fc.Consultation)
+                    .Include(f => f.FacturesConsultations)
+                        .ThenInclude(fc => fc.Medecin)
+                    .Include(f => f.User)
+                    .OrderByDescending(f => f.Created_at)
+                    .Skip((PaginationVM.Pagination.Current_page - 1) * PaginationVM.Pagination.Items_per_page)
+                    .Take(PaginationVM.Pagination.Items_per_page);
+
+                var factures = await query.ToListAsync();
+
+                Factures.Clear();
+                foreach (var facture in factures)
+                {
+                    Factures.Add(facture);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($" Erreur survenue pendant le chargement de toutes les factures : {ex.Message}");
             }
         }
+        private void RetrieveInvoiceTotalItems()
+        {
+            try
+            {
+                using var context = new ClimaDbContext();
+                int totalItems = context.Factures.Count();
 
+                PaginationVM.UpdateTotalItems(totalItems);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération du nombre total d'éléments : {ex.Message}");
+            }
+        }
+        private void RetrieveInvoiceTotalItemsFiltered(StatusType status)
+        {
+            try
+            {
+                using var context = new ClimaDbContext();
+                int totalItems = context.Factures.Count(f => f.Status == status);
+                PaginationVM.UpdateTotalItems(totalItems);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération du nombre total d'éléments : {ex.Message}");
+            }
+        }
+        private void RetrieveInvoiceTotalItemsSearch(string searchTerm)
+        {
+            try
+            {
+                using var context = new ClimaDbContext();
+                int totalItems = context.Factures
+                    .Count(f => f.Patient!.LastName.Contains(searchTerm) || f.Patient!.FirstName.Contains(searchTerm) || f.Reference.Contains(searchTerm));
+                PaginationVM.UpdateTotalItems(totalItems);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la récupération du nombre total d'éléments : {ex.Message}");
+            }
+        }
         private void CalculateAmountLeft()
         {
             if (SelectedFacture != null && SelectedFacture.AmountPaid == 0m)
@@ -106,7 +194,7 @@ namespace invoice.ViewModels
                 return;
             }
 
-            AmountLeft = SelectedFacture != null ? (decimal)(SelectedFacture.TotalAmountTTC - SelectedFacture.AmountPaid!) : 0m ;
+            AmountLeft = SelectedFacture != null ? (decimal)(SelectedFacture.TotalAmountTTC - SelectedFacture.AmountPaid!) : 0m;
         }
 
         public string GenererFacturePdf()
@@ -145,7 +233,7 @@ namespace invoice.ViewModels
                 // Crée tous les répertoires et sous-répertoires dans le chemin spécifié.
                 Directory.CreateDirectory(folderPath);
                 Console.WriteLine($"Dossier créé : {folderPath}");
-            }          
+            }
 
             try
             {
@@ -197,6 +285,8 @@ namespace invoice.ViewModels
             return filePath;
         }
 
+
+
         // Commands
         [RelayCommand(CanExecute = nameof(CanPreviewFacture))]
         public async Task PreviewInvoice()
@@ -231,42 +321,30 @@ namespace invoice.ViewModels
                 MessageBox.Show($"Impossible d'ouvrir le PDF. Veuillez vérifier que Adobe Reader ou un autre lecteur PDF est installé et défini par défaut. Erreur: {ex.Message}");
             }
         }
-
         [RelayCommand]
         public async Task RefreshFactures()
         {
-            using var db = new ClimaDbContext();
-            var messageBox = new ModelOpenner();
-            try
-            {
-                var query = db.Factures
-                .AsNoTracking()      // Pas de suivi -> moins d'overhead mémoire
-                .AsSplitQuery()      // Évite les joins massifs / explosion cartésienne
-                .Include(f => f.Patient)
-                .Include(f => f.FacturesExamens)
-                    .ThenInclude(fe => fe.Examen)
-                // Inclure les deux navigations de FacturesConsultations si nécessaire.
-                // Les appels séparés à Include + ThenInclude sont acceptables et
-                // restent efficaces avec AsSplitQuery.
-                .Include(f => f.FacturesConsultations)
-                    .ThenInclude(fc => fc.Consultation)
-                .Include(f => f.FacturesConsultations)
-                    .ThenInclude(fc => fc.Medecin)
-                .Include(f => f.User)
-                .OrderByDescending(f => f.Created_at);
+            RetrieveInvoiceTotalItems();
+            PaginationVM.UpdateTotalPages();
+            PaginationVM.UpdateCurrentPage(1);
+            OnPageChanged(this, EventArgs.Empty);
 
-                var factures = await query.ToListAsync();
+        }
+        [RelayCommand]
+        public async Task GoToPage()
+        {
+            RetrieveInvoiceTotalItems();
+            PaginationVM.UpdateTotalPages();
+            OnPageChanged(this, EventArgs.Empty);
 
-                Factures.Clear();
-                foreach (var facture in factures)
-                {
-                    Factures.Add(facture);
-                }
-            }
-            catch (Exception ex)
-            {
-                messageBox.Show("Erreur survenue",$"{ex.Message}", MessageBoxButton.OK);
-            }
+        }
+        [RelayCommand]
+        public async Task FilterItemsPerPage()
+        {
+            //RetrieveInvoiceTotalItems(); pas necessaire pour l'opération (atomiquement parlant)
+            PaginationVM.UpdateTotalPages();
+            OnPageChanged(this, EventArgs.Empty);
+
         }
         [RelayCommand(CanExecute = nameof(CanMarquerPayer))]
         public async Task MarquerPayer()
@@ -342,7 +420,6 @@ namespace invoice.ViewModels
             {
             }
         }
-
         [RelayCommand(CanExecute = nameof(CanMarquerNonPayer))]
         public async Task MarquerNonPayer()
         {
@@ -387,6 +464,7 @@ namespace invoice.ViewModels
                             Factures.Remove(SelectedFacture!);
                             SelectedFacture = null;
                             var MessageBox = new ModelOpenner("Facture supprimée avec succès");
+                            await RefreshFactures();
                         }
                     }
                     break;
@@ -399,40 +477,72 @@ namespace invoice.ViewModels
         public async Task SearchFactures(KeyEventArgs args)
         {
             if (args.Key != Key.Enter) return;
-            using (var db = new ClimaDbContext())
-            {
-                var query = db.Factures
-                .AsNoTracking()      // Pas de suivi -> moins d'overhead mémoire
-                .AsSplitQuery()      // Évite les joins massifs / explosion cartésienne
-                .Include(f => f.Patient)
-                .Include(f => f.FacturesExamens)
-                    .ThenInclude(fe => fe.Examen)
-                // Inclure les deux navigations de FacturesConsultations si nécessaire.
-                // Les appels séparés à Include + ThenInclude sont acceptables et
-                // restent efficaces avec AsSplitQuery.
-                .Include(f => f.FacturesConsultations)
-                    .ThenInclude(fc => fc.Consultation)
-                .Include(f => f.FacturesConsultations)
-                    .ThenInclude(fc => fc.Medecin)
-                .Include(f => f.User)
-                .Where(f => f.Patient!.LastName.Contains(SearchTerm) || f.Patient!.FirstName.Contains(SearchTerm) || f.Reference.Contains(SearchTerm))
-                .OrderByDescending(f => f.Created_at);
 
-                var factures = await query.ToListAsync();
-                Factures.Clear();
-                foreach (var facture in factures)
+            var messageBox = new ModelOpenner();
+            RetrieveInvoiceTotalItemsSearch(SearchTerm);
+            PaginationVM.UpdateTotalPages();
+
+            if (!estRechercher)
+            {
+                PaginationVM.UpdateCurrentPage(1);
+                messageBox.Show("Résultat", $"{PaginationVM.Pagination.Total_items} correspondance trouvé.", MessageBoxButton.OK);
+            }
+
+            try
+            {
+
+                using (var db = new ClimaDbContext())
                 {
-                    Factures.Add(facture);
+                    var query = db.Factures
+                    .AsNoTracking()      // Pas de suivi -> moins d'overhead mémoire
+                    .AsSplitQuery()      // Évite les joins massifs / explosion cartésienne
+                    .Include(f => f.Patient)
+                    .Include(f => f.FacturesExamens)
+                        .ThenInclude(fe => fe.Examen)
+                    // Inclure les deux navigations de FacturesConsultations si nécessaire.
+                    // Les appels séparés à Include + ThenInclude sont acceptables et
+                    // restent efficaces avec AsSplitQuery.
+                    .Include(f => f.FacturesConsultations)
+                        .ThenInclude(fc => fc.Consultation)
+                    .Include(f => f.FacturesConsultations)
+                        .ThenInclude(fc => fc.Medecin)
+                    .Include(f => f.User)
+                    .Where(f => f.Patient!.LastName.Contains(SearchTerm) || f.Patient!.FirstName.Contains(SearchTerm) || f.Reference.Contains(SearchTerm))
+                    .OrderByDescending(f => f.Created_at)
+                    .Skip((PaginationVM.Pagination.Current_page - 1) * PaginationVM.Pagination.Items_per_page)
+                        .Take(PaginationVM.Pagination.Items_per_page);
+
+
+                    var factures = await query.ToListAsync();
+                    Factures.Clear();
+                    foreach (var facture in factures)
+                    {
+                        Factures.Add(facture);
+                    }
+                    args.Handled = true;
                 }
-                args.Handled = true;
-                var MessageBox = new ModelOpenner($"{factures.Count} factures trouvées pour le terme de recherche '{SearchTerm}'");
+
+                estRechercher = true;
+                estChargement = false;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($" Erreur survenue pendant la recherche des factures : {ex.Message}");
             }
         }
         [RelayCommand]
         public async Task FilterStatusFactures(StatusType status)
         {
-            using (var db = new ClimaDbContext())
+            // si le filtre change, on reset la pagination aussi, voir la prorpriété EstChargementStatus
+            if (!estChargement)
+                PaginationVM.UpdateCurrentPage(1);
+
+            try
             {
+                RetrieveInvoiceTotalItemsFiltered(status);
+                PaginationVM.UpdateTotalPages();
+
+                using var db = new ClimaDbContext();
                 var query = db.Factures
                 .AsNoTracking()      // Pas de suivi -> moins d'overhead mémoire
                 .AsSplitQuery()      // Évite les joins massifs / explosion cartésienne
@@ -448,7 +558,9 @@ namespace invoice.ViewModels
                     .ThenInclude(fc => fc.Medecin)
                 .Include(f => f.User)
                 .Where(f => f.Status == status)
-                .OrderByDescending(f => f.Created_at);
+                .OrderByDescending(f => f.Created_at)
+                .Skip((PaginationVM.Pagination.Current_page - 1) * PaginationVM.Pagination.Items_per_page)
+                    .Take(PaginationVM.Pagination.Items_per_page);
 
                 var factures = await query.ToListAsync();
                 Factures.Clear();
@@ -456,13 +568,33 @@ namespace invoice.ViewModels
                 {
                     Factures.Add(facture);
                 }
+                estChargement = true;
+                estRechercher = false;
+                EstChargementStatus = status;
+            }
+            catch (Exception)
+            {
+
+                System.Diagnostics.Debug.WriteLine($" Erreur survenue pendant le chargement des factures filtrées par status : {status} ");
+            }
+        }
+        [RelayCommand]
+        public void ToogleDetailInvoice()
+        {
+            IsFactureIsSelected = !IsFactureIsSelected;
+            ShowDetailInvoice = !ShowDetailInvoice;
+            if (ShowDetailInvoice)
+            {
+                ShowDetailButtonText = "X";
+            }
+            else
+            {
+                ShowDetailButtonText = "O";
             }
         }
 
 
-
         // Can execute methods
-
         private bool CanMarquerPayer()
         {
             return IsFactureIsSelected && SelectedFacture.Status != StatusType.Payer;
@@ -482,6 +614,34 @@ namespace invoice.ViewModels
         private bool CanPreviewFacture()
         {
             return IsFactureIsSelected;
+        }
+
+        // event 
+        private async void OnPageChanged(object? sender, EventArgs e)
+        {
+            try
+            {
+                if (!estChargement && !estRechercher)
+                {
+                    await LoadLastFacture();
+                }
+                else if (estChargement && !estRechercher)
+                {
+                    await FilterStatusFactures(EstChargementStatus);
+                }
+                else if (estRechercher && !estChargement)
+                {
+                    await SearchFactures(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(System.Windows.Application.Current.MainWindow)!, 0, Key.Enter)
+                    {
+                        RoutedEvent = Keyboard.KeyDownEvent 
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur lors du changement de page : {ex.Message}");
+                throw;
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace invoice.ViewModels
 {
@@ -113,6 +114,49 @@ namespace invoice.ViewModels
                 // user credentials are correct so launch mainview;
                 _navigationService.NavigateTo<MainVM>();
                 _navigationService.CloseWindow<LoginVM>();
+            }
+            catch (Exception ex)
+            {
+                messageBox.Show("Erreur", "Une erreur est survenue pendant la tentative de connexion.", System.Windows.MessageBoxButton.OK);
+                if (ex.InnerException != null)
+                {
+                    messageBox.Show("Details", $"{ex.InnerException.Message}", System.Windows.MessageBoxButton.OK);
+                }
+            }
+        }
+        [RelayCommand(CanExecute = nameof(CanExecuteDoLogin))]
+        public async Task DoLoginShortcut(KeyEventArgs args)
+        {
+            if (args.Key != Key.Enter) return;
+            var messageBox = new ModelOpenner();
+            try
+            {
+                using var context = new ClimaDbContext();
+                var user = await context.Users.SingleOrDefaultAsync(w => w.Account_name == UserName);
+                if (user == null)
+                {
+                    ErrorMessage = "Utilisateur Inconnue";
+                    return;
+                }
+
+                Plainpwd = SecureStringHelper.ToPlainString(Password!);
+                string computedHash = PasswordHasher.HashPassword(Plainpwd, user.Salt);
+
+                if (computedHash != user.PasswordHash)
+                {
+                    ErrorMessage = "Le Mots de passe est incorrect";
+                    return;
+                }
+                if (user.IsActive == false)
+                {
+                    ErrorMessage = "Compte Utilisateur désactivé. Veuillez contacter l'administrateur.";
+                    return;
+                }
+                _sessionService.User = user;
+                // user credentials are correct so launch mainview;
+                _navigationService.NavigateTo<MainVM>();
+                _navigationService.CloseWindow<LoginVM>();
+                args.Handled = true;
             }
             catch (Exception ex)
             {

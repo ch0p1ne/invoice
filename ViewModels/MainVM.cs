@@ -92,7 +92,7 @@ namespace invoice.ViewModels
         {
             var messageBox = new ModelOpenner();
 
-            if (messageBox.Show("Confirmation", "Voulez vous vraiment fermer la séssion ?", System.Windows.MessageBoxButton.YesNo) != System.Windows.MessageBoxResult.Yes)
+            if (messageBox.Show("Confirmation", "Voulez-vous vraiment fermer la session ?", System.Windows.MessageBoxButton.YesNo) != System.Windows.MessageBoxResult.Yes)
                 return;
             try
             {

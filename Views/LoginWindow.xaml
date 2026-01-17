@@ -48,6 +48,12 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Right" Height="390" Width="350"    >
+                    <behavior:Interaction.Triggers>
+                        <behavior:EventTrigger EventName="KeyDown">
+                            <behavior:InvokeCommandAction Command="{Binding DoLoginShortcutCommand}"
+                                                            PassEventArgsToCommand="True"/>
+                        </behavior:EventTrigger>
+                    </behavior:Interaction.Triggers>
                     <Image Source="/Assets/img/logo.png"  Height="125"/>
 
                     <WrapPanel Margin="5,35,0,0" HorizontalAlignment="center" Orientation="Vertical">
@@ -101,7 +107,19 @@
 
                     <TextBlock HorizontalAlignment="Center" Margin="0,15,0,0" Text="{Binding ErrorMessage }" Foreground="DarkOrange" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap"/>
 
-                    <Button x:Name="btnTryConnexion" Margin="0,25,0,0" Width="150" Height="40" Background="#D3FFFF" Foreground="#000" BorderThickness="0" FontWeight="SemiBold" FontSize="15" HorizontalContentAlignment="Center" FontFamily="{StaticResource fontBase}" Command="{Binding DoLoginCommand}" Click="btnTryConnexion_Click">Connexion</Button>
+                    <Button x:Name="btnTryConnexion" 
+                            Margin="0,25,0,0" 
+                            Width="150" Height="40" 
+                            Background="#D3FFFF" 
+                            Foreground="#000" 
+                            BorderThickness="0" 
+                            FontWeight="SemiBold" FontSize="15" 
+                            HorizontalContentAlignment="Center" FontFamily="{StaticResource fontBase}" 
+                            Command="{Binding DoLoginCommand}" 
+                            >
+                        
+                        Connexion
+                    </Button>
                 </StackPanel>
 
             </Grid>

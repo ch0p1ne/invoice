@@ -23,6 +23,13 @@ namespace invoice.Views
         public FactureView()
         {
             InitializeComponent();
+            Loaded += FactureView_Loaded;
         }
+
+        private void FactureView_Loaded(object? sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"FactureView DataContext type: {DataContext?.GetType().FullName ?? "null"}");
+        }
+
     }
 }
